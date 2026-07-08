@@ -251,4 +251,3 @@ Made with ❤️ for Pokémon fans around the world.
 
 </div>
 
-A free open-source game by SG ❤️ (Kindly provide credits to orginal dev in game)
