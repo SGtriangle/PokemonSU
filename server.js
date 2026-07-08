@@ -12,7 +12,7 @@ const MONGO_URI = "mongodb+srv://unitegamer06_db_user:54LZzMK9WpNwMHPQ@cluster0.
 // ==========================================
 
 // Connect to MongoDB
-mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(MONGO_URI)
     .then(() => console.log('✅ Connected to MongoDB Atlas permanently!'))
     .catch(err => console.error('❌ MongoDB Connection Error:', err));
 
