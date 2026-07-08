@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Quick Fix: Preconnect to the sprite server for faster image loading -->
+<link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+<title>PokemonSU - Free Online Pokemon Game | Login & Play Now</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,sans-serif}
+body{background:linear-gradient(160deg,#0b1020 0%,#131a33 50%,#0d1226 100%);color:#e8ecf8;min-height:100vh}
+.hidden{display:none!important}
+.wrap{max-width:960px;margin:0 auto;padding:16px}
+/* ===== LOGIN PAGE ===== */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 4px;flex-wrap:wrap;gap:8px}
+.logo{font-size:1.5rem;font-weight:800;background:linear-gradient(90deg,#ffd54a,#ff8a3d);-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo small{display:block;font-size:.65rem;color:#8fa0c8;-webkit-text-fill-color:#8fa0c8;font-weight:500;letter-spacing:2px}
+.beta{background:#ff8a3d;color:#111;font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:10px;vertical-align:top;margin-left:6px}
+.tabs button{background:none;border:1px solid #2a3providers558;border:1px solid #2a3558;color:#aab8dd;padding:8px 20px;border-radius:8px;cursor:pointer;margin-left:6px;font-weight:600}
+.tabs button.on{background:#ffd54a;color:#111;border-color:#ffd54a}
+.hero{text-align:center;padding:26px 8px 10px}
+.hero h1{font-size:1.9rem;font-weight:800}
+.hero p{color:#9fb0d6;margin-top:8px;max-width:560px;margin-left:auto;margin-right:auto}
+.pills{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.pill{background:#1a2342;border:1px solid #2c3a68;padding:5px 14px;border-radius:20px;font-size:.8rem;color:#ffd54a;font-weight:600}
+.feats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:22px 0}
+.feat{background:#151d3a;border:1px solid #263258;border-radius:14px;padding:16px}
+.feat h3{color:#ffd54a;font-size:.95rem;margin-bottom:6px}
+.feat p{color:#9fb0d6;font-size:.82rem;line-height:1.45}
+.feat span{display:inline-block;margin-top:10px;font-size:.7rem;background:#232f57;padding:3px 10px;border-radius:10px;color:#c3d0f0}
+.strip{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;padding:14px;background:#10173011;margin-bottom:6px}
+.strip img{width:64px;height:64px;image-rendering:pixelated;filter:drop-shadow(0 4px 8px #0008);transition:.2s}
+.strip img:hover{transform:scale(1.25)}
+.card{background:#151d3a;border:1px solid #2c3a68;border-radius:16px;padding:26px;max-width:420px;margin:10px auto;box-shadow:0 12px 40px #0006}
+.card h2{text-align:center;font-size:1.15rem}
+.card .sub{text-align:center;color:#8fa0c8;font-size:.82rem;margin:6px 0 18px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:.78rem;color:#aab8dd;margin-bottom:6px;font-weight:600}
+.field input{width:100%;padding:12px 14px;background:#0e1530;border:1px solid #2c3a68;border-radius:10px;color:#fff;font-size:.95rem;outline:none}
+.field input:focus{border-color:#ffd54a}
+.btn{width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(90deg,#ffd54a,#ff8a3d);color:#111;font-weight:800;font-size:1rem;cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn2{background:#232f57;color:#e8ecf8;border:1px solid #35447a}
+.links{text-align:center;margin-top:14px;font-size:.8rem}
+.links a{color:#ffd54a;cursor:pointer;text-decoration:none;display:block;margin-top:8px}
+.err{color:#ff7a7a;font-size:.8rem;text-align:center;min-height:18px;margin-bottom:6px}
+footer{text-align:center;color:#67759d;font-size:.7rem;padding:26px 12px;line-height:1.6;border-top:1px solid #1d274a;margin-top:24px}
+/* ===== GAME ===== */
+.hud{display:flex;justify-content:space-between;align-items:center;background:#151d3a;border:1px solid #2c3a68;border-radius:12px;padding:10px 16px;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.hud b{color:#ffd54a}
+.nav{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.nav button{flex:1;min-width:70px;padding:10px;background:#1a2342;border:1px solid #2c3a68;color:#aab8dd;border-radius:10px;cursor:pointer;font-weight:700;font-size:.85rem}
+.nav button.on{background:#ffd54a;color:#111;border-color:#ffd54a}
+.panel{background:#151d3a;border:1px solid #263258;border-radius:14px;padding:18px;margin-bottom:12px}
+.panel h3{color:#ffd54a;margin-bottom:10px}
+.zone{display:flex;justify-content:space-between;align-items:center;background:#0e1530;border:1px solid #2c3a68;border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.zone.lock{opacity:.4}
+.zone small{color:#8fa0c8;display:block}
+.sbtn{padding:8px 16px;background:linear-gradient(90deg,#ffd54a,#ff8a3d);border:none;border-radius:8px;font-weight:700;cursor:pointer;color:#111}
+.sbtn:disabled{opacity:.4;cursor:default}
+.gbtn{padding:8px 16px;background:#232f57;border:1px solid #35447a;border-radius:8px;font-weight:600;cursor:pointer;color:#e8ecf8}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.mon{background:#0e1530;border:1px solid #2c3a68;border-radius:12px;padding:10px;text-align:center}
+.mon img{width:72px;height:72px;image-rendering:pixelated}
+.mon .nm{font-weight:700;font-size:.82rem}
+.mon small{color:#8fa0c8;font-size:.72rem;display:block}
+.hpbar{height:6px;background:#26305a;border-radius:4px;margin:6px 0;overflow:hidden}
+.hpbar i{display:block;height:100%;background:#4ade80;border-radius:4px;transition:width .4s}
+.hpbar i.mid{background:#facc15}.hpbar i.low{background:#ef4444}
+/* battle */
+#battle{position:fixed;inset:0;background:linear-gradient(160deg,#0b1020,#1a2342);z-index:50;overflow:auto;padding:14px}
+.bwrap{max-width:680px;margin:0 auto}
+.bfield{background:linear-gradient(180deg,#1f2c55 0%,#16204233 100%);border:1px solid #2c3a68;border-radius:16px;padding:14px;position:relative;min-height:280px}
+.bside{display:flex;align-items:flex-end;justify-content:space-between}
+.bmon{text-align:center}
+.bmon img{width:140px;height:140px;image-rendering:pixelated;filter:drop-shadow(0 8px 12px #0009)}
+.binfo{background:#0e1530ee;border:1px solid #35447a;border-radius:10px;padding:8px 12px;min-width:170px;text-align:left}
+.binfo b{font-size:.85rem}.binfo small{color:#8fa0c8}
+.blog{background:#0e1530;border:1px solid #2c3a68;border-radius:12px;padding:12px;margin:10px 0;min-height:64px;font-size:.88rem;line-height:1.5;color:#c3d0f0}
+.bacts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bacts button{padding:12px;background:#1a2342;border:1px solid #35447a;border-radius:10px;color:#e8ecf8;font-weight:700;cursor:pointer;font-size:.85rem}
+.bacts button:hover{background:#232f57;border-color:#ffd54a}
+.bacts button.mv{border-left:4px solid #ffd54a}
+.bacts button:disabled{opacity:.35;cursor:default}
+/* dialogue & modals */
+.modal-overlay{position:fixed;inset:0;background:#000a;z-index:60;display:flex;align-items:center;justify-content:center;padding:14px}
+.dbox{background:#151d3a;border:2px solid #ffd54a55;border-radius:16px;max-width:560px;width:100%;padding:22px}
+.dbox .who{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.dbox .who img{width:80px;height:80px;image-rendering:pixelated}
+.dbox .who b{color:#ffd54a;font-size:1.05rem}
+.dbox p{line-height:1.6;color:#dde5f7;min-height:70px}
+.dbox .row{display:flex;gap:8px;margin-top:14px;justify-content:flex-end;flex-wrap:wrap}
+.starterRow{display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.starterRow .mon{cursor:pointer}
+.starterRow .mon:hover{border-color:#ffd54a}
+.badge{display:inline-block;background:#232f57;border:1px solid #ffd54a66;color:#ffd54a;font-size:.7rem;padding:3px 10px;border-radius:10px;margin:2px}
+.shoprow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #1d274a;font-size:.88rem}
+.done{color:#4ade80;font-size:.8rem}
+/* rank styles */
+.rank-badge{display:inline-block;padding:6px 12px;border-radius:8px;font-weight:800;font-size:1.1rem;margin-bottom:10px;background:#232f57;color:#fff;border:1px solid #35447a}
+.rank-Bronze{color:#cd7f32;border-color:#cd7f32}
+.rank-Silver{color:#c0c0c0;border-color:#c0c0c0}
+.rank-Gold{color:#ffd700;border-color:#ffd700}
+.rank-Master{background:linear-gradient(90deg,#9c27b0,#f44336);-webkit-background-clip:text;color:transparent;border-color:#9c27b0}
+@media(max-width:520px){.bmon img{width:100px;height:100px}.binfo{min-width:130px}}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN PAGE ================= -->
+<div id="pgLogin">
+<div class="wrap">
+  <div class="topbar">
+    <div class="logo">PokemonSU<span class="beta">Beta</span><small>BROWSER ADVENTURE RPG</small></div>
+    <div class="tabs"><button id="tabL" class="on" onclick="authTab(0)">Login</button><button id="tabR" onclick="authTab(1)">Register</button></div>
+  </div>
+  <div class="hero">
+    <h1>Return to the Rift.</h1>
+    <p>Resume right where you left off with your full roster, progress, and daily events. No downloads required — play instantly in your browser!</p>
+    <div class="pills"><span class="pill">Gyms</span><span class="pill">Raids</span><span class="pill">PvP Arena</span></div>
+  </div>
+  <div class="feats">
+    <div class="feat"><h3>🗺️ Adventure</h3><p>Explore routes, hunt encounters, and unlock new travel zones across all nine generations.</p><span>Adventure</span></div>
+    <div class="feat"><h3>⚔️ Competitive</h3><p>Join raids, gym runs, and PvP pushes for rewards and ranking against the toughest Wardens.</p><span>Competitive</span></div>
+    <div class="feat"><h3>📦 Collection</h3><p>Play safari/minigame content and collect rare variant Pokémon from every known region.</p><span>Collection</span></div>
+  </div>
+  <div class="strip" id="strip"></div>
+  <div class="card" id="loginCard">
+    <h2>⚡ Trainer Login</h2><div class="sub">Continue your Pokémon adventure</div>
+    <div class="err" id="loginErr"></div>
+    <div class="field"><label>👤 Trainer Name</label><input id="liUser" maxlength="16" placeholder="Enter trainer name"></div>
+    <div class="field"><label>🔒 Password</label><input id="liPass" type="password" placeholder="Enter password"></div>
+    <button class="btn" onclick="doLogin()">Login to Game</button>
+    <div class="links"><a onclick="authTab(1)">🎯 Create New Trainer Account</a><a onclick="alert2('The Game Guide: pick a starter, follow the Story tab, explore Rift zones to catch Pokémon, and defeat all Wardens!')">📖 View Game Guide</a></div>
+  </div>
+  <div class="card hidden" id="regCard">
+    <h2>🎯 New Trainer</h2><div class="sub">Begin your Rift adventure</div>
+    <div class="err" id="regErr"></div>
+    <div class="field"><label>👤 Trainer Name</label><input id="rgUser" maxlength="16" placeholder="Choose a trainer name"></div>
+    <div class="field"><label>🔒 Password</label><input id="rgPass" type="password" placeholder="Choose a password"></div>
+    <button class="btn" onclick="doRegister()">Create Trainer Account</button>
+  </div>
+  <footer>© 2022–2026 – PokemonSU Project<br>Pokémon © 1995–2026 Nintendo/Creatures Inc./Game Freak Inc. Please support the official release.<br><b>Legal Notice:</b> This is a fan-made game and is not affiliated with, endorsed by, or connected to Nintendo, Game Freak, Creatures Inc., or The Pokémon Company.<br>Legal | Terms | Privacy</footer>
+</div>
+</div>
+
+<!-- ================= GAME ================= -->
+<div id="pgGame" class="hidden">
+<div class="wrap">
+  <div class="hud">
+    <div>👤 <b id="hudName"></b> &nbsp; 💰 <b id="hudMoney"></b></div>
+    <div id="hudBadges"></div>
+    <div><button class="gbtn" onclick="healTeam();log2('Your team was fully healed at the Rift Center!')">💗 Rift Center</button> <button class="gbtn" onclick="logout()">Logout</button></div>
+  </div>
+  <div class="nav">
+    <button id="nv0" class="on" onclick="nav(0)">📖 Story</button>
+    <button id="nv1" onclick="nav(1)">🗺️ Explore</button>
+    <button id="nv2" onclick="nav(2)">⚔️ Team</button>
+    <button id="nv3" onclick="nav(3)">🎒 Shop & Support</button>
+    <button id="nv4" onclick="nav(4)">📦 Box / Dex</button>
+    <button id="nv5" onclick="nav(5)">🏆 PvP Arena</button>
+  </div>
+  <div id="msg" style="color:#4ade80;font-size:.85rem;min-height:20px;margin-bottom:6px"></div>
+  <div id="scr0"></div><div id="scr1" class="hidden"></div><div id="scr2" class="hidden"></div><div id="scr3" class="hidden"></div><div id="scr4" class="hidden"></div><div id="scr5" class="hidden"></div>
+</div>
+</div>
+
+<!-- ================= DIALOGUE & MODALS ================= -->
+<div id="dlg" class="modal-overlay hidden"><div class="dbox">
+  <div class="who"><img id="dImg" onerror="this.style.display='none'"><b id="dWho"></b></div>
+  <p id="dTxt"></p><div id="dExtra"></div>
+  <div class="row"><button class="sbtn" id="dNext" onclick="dlgNext()">Next ▸</button></div>
+</div></div>
+
+<!-- ================= BATTLE ================= -->
+<div id="battle" class="hidden"><div class="bwrap">
+  <div class="bfield">
+    <div class="bside" style="justify-content:flex-end;align-items:flex-start">
+      <div class="binfo"><b id="eName"></b> <small id="eLvl"></small><div class="hpbar"><i id="eHp"></i></div><small id="eTypes"></small></div>
+      <div class="bmon"><img id="eImg"></div>
+    </div>
+    <div class="bside">
+      <div class="bmon"><img id="pImg"></div>
+      <div class="binfo"><b id="pName"></b> <small id="pLvl"></small><div class="hpbar"><i id="pHp"></i></div><small id="pHpTxt"></small></div>
+    </div>
+  </div>
+  <div class="blog" id="bLog"></div>
+  <div class="bacts" id="bActs"></div>
+</div></div>
+
+<!-- Add Socket.io Client Script -->
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+<script>
+/* ============ BACKEND & SOCKET.IO SETUP ============ */
+let socket = null;
+try { socket = io(); } catch(e) { console.log('Playing in offline/local mode.'); }
+
+if(socket) {
+    socket.on('syncData', (serverData) => { if(serverData) { S = serverData; renderAll(); } });
+    socket.on('matchFound', async (data) => {
+        bLog.innerHTML = `Real Match found! Opponent: ${data.opponent.user} (Elo: ${data.opponent.elo})`;
+        setTimeout(() => {
+            startBattle({wild:false, trainer:[data.opponent.user], queue:data.opponent.team, isPvP:true, isRealPvP:true, roomId: data.room});
+        }, 1500);
+    });
+    socket.on('enemyAction', (data) => {
+        if(!B) return;
+        if(data.type === 'move') {
+            const p = S.team[B.pi]; p.hp -= data.damage; drawB();
+            bmsg(`Opponent used ${data.move}! (${data.damage} dmg)`);
+            if(p.hp <= 0) {
+                p.hp = 0; drawB();
+                setTimeout(()=>{
+                    if(S.team.some(m=>m.hp>0)){bmsg(`${p.name} fainted! Choose another.`); B.lock=false; forceSwitch();}
+                    else {
+                        socket.emit('playerAction', {room: B.roomId, type: 'win'}); // Tell enemy they won
+                        S.elo = Math.max(0, S.elo - 15); endB(false, `Match Lost! Elo dropped to ${S.elo}`);
+                    }
+                }, 700);
+            } else { B.lock = false; drawB(); }
+        } else if (data.type === 'switch') {
+            B.enemy = data.mon; bmsg(`Opponent sent out ${B.enemy.name}!`);
+            drawB(); B.lock = false;
+        } else if (data.type === 'faint') {
+            bmsg(`Opponent's Pokémon fainted! Waiting for them to switch...`);
+        } else if (data.type === 'win') {
+            S.elo += 25; endB(true, `Match Won! Elo increased to ${S.elo} 🏆`);
+        }
+    });
+}
+
+/* ============ DATA ============ */
+const SPR=(i,s=false)=>`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${s?'shiny/':''}${i}.png`;
+const SPRB=(i,s=false)=>`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/${s?'shiny/':''}${i}.png`;
+const TRN=n=>`https://play.pokemonshowdown.com/sprites/trainers/${n}.png`;
+const API='https://pokeapi.co/api/v2/pokemon/';
+const GENS=[[1,151],[152,251],[252,386],[387,493],[494,649],[650,721],[722,809],[810,905],[906,1025]];
+const ZONES=[
+ {n:'Route 1 · Rift Fields',g:1,lv:[2,6],ch:1},{n:'Verdant Woods',g:1,lv:[5,12],ch:2},
+ {n:'Johto Rift Gate',g:2,lv:[10,18],ch:3},{n:'Hoenn Rift Gate',g:3,lv:[16,24],ch:4},
+ {n:'Sinnoh Rift Gate',g:4,lv:[22,30],ch:5},{n:'Unova Rift Gate',g:5,lv:[28,36],ch:6},
+ {n:'Kalos Rift Gate',g:6,lv:[34,42],ch:7},{n:'Alola Rift Gate',g:7,lv:[40,48],ch:8},
+ {n:'Galar Rift Gate',g:8,lv:[46,54],ch:9},{n:'Paldea Rift Gate',g:9,lv:[52,62],ch:10}];
+const TM={normal:[['Tackle',40],['Body Slam',85]],fire:[['Ember',40],['Flamethrower',90]],water:[['Water Gun',40],['Surf',90]],grass:[['Vine Whip',45],['Energy Ball',90]],electric:[['Thunder Shock',40],['Thunderbolt',90]],ice:[['Powder Snow',40],['Ice Beam',90]],fighting:[['Karate Chop',50],['Close Combat',100]],poison:[['Poison Sting',40],['Sludge Bomb',90]],ground:[['Mud-Slap',45],['Earthquake',100]],flying:[['Gust',40],['Air Slash',75]],psychic:[['Confusion',50],['Psychic',90]],bug:[['Bug Bite',60],['X-Scissor',80]],rock:[['Rock Throw',50],['Stone Edge',100]],ghost:[['Lick',40],['Shadow Ball',80]],dragon:[['Dragon Breath',60],['Dragon Pulse',85]],dark:[['Bite',60],['Dark Pulse',80]],steel:[['Metal Claw',50],['Iron Head',80]],fairy:[['Fairy Wind',40],['Moonblast',95]]};
+const EFF={fire:{grass:2,ice:2,bug:2,steel:2,fire:.5,water:.5,rock:.5,dragon:.5},water:{fire:2,ground:2,rock:2,water:.5,grass:.5,dragon:.5},grass:{water:2,ground:2,rock:2,fire:.5,grass:.5,poison:.5,flying:.5,bug:.5,dragon:.5,steel:.5},electric:{water:2,flying:2,electric:.5,grass:.5,dragon:.5,ground:0},ice:{grass:2,ground:2,flying:2,dragon:2,fire:.5,water:.5,ice:.5,steel:.5},fighting:{normal:2,ice:2,rock:2,dark:2,steel:2,poison:.5,flying:.5,psychic:.5,bug:.5,fairy:.5,ghost:0},poison:{grass:2,fairy:2,poison:.5,ground:.5,rock:.5,ghost:.5,steel:0},ground:{fire:2,electric:2,poison:2,rock:2,steel:2,grass:.5,bug:.5,flying:0},flying:{grass:2,fighting:2,bug:2,electric:.5,rock:.5,steel:.5},psychic:{fighting:2,poison:2,psychic:.5,steel:.5,dark:0},bug:{grass:2,psychic:2,dark:2,fire:.5,fighting:.5,poison:.5,flying:.5,ghost:.5,steel:.5,fairy:.5},rock:{fire:2,ice:2,flying:2,bug:2,fighting:.5,ground:.5,steel:.5},ghost:{psychic:2,ghost:2,dark:.5,normal:0},dragon:{dragon:2,steel:.5,fairy:0},dark:{psychic:2,ghost:2,fighting:.5,dark:.5,fairy:.5},steel:{ice:2,rock:2,fairy:2,fire:.5,water:.5,electric:.5,steel:.5},fairy:{fighting:2,dragon:2,dark:2,fire:.5,poison:.5,steel:.5},normal:{rock:.5,steel:.5,ghost:0}};
+
+const EVO={1:[16,2],2:[32,3],4:[16,5],5:[36,6],7:[16,8],8:[36,9],10:[7,11],11:[10,12],13:[7,14],14:[10,15],16:[18,17],17:[36,18],25:[50,26],147:[30,148],148:[55,149],371:[30,372],372:[50,373],443:[24,444],444:[48,445]};
+const RESTRICTED=[144,145,146,147,148,149,150,151,243,244,245,246,247,248,249,250,251,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,443,444,445,480,481,482,483,484,485,486,487,488,489,490,491,492,493];
+
+/* ============ STORY: THE RIFT CHRONICLES (original) ============ */
+const P_ALDER=['Professor Alder','alder'],KAIA=['Kaia','rosa'],GRUNT=['Eclipse Grunt','galacticgrunt'],ADMIN=['Eclipse Admin Vesper','mars'],NOCTIS=['Noctis','cyrus'],MOSS=['Warden Moss','ramos'],VOLTA=['Warden Volta','elesa'],YUKI=['Warden Yuki','candice'],NARR=['— The Rift Chronicles —',''];
+const CHAPTERS=[
+{t:'Ch. 1 — The Sky That Cracked',d:[
+ [NARR,'One year ago, the sky above the old Kanto plateau split open. Since then, glowing Rifts have appeared across the world, leaking Pokémon from every known region — and some no one had ever catalogued.'],
+ [P_ALDER,'You made it! I\'m Professor Alder, head of the Rift Warden Program. The Rifts are unstable — Pokémon are pouring through, confused and displaced. We need trainers to study them, calm them, and protect the towns.'],
+ [P_ALDER,'Every Warden candidate receives a partner. These three were found near the very first Rift. Choose carefully — this Pokémon will walk the whole road with you.']],
+ ev:{type:'starter'}},
+{t:'Ch. 2 — The Girl at the Crossroads',d:[
+ [KAIA,'Hey! You\'re Alder\'s new recruit? I\'m Kaia — top of the candidate class, future First Warden, and your new rival, apparently.'],
+ [KAIA,'They say a Rift opened over Verdant Woods last night. Before we go poking at holes in reality... let\'s see if you can even handle a real battle. Come on!']],
+ ev:{type:'battle',who:KAIA,mons:s=>[[({1:4,4:7,7:1})[s],8]],reward:600,
+ after:[[KAIA,'Not bad... not bad at all. Fine — I officially acknowledge you. Race you to the Johto Gate!']]}},
+{t:'Ch. 3 — Shadows at the Gate',d:[
+ [NARR,'At the shimmering Johto Rift Gate, figures in black uniforms are driving machinery into the tear in the sky.'],
+ [GRUNT,'Halt! This Rift is property of Team Eclipse. The boss says the Rifts aren\'t a disaster — they\'re a POWER SOURCE. Scram, Warden brat, or my Pokémon will make you.']],
+ ev:{type:'battle',who:GRUNT,mons:()=>[[41,10],[19,10]],reward:800,
+ after:[[GRUNT,'Tch! The Admins will hear about this...'],[P_ALDER,'Team Eclipse... so the rumors were true. Someone is trying to widen the Rifts on purpose. The Johto Gate is stable now — you may travel through it. Be careful out there.']]}},
+{t:'Ch. 4 — The Verdant Warden',d:[
+ [MOSS,'Welcome, young one, to the Verdant Sanctum. I am Moss, first of the eight Rift Wardens. Alder speaks well of you — but words are wind. Only battle reveals a trainer\'s roots.'],
+ [MOSS,'Show me the bond between you and your Pokémon. If it holds, my badge — and the Hoenn Gate — are yours.']],
+ ev:{type:'battle',who:MOSS,badge:'Verdant',mons:()=>[[114,14],[154,16]],reward:1500,
+ after:[[MOSS,'Splendid! Your bond runs deep. Take the Verdant Badge. The Hoenn Rift Gate will answer to you now.']]}},
+{t:'Ch. 5 — Sabotage',d:[
+ [NARR,'Alarms wail across the Warden outpost. The Sinnoh Gate\'s stabilizers have been ripped out — and a red-haired Eclipse Admin stands atop the wreckage.'],
+ [ADMIN,'So YOU\'RE the recruit who embarrassed our grunt. I\'m Vesper. Noctis has a vision: one great Rift, one new world, with Eclipse holding the only key. You\'re standing in the doorway, kid.']],
+ ev:{type:'battle',who:ADMIN,mons:()=>[[42,20],[229,21]],reward:2200,
+ after:[[ADMIN,'Hmph. Enjoy your little victory. The deeper Gates are already ours...'],[P_ALDER,'You saved the Sinnoh Gate! I\'ve re-keyed it to your Warden license. But Vesper mentioned "Noctis"... I\'ve heard that name before, long ago. Stay sharp.']]}},
+{t:'Ch. 6 — The Storm Warden',d:[
+ [VOLTA,'You\'re late, sparkplug! I\'m Volta — Storm Warden, guardian of the Unova Gate, and the fastest battler on this side of the sky-crack. Alder says you\'re "promising." I say: prove it before I get bored!']],
+ ev:{type:'battle',who:VOLTA,badge:'Storm',mons:()=>[[82,26],[405,28]],reward:3000,
+ after:[[VOLTA,'ZAP! Ha! You actually kept up. Storm Badge is yours — the Unova Gate\'s open. Try not to get eaten by anything with more than two heads!']]}},
+{t:'Ch. 7 — Rival\'s Resolve',d:[
+ [KAIA,'There you are. I heard about Vesper. Listen... Eclipse raided my hometown outpost last week. I\'m done treating this like a class ranking.'],
+ [KAIA,'But before we take them down — I need to know where I stand. Full strength. No holding back. BATTLE ME!']],
+ ev:{type:'battle',who:KAIA,mons:s=>[[18,30],[({1:6,4:9,7:3})[s],32]],reward:3500,
+ after:[[KAIA,'...You\'ve gotten so strong. Good. Then it\'s settled — you take the front gate, I\'ll cover the flanks. Partners?'],[NARR,'Kaia grins and bumps your fist. The Kalos Gate hums open behind you.']]}},
+{t:'Ch. 8 — The Frost Warden',d:[
+ [YUKI,'Shhh. Listen... the Rift above the Alola Gate sings when it snows. I am Yuki, the Frost Warden. Noctis came here once, you know. He asked me to freeze the Gate open. I refused.'],
+ [YUKI,'He will not stop, Warden. So you must not either. Show me a fire that does not go out in the cold.']],
+ ev:{type:'battle',who:YUKI,badge:'Frost',mons:()=>[[362,38],[478,40]],reward:4200,
+ after:[[YUKI,'Warm... even here. The Frost Badge is yours, and the Alola Gate with it. Hurry — the singing has changed. Something is coming through the Great Rift.']]}},
+{t:'Ch. 9 — Eclipse of the Heart',d:[
+ [NARR,'At the storm-wracked Galar Gate, machinery the size of towers drills into the sky itself. A pale man in a grey coat watches the Rift widen — Noctis, leader of Team Eclipse.'],
+ [NOCTIS,'Ah. Alder\'s finest. Do you know what I saw the day the sky cracked? Truth. This world is a rough draft, Warden. Beyond the Great Rift is a blank page — and I will be the one who writes on it.'],
+ [NOCTIS,'Darkrai. Show our guest the space between worlds.']],
+ ev:{type:'battle',who:NOCTIS,mons:()=>[[461,44],[635,46],[491,48]],reward:6000,
+ after:[[NOCTIS,'...So the rough draft fights back. Fascinating. Then witness it yourself — the machine is already past the point of return. The Heart of the Rift opens. Go on. Look at what waits inside.'],[P_ALDER,'The Great Rift is destabilizing! Whatever anchors it — you have to calm it, catch it, or beat it down. You\'re the only one close enough. GO!']]}},
+{t:'Ch. 10 — Heart of the Rift',d:[
+ [NARR,'You step through. Inside the Rift there is no ground and no sky — only light, and three colossal silhouettes circling the wound in the world: the guardians the Rift itself called to defend it.'],
+ [NARR,'One by one, they descend. To seal the Rift, you must prove the world outside is worth protecting.']],
+ ev:{type:'battle',who:['Heart of the Rift','cynthia'],badge:'Riftheart',mons:()=>[[384,55],[150,58],[493,60]],reward:15000,
+ after:[[NARR,'As the last guardian bows its head, the light softens. The Great Rift folds inward, gently — not slammed shut, but healed. Across the world, the small Gates settle into a calm, steady glow.'],
+ [P_ALDER,'You did it... The Gates are stable — doorways now, not wounds. Noctis vanished into custody muttering about "the next draft." And you — you\'re no candidate anymore. The world has a new First Warden.'],
+ [KAIA,'FIRST Warden?! Ugh — fine, you earned it. But the Paldea Gate just opened and I am NOT letting you fill the dex before me. Race you through!'],
+ [NARR,'— THE END... of Chapter One of your story. All nine Gates are now open. Explore, catch, and complete the Rift Dex! —']]}}];
+
+/* ============ ACCOUNTS / SAVE ============ */
+let ACC={},S=null,storageOK=true;
+try{ACC=JSON.parse(localStorage.getItem('psu_acc')||'{}')}catch(e){storageOK=false}
+
+function persist(){
+ if(!storageOK)return;
+ try {
+  if(S)ACC[S.user].save=S;
+  localStorage.setItem('psu_acc',JSON.stringify(ACC));
+  if(socket && S && socket.connected) socket.emit('saveData', {user: S.user, data: S}); // Push to backend
+ } catch(e){}
+}
+
+function authTab(i){document.getElementById('tabL').classList.toggle('on',!i);document.getElementById('tabR').classList.toggle('on',!!i);document.getElementById('loginCard').classList.toggle('hidden',!!i);document.getElementById('regCard').classList.toggle('hidden',!i)}
+function alert2(m){const t=document.getElementById('loginErr');t.style.color='#ffd54a';t.textContent=m}
+
+function doRegister(){
+ const u=rgUser.value.trim(),p=rgPass.value;const e=document.getElementById('regErr');
+ if(u.length<3)return e.textContent='Trainer name must be 3+ characters.';
+ if(p.length<3)return e.textContent='Password must be 3+ characters.';
+ 
+ if(socket && socket.connected) {
+     socket.emit('register', {user: u, pass: p}, (res) => {
+         if(res.error) return e.textContent = res.error;
+         ACC[u]={pass:p,save:null};persist();authTab(0);alert2('Account registered securely! Log in to begin.')
+     });
+     return;
+ }
+ // Fallback Local Registration
+ if(ACC[u])return e.textContent='That trainer name is taken.';
+ ACC[u]={pass:p,save:null};persist();authTab(0);alert2('Account created! Log in to begin.')
+}
+
+function doLogin(){
+ const u=liUser.value.trim(),p=liPass.value;const e=document.getElementById('loginErr');e.style.color='#ff7a7a';
+ 
+ if(socket && socket.connected) {
+     socket.emit('login', {user: u, pass: p}, (res) => {
+         if(res.error) return e.textContent = res.error;
+         e.style.color='#4ade80';e.textContent='Connecting to servers...';
+         setTimeout(()=>{S=res.save||newSave(u);ACC[u]={pass:p,save:S};startGame()},600);
+     });
+     return;
+ }
+ // Fallback Local Login
+ if(!ACC[u]||ACC[u].pass!==p)return e.textContent='Invalid trainer name or password.';
+ e.style.color='#4ade80';e.textContent='Logging you in...';
+ setTimeout(()=>{S=ACC[u].save||newSave(u);ACC[u].save=S;startGame()},600)
+}
+
+function newSave(u){return{user:u,money:3000,elo:1200,balls:{poke:10,great:0},pots:{p:3,s:0},badges:[],ch:0,starter:0,team:[],box:[],dex:{}}}
+function logout(){persist();S=null;document.getElementById('pgGame').classList.add('hidden');document.getElementById('pgLogin').classList.remove('hidden')}
+
+/* ============ POKEAPI & CACHING ============ */
+let POKE_CACHE = {};
+try { POKE_CACHE = JSON.parse(localStorage.getItem('psu_cache')||'{}'); } catch(e){}
+async function getPoke(id){
+ if(POKE_CACHE[id]) return POKE_CACHE[id];
+ try{
+  const r=await fetch(API+id);const d=await r.json();
+  const data = {name:d.name[0].toUpperCase()+d.name.slice(1),types:d.types.map(t=>t.type.name),base:{hp:d.stats[0].base_stat,atk:d.stats[1].base_stat,def:d.stats[2].base_stat}};
+  POKE_CACHE[id] = data; localStorage.setItem('psu_cache', JSON.stringify(POKE_CACHE));
+  return data;
+ }catch(e){
+  const r=(id*2654435761)>>>0;
+  return {name:'Rift Pokémon #'+id,types:['normal'],base:{hp:50+r%40,atk:50+(r>>3)%40,def:50+(r>>6)%40}};
+ }
+}
+function calc(m){m.maxhp=Math.floor(m.base.hp*2*m.lvl/100)+m.lvl+10;m.atk=Math.floor(m.base.atk*2*m.lvl/100)+5;m.def=Math.floor(m.base.def*2*m.lvl/100)+5}
+function genMoves(m){const mv=[{n:'Tackle',t:'normal',p:40}];m.types.forEach(t=>{const a=TM[t]||TM.normal;mv.push({n:a[0][0],t,p:a[0][1]});if(m.lvl>=20)mv.push({n:a[1][0],t,p:a[1][1]})});return mv.slice(0,4)}
+async function makeMon(id,lvl,shiny=false){const p=await getPoke(id);const m={id,name:shiny?'✨ '+p.name:p.name,types:p.types,base:p.base,lvl,xp:0,shiny};calc(m);m.hp=m.maxhp;m.moves=genMoves(m);return m}
+
+/* ============ PRELOADER ============ */
+function preloadSprites(){
+ if(!S) return;
+ const mons = [...S.team, ...S.box];
+ mons.forEach(m => {
+  new Image().src = SPR(m.id, m.shiny);
+  new Image().src = SPRB(m.id, m.shiny);
+ });
+}
+
+/* ============ GAME UI ============ */
+function startGame(){document.getElementById('pgLogin').classList.add('hidden');document.getElementById('pgGame').classList.remove('hidden');refreshHud();preloadSprites();nav(0)}
+function refreshHud(){hudName.textContent=S.user;hudMoney.textContent='₽'+S.money;hudBadges.innerHTML=S.badges.map(b=>`<span class="badge">🏅 ${b}</span>`).join('')||'<small style="color:#67759d">No badges yet</small>';persist()}
+function log2(m){msg.textContent=m;setTimeout(()=>{if(msg.textContent===m)msg.textContent=''},4000)}
+function healTeam(){S.team.forEach(m=>{m.hp=m.maxhp});persist();renderAll()}
+function nav(i){
+ for(let k=0;k<6;k++){
+  const btn = document.getElementById('nv'+k);
+  const scr = document.getElementById('scr'+k);
+  if(btn) btn.classList.toggle('on',k===i);
+  if(scr) scr.classList.toggle('hidden',k!==i);
+ }
+ if(i===3){ renderShop(); }
+ renderAll();
+}
+function hpCls(m){const r=m.hp/m.maxhp;return r>.5?'':r>.25?'mid':'low'}
+function monCard(m,extra=''){return`<div class="mon"><img src="${SPR(m.id,m.shiny)}" onerror="this.src='${SPR(1)}'"><div class="nm">${m.name}</div><small>Lv ${m.lvl} · ${m.types.join('/')}</small><div class="hpbar"><i class="${hpCls(m)}" style="width:${m.hp/m.maxhp*100}%"></i></div><small>${m.hp}/${m.maxhp} HP</small>${extra}</div>`}
+
+/* ============ DYNAMIC VIEWS ============ */
+function renderAll(){refreshHud();
+ /* story */
+ const done=CHAPTERS.slice(0,S.ch).map(c=>`<div class="done">✔ ${c.t}</div>`).join('');
+ const next=S.ch<CHAPTERS.length?`<div class="zone"><div><b>${CHAPTERS[S.ch].t}</b><small>The Rift Chronicles — original story</small></div><button class="sbtn" onclick="playStory()">Play ▸</button></div>`:'<p style="color:#4ade80">🌟 Story complete! All nine Rift Gates are open. Keep exploring and complete the Rift Dex!</p>';
+ scr0.innerHTML=`<div class="panel"><h3>📖 The Rift Chronicles</h3>${done}${next}</div>`;
+ /* explore */
+ scr1.innerHTML=`<div class="panel"><h3>🗺️ Rift Zones</h3>${ZONES.map((z,i)=>{const un=S.ch>=z.ch;return`<div class="zone ${un?'':'lock'}"><div><b>${z.n}</b><small>Gen ${z.g} · Lv ${z.lv[0]}–${z.lv[1]}${un?'':' · 🔒 complete Chapter '+z.ch+' to unlock'}</small></div><button class="sbtn" ${un?'':'disabled'} onclick="explore(${i})">Explore</button></div>`}).join('')}</div>`;
+ /* team */
+ scr2.innerHTML=`<div class="panel"><h3>⚔️ Your Team (${S.team.length}/6)</h3><div class="grid">${S.team.map((m,i)=>monCard(m,`<div style="margin-top:6px">${i>0?`<button class="gbtn" style="font-size:.7rem;padding:4px 8px" onclick="lead(${i})">★ Lead</button>`:''}${S.team.length>1?`<button class="gbtn" style="font-size:.7rem;padding:4px 8px" onclick="toBox(${i})">Box</button>`:''}</div>`)).join('')||'<p>No Pokémon yet — start the Story!</p>'}</div></div>`;
+ /* box */
+ scr4.innerHTML=`<div class="panel"><h3>📦 Box (${S.box.length}) · Rift Dex: ${Object.keys(S.dex).length}/1025</h3><div class="grid">${S.box.map((m,i)=>monCard(m,S.team.length<6?`<button class="gbtn" style="font-size:.7rem;padding:4px 8px;margin-top:6px" onclick="toTeam(${i})">To Team</button>`:'')).join('')||'<p>Empty — go catch some Pokémon!</p>'}</div></div>`;
+ /* pvp arena */
+ const rank = S.elo >= 1800 ? 'Master' : S.elo >= 1500 ? 'Gold' : S.elo >= 1200 ? 'Silver' : 'Bronze';
+ const reward = rank === 'Master' ? 'Weekly Legendary Egg' : rank === 'Gold' ? '10x Great Balls' : rank === 'Silver' ? '5x Potions' : 'Keep pushing!';
+ scr5.innerHTML=`<div class="panel" style="text-align:center;padding:40px 10px">
+  <h3>🏆 Ranked Multiplayer Arena</h3>
+  <p style="color:#9fb0d6;margin-bottom:20px;font-size:.9rem">Queue up to battle other real players based on your Elo rating.</p>
+  <div class="rank-badge rank-${rank}">Tier: ${rank}</div>
+  <p style="font-size:1.4rem;font-weight:700;margin-bottom:10px">Elo Rating: ${S.elo}</p>
+  <p style="font-size:.85rem;color:#4ade80;margin-bottom:20px">🎁 Exclusive Tier Reward: <b>${reward}</b></p>
+  <button class="btn" style="max-width:300px;margin:0 auto" onclick="startPvP()">Find Match</button>
+ </div>`;
+}
+
+/* ============ SHOP & DONATE ============ */
+function renderShop(){
+ scr3.innerHTML=`<div class="panel"><h3>🎒 Basic Items</h3><div class="shoprow"><span>⚪ Poké Ball ×${S.balls.poke}</span><span>₽200</span><button class="sbtn" onclick="buy('balls','poke',200,'Poké Ball')">Buy</button></div><div class="shoprow"><span>🔵 Great Ball ×${S.balls.great}</span><span>₽600</span><button class="sbtn" onclick="buy('balls','great',600,'Great Ball')">Buy</button></div><div class="shoprow"><span>🧪 Potion ×${S.pots.p}</span><span>₽300</span><button class="sbtn" onclick="buy('pots','p',300,'Potion')">Buy</button></div></div>
+ <div class="panel" style="text-align:center; padding: 24px 12px;">
+  <h3 style="color:#ffd54a;margin-bottom:12px;justify-content:center;">❤️ Support the Developer</h3>
+  <p style="font-size:.85rem;color:#9fb0d6;margin-bottom:16px">If you enjoy PokemonSU, consider donating for the hard work of the dev! Your support keeps the servers running and updates coming.</p>
+  <img src="GooglePay_QR.png" alt="Donate QR" style="width:200px; height:200px; border-radius:12px; border:4px solid #fff; margin-bottom:12px;">
+  <p style="font-size:1.1rem; font-weight:700; color:#e8ecf8; margin-bottom:8px;">UPI ID: ghsubhodeep06@okaxis</p>
+  <p style="font-size:.75rem; color:#8fa0c8;">Scan via GPay, PhonePe, or Paytm to donate.</p>
+ </div>`;
+}
+
+function buy(c,k,p,n){if(S.money<p)return log2('Not enough money!');S.money-=p;S[c][k]++;log2(`Bought 1 ${n}!`);renderAll()}
+function lead(i){S.team.unshift(S.team.splice(i,1)[0]);renderAll()}
+function toBox(i){S.box.push(S.team.splice(i,1)[0]);renderAll()}
+function toTeam(i){if(S.team.length>=6)return;S.team.push(S.box.splice(i,1)[0]);renderAll()}
+
+/* ============ DIALOGUE ============ */
+let dq=[],dOn=null;
+function showDlg(lines,onEnd){dq=lines.slice();dOn=onEnd;dExtra.innerHTML='';document.getElementById('dlg').classList.remove('hidden');dlgNext()}
+function dlgNext(){if(!dq.length){document.getElementById('dlg').classList.add('hidden');const f=dOn;dOn=null;if(f)f();return}
+ const[who,txt]=dq.shift();dWho.textContent=who[0];dTxt.textContent=txt;dImg.style.display=who[1]?'':'none';if(who[1])dImg.src=TRN(who[1]);dNext.style.display='';dExtra.innerHTML=''}
+function playStory(){const c=CHAPTERS[S.ch];showDlg(c.d,()=>runEvent(c))}
+async function runEvent(c){const ev=c.ev;
+ if(ev.type==='starter'){
+  document.getElementById('dlg').classList.remove('hidden');dWho.textContent='Professor Alder';dImg.style.display='';dImg.src=TRN('alder');dTxt.textContent='Choose your partner!';dNext.style.display='none';
+  const ids=[1,4,7],names=['Bulbasaur','Charmander','Squirtle'];
+  dExtra.innerHTML=`<div class="starterRow">${ids.map((id,i)=>`<div class="mon" onclick="pickStarter(${id})"><img src="${SPR(id)}"><div class="nm">${names[i]}</div><small>Lv 5</small></div>`).join('')}</div>`;
+  return}
+ if(ev.type==='battle'){
+  const mons=[];for(const[id,lv]of ev.mons(S.starter))mons.push(await makeMon(id,lv));
+  startBattle({wild:false,trainer:ev.who,queue:mons,onWin:()=>{S.money+=ev.reward;if(ev.badge)S.badges.push(ev.badge);
+   const fin=()=>{S.ch++;persist();renderAll();nav(0);log2(`Chapter complete! +₽${ev.reward}${ev.badge?' · Earned the '+ev.badge+' Badge!':''}`)};
+   ev.after?showDlg(ev.after,fin):fin()},
+  onLose:()=>{healTeam();log2('You blacked out... your team was healed. Try the chapter again!')}})}}
+async function pickStarter(id){S.starter=id;S.dex[id]=1;S.team=[await makeMon(id,5)];persist();
+ showDlg([[P_ALDER,'A fine choice! Here — take 10 Poké Balls and some potions. Now, one last lesson: a wild Pokémon has wandered out of the Rift onto Route 1. Weaken it, then throw a ball to catch it!']],
+ async()=>{const w=await makeMon(16,3);startBattle({wild:true,queue:[w],onWin:()=>{S.ch++;persist();preloadSprites();renderAll();nav(0);log2('Chapter 1 complete! The Story tab has your next chapter.')},onLose:()=>{healTeam();S.ch++;renderAll();log2('It got away — but you learned the basics! Chapter 1 complete.')}})})}
+
+/* ============ PvP MATCHMAKING ============ */
+async function startPvP(){
+ if(!S.team.some(m=>m.hp>0)) return log2('Your team is fainted! Heal at the Center first.');
+ log2('Searching for opponents in your Elo bracket...');
+ document.getElementById('battle').classList.remove('hidden');
+ 
+ if(socket && socket.connected) {
+    bLog.innerHTML = 'Connecting to real multiplayer matchmaking...<br><i style="color:#ffd54a">Waiting for another player to join queue...</i>';
+    socket.emit('joinQueue', S);
+    return;
+ }
+
+ // Offline/Local Fallback
+ bLog.innerHTML = 'Server offline. Playing against simulated bots...<br><i style="color:#ffd54a">Estimated wait: 2s</i>';
+ setTimeout(async()=>{
+  const names = ['Ash', 'Gary', 'Dawn', 'Cynthia', 'Leon', 'Red'];
+  const rName = names[Math.floor(Math.random()*names.length)];
+  bLog.innerHTML = `Match found! Opponent: ${rName} (Elo: ${S.elo + Math.floor(Math.random()*40-20)})`;
+  
+  const avgLvl = Math.max(5, Math.floor(S.team.reduce((sum,m)=>sum+m.lvl,0)/S.team.length));
+  const enemyTeam = [];
+  for(let i=0; i<3; i++){ let eid = Math.floor(Math.random()*150)+1; enemyTeam.push(await makeMon(eid, avgLvl + (i===2?2:0))); }
+  
+  setTimeout(()=>{ startBattle({wild:false, trainer:[rName], queue:enemyTeam, isPvP:true}); }, 1500);
+ }, 2000);
+}
+
+/* ============ BATTLE ENGINE ============ */
+let B=null;
+function startBattle(cfg){B={...cfg,pi:0,enemy:cfg.queue.shift(),lock:false};
+ if(!S.team.some(m=>m.hp>0))return log2('Your whole team has fainted! Visit the Rift Center first.');
+ while(S.team[B.pi].hp<=0)B.pi++;
+ document.getElementById('battle').classList.remove('hidden');
+ bmsg(cfg.wild?`A wild ${B.enemy.name} (Lv ${B.enemy.lvl}) appeared!`:`${cfg.trainer[0]} sent out ${B.enemy.name} (Lv ${B.enemy.lvl})!`);drawB()}
+function bmsg(m){bLog.innerHTML=m}
+function drawB(){const p=S.team[B.pi],e=B.enemy;
+ eImg.src=SPR(e.id,e.shiny);eName.textContent=e.name;eLvl.textContent='Lv '+e.lvl;eTypes.textContent=e.types.join(' / ');
+ const eb=document.getElementById('eHp');eb.style.width=Math.max(0,e.hp/e.maxhp*100)+'%';eb.className=hpCls(e);
+ pImg.src=SPRB(p.id,p.shiny);pImg.onerror=()=>{pImg.onerror=null;pImg.src=SPR(p.id,p.shiny)};
+ pName.textContent=p.name;pLvl.textContent='Lv '+p.lvl;pHpTxt.textContent=p.hp+' / '+p.maxhp+' HP';
+ const pb=document.getElementById('pHp');pb.style.width=Math.max(0,p.hp/p.maxhp*100)+'%';pb.className=hpCls(p);
+ bActs.innerHTML=p.moves.map((m,i)=>`<button class="mv" ${B.lock?'disabled':''} onclick="useMove(${i})">${m.n}<br><small style="color:#8fa0c8">${m.t} · ${m.p}</small></button>`).join('')+
+ `<button ${B.lock||!B.wild?'disabled':''} onclick="throwBall('poke')">⚪ Poké Ball ×${S.balls.poke}</button>
+  <button ${B.lock||!B.wild?'disabled':''} onclick="throwBall('great')">🔵 Great Ball ×${S.balls.great}</button>
+  <button ${B.lock?'disabled':''} onclick="usePot()">🧪 Potion (${S.pots.p}/${S.pots.s})</button>
+  <button ${B.lock?'disabled':''} onclick="switchMon()">🔄 Switch</button>
+  <button ${B.lock||(!B.wild && !B.isPvP)?'disabled':''} onclick="endB(null,B.isPvP?'You forfeited the match!':'You got away safely!')">🏃 Run</button>`}
+
+function dmg(a,d,mv){let e=1;d.types.forEach(t=>{const c=EFF[mv.t];if(c&&c[t]!=null)e*=c[t]});const stab=a.types.includes(mv.t)?1.5:1;
+ return{v:Math.max(1,Math.floor(((2*a.lvl/5+2)*mv.p*a.atk/d.def/50+2)*stab*e*(0.85+Math.random()*0.15))),e}}
+
+function useMove(i){if(B.lock)return;B.lock=true;const p=S.team[B.pi],e=B.enemy,mv=p.moves[i];
+ const r=dmg(p,e,mv);e.hp-=r.v;let m=`${p.name} used ${mv.n}! ${r.e>1?'It\'s super effective!':r.e===0?'It had no effect...':r.e<1?'Not very effective...':''} (${r.v} dmg)`;
+ drawB();
+ if(B.isRealPvP && socket) socket.emit('playerAction', {room: B.roomId, type: 'move', move: mv.n, damage: r.v});
+ if(e.hp<=0)return enemyFaint(m);bmsg(m);
+ if(!B.isRealPvP) setTimeout(()=>enemyTurn(m),900); else bmsg(m+"<br><i style='color:#8fa0c8'>Waiting for opponent...</i>");}
+
+function enemyTurn(prev){const p=S.team[B.pi],e=B.enemy;const mv=e.moves[Math.floor(Math.random()*e.moves.length)];
+ const r=dmg(e,p,mv);p.hp-=r.v;drawB();bmsg(prev+`<br>Enemy ${e.name} used ${mv.n}! (${r.v} dmg)`);
+ if(p.hp<=0){p.hp=0;drawB();setTimeout(()=>{if(S.team.some(m=>m.hp>0)){bmsg(`${p.name} fainted! Choose another Pokémon.`);B.lock=false;forceSwitch();}else{
+  if(B.isPvP){ S.elo=Math.max(0, S.elo-15); endB(false,`Match Lost! Elo dropped to ${S.elo}`); }
+  else endB(false,`All your Pokémon fainted...`);
+ }},700)}
+ else{B.lock=false;drawB()}}
+
+function enemyFaint(prev){const p=S.team[B.pi],e=B.enemy;
+ let gain=e.lvl*(B.isPvP?20:14); p.xp+=gain; let m=prev+`<br>Enemy ${e.name} fainted! ${p.name} gained ${gain} XP.`;
+ while(p.xp>=p.lvl*20){p.xp-=p.lvl*20;p.lvl++;calc(p);p.hp=Math.min(p.maxhp,p.hp+8);p.moves=genMoves(p);m+=`<br>🎉 ${p.name} grew to Lv ${p.lvl}!`}
+ if(EVO[p.id] && p.lvl>=EVO[p.id][0]){
+  const nid=EVO[p.id][1]; m+=`<br>✨ What? ${p.name} is evolving!`; bmsg(m);
+  setTimeout(async()=>{
+   const old=p.name; p.id=nid; S.dex[nid]=1; const nP=await getPoke(nid);
+   p.name=p.shiny?'✨ '+nP.name:nP.name; p.base=nP.base; p.types=nP.types; calc(p); p.moves=genMoves(p);
+   m+=`<br>🌟 ${old} evolved into ${p.name}!`; drawB(); continueFaint(m);
+  },1500);
+ } else { continueFaint(m); }
+}
+function continueFaint(m){
+ if(B.isRealPvP) {
+     if(socket) socket.emit('playerAction', {room: B.roomId, type: 'faint'});
+     bmsg(m + "<br><i style='color:#8fa0c8'>Waiting for opponent to send next Pokémon...</i>");
+     return;
+ }
+ if(B.queue.length){B.enemy=B.queue.shift();m+=`<br>${B.trainer?B.trainer[0]:''} sent out ${B.enemy.name} (Lv ${B.enemy.lvl})!`;bmsg(m);B.lock=false;drawB()}
+ else{
+  bmsg(m);
+  setTimeout(()=>{
+   if(B.isPvP){ S.elo+=25; endB(true,`Match Won! Elo increased to ${S.elo} 🏆`); }
+   else { endB(true,B.wild?'You won!':'You defeated '+B.trainer[0]+'!'); }
+  },900)
+ }
+}
+
+function throwBall(k){if(B.lock||!B.wild||S.balls[k]<1)return;B.lock=true;S.balls[k]--;const e=B.enemy;
+ const rate=(1-(e.hp/e.maxhp)*0.72)*(k==='great'?1.5:1)*(e.lvl>50?0.55:1);
+ if(Math.random()<Math.max(0.08,rate)){S.dex[e.id]=1;(S.team.length<6?S.team:S.box).push(e);persist();
+  bmsg(`Gotcha! ${e.name} was caught!${S.team.length<=6?'':' Sent to Box.'}`);setTimeout(()=>{endB(true,`${e.name} joined you!`,true);preloadSprites();},900)}
+ else{bmsg(`Oh no! ${e.name} broke free!`);setTimeout(()=>enemyTurn(`${e.name} broke free!`),900)}}
+
+function usePot(){if(B.lock)return;const p=S.team[B.pi];let h=0;
+ if(S.pots.s>0){S.pots.s--;h=120}else if(S.pots.p>0){S.pots.p--;h=50}else return bmsg('No potions left!');
+ B.lock=true;p.hp=Math.min(p.maxhp,p.hp+h);drawB();bmsg(`${p.name} recovered ${h} HP!`);setTimeout(()=>enemyTurn(`${p.name} recovered ${h} HP!`),900)}
+function forceSwitch(){bActs.innerHTML=S.team.map((m,i)=>m.hp>0?`<button onclick="doSwitch(${i},true)">${m.name} — Lv ${m.lvl} (${m.hp}/${m.maxhp})</button>`:'').join('')}
+function switchMon(){if(B.lock)return;bActs.innerHTML=S.team.map((m,i)=>m.hp>0&&i!==B.pi?`<button onclick="doSwitch(${i},false)">${m.name} — Lv ${m.lvl} (${m.hp}/${m.maxhp})</button>`:'').join('')+`<button onclick="drawB()">◂ Back</button>`}
+
+function doSwitch(i,free){
+ B.pi=i;drawB();bmsg(`Go, ${S.team[i].name}!`);
+ if(B.isRealPvP && socket) socket.emit('playerAction', {room: B.roomId, type: 'switch', mon: S.team[i]});
+ if(!free){B.lock=true;
+  if(!B.isRealPvP) setTimeout(()=>enemyTurn(`Go, ${S.team[i].name}!`),800);
+  else bmsg(`Go, ${S.team[i].name}! <br><i style='color:#8fa0c8'>Waiting for opponent...</i>`);
+ }
+}
+
+function endB(win,m,caught){
+ document.getElementById('battle').classList.add('hidden');B.lock=false;
+ if(m) log2(m);
+ persist(); renderAll();
+ const cb=win===false?B.onLose:B.onWin; B=null; if(win&&cb)cb();else if(win===false&&cb)cb()
+}
+
+async function explore(i){const z=ZONES[i];const[a,b]=GENS[z.g-1];let id=a+Math.floor(Math.random()*(b-a+1));
+ while(RESTRICTED.includes(id)){id=a+Math.floor(Math.random()*(b-a+1));}
+ const lv=z.lv[0]+Math.floor(Math.random()*(z.lv[1]-z.lv[0]+1));log2('Searching the tall grass...');
+ const w=await makeMon(id,lv);startBattle({wild:true,queue:[w],onWin:()=>{S.money+=lv*10;log2(`+₽${lv*10}`)},onLose:()=>{healTeam();S.money=Math.floor(S.money/2);log2('You blacked out and lost half your money...')}})}
+
+/* login page sprite strip */
+[25,6,94,448,131,150,384,493].forEach(id=>{const im=document.createElement('img');im.src=SPR(id);im.onerror=()=>im.remove();document.getElementById('strip').append(im)});
+</script>
+</body>
+</html>
