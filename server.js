@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 // ==========================================
 // 1. DATABASE CONFIGURATION
 // Replace this string with your actual MongoDB Atlas connection string!
-const MONGO_URI = "mongodb+srv://unitegamer06_db_user:54LZzMK9WpNwMHPQ@cluster0.xxxxx.mongodb.net/PokemonSU?retryWrites=true&w=majority";
+const MONGO_URI = "mongodb+srv://unitegamer06_db_user:54LZzMK9WpNwMHPQ@cluster0.7ua7dam.mongodb.net/PokemonSU?retryWrites=true&w=majority";
 // ==========================================
 
 // Connect to MongoDB
