@@ -2,58 +2,83 @@ const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http, { cors: { origin: "*" } });
-const fs = require('fs');
 const path = require('path');
+const mongoose = require('mongoose');
 
+// ==========================================
+// 1. DATABASE CONFIGURATION
+// Replace this string with your actual MongoDB Atlas connection string!
+const MONGO_URI = "mongodb+srv://unitegamer06_db_user:54LZzMK9WpNwMHPQ@cluster0.xxxxx.mongodb.net/PokemonSU?retryWrites=true&w=majority";
+// ==========================================
+
+// Connect to MongoDB
+mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('✅ Connected to MongoDB Atlas permanently!'))
+    .catch(err => console.error('❌ MongoDB Connection Error:', err));
+
+// Define the Player Schema
+const playerSchema = new mongoose.Schema({
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true }, // Note: In a production app, hash this!
+    saveData: { type: Object, default: null }
+});
+
+const Player = mongoose.model('Player', playerSchema);
+
+// Serve Static Files
 app.use(express.static(__dirname)); 
-
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Database Setup
-const DB_FILE = 'database.json';
-let DB = {};
-if (fs.existsSync(DB_FILE)) {
-    DB = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
-} else {
-    fs.writeFileSync(DB_FILE, JSON.stringify(DB));
-}
-
-function saveDB() {
-    fs.writeFileSync(DB_FILE, JSON.stringify(DB, null, 2));
-}
-
+// Multiplayer Queue
 let matchmakingQueue = [];
 
 io.on('connection', (socket) => {
     console.log('Trainer connected:', socket.id);
 
     // Registration
-    socket.on('register', (data, callback) => {
-        if(DB[data.user]) {
-            return callback({error: 'That trainer name is taken.'});
+    socket.on('register', async (data, callback) => {
+        try {
+            const existingUser = await Player.findOne({ username: data.user });
+            if(existingUser) {
+                return callback({error: 'That trainer name is taken.'});
+            }
+            
+            const newPlayer = new Player({
+                username: data.user,
+                password: data.pass
+            });
+            await newPlayer.save();
+            callback({success: true});
+        } catch (err) {
+            callback({error: 'Database error during registration.'});
         }
-        DB[data.user] = { pass: data.pass, save: null };
-        saveDB();
-        callback({success: true});
     });
 
     // Login
-    socket.on('login', (data, callback) => {
-        const user = DB[data.user];
-        if(!user || user.pass !== data.pass) {
-            return callback({error: 'Invalid trainer name or password.'});
+    socket.on('login', async (data, callback) => {
+        try {
+            const user = await Player.findOne({ username: data.user });
+            if(!user || user.password !== data.pass) {
+                return callback({error: 'Invalid trainer name or password.'});
+            }
+            socket.username = data.user; 
+            callback({success: true, save: user.saveData});
+        } catch (err) {
+            callback({error: 'Database error during login.'});
         }
-        socket.username = data.user; // attach to socket session
-        callback({success: true, save: user.save});
     });
 
     // Continuous save sync from client
-    socket.on('saveData', (payload) => {
-        if(DB[payload.user]) {
-            DB[payload.user].save = payload.data;
-            saveDB();
+    socket.on('saveData', async (payload) => {
+        try {
+            await Player.updateOne(
+                { username: payload.user }, 
+                { $set: { saveData: payload.data } }
+            );
+        } catch (err) {
+            console.error('Failed to sync save data:', err);
         }
     });
 
@@ -63,7 +88,7 @@ io.on('connection', (socket) => {
             id: socket.id, 
             user: playerData.user, 
             elo: playerData.elo, 
-            team: playerData.team.map(mon => ({...mon, hp: mon.maxhp})) // ensure full heal
+            team: playerData.team.map(mon => ({...mon, hp: mon.maxhp})) // Ensure full heal
         };
         
         if (matchmakingQueue.length > 0) {
@@ -83,7 +108,6 @@ io.on('connection', (socket) => {
 
     // Handle Peer-to-Peer Battle Actions
     socket.on('playerAction', (data) => {
-        // Relay the action (move, damage, switch, faint, win) to the other person in the room
         socket.to(data.room).emit('enemyAction', data);
     });
 
@@ -93,7 +117,7 @@ io.on('connection', (socket) => {
     });
 });
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 http.listen(PORT, () => {
-    console.log(`PokemonSU Backend & PvP Server is running on http://localhost:${PORT}`);
+    console.log(`PokemonSU Server is running on port ${PORT}`);
 });
