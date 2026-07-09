@@ -47,8 +47,8 @@
 ### 💰 Economy
 
 * Earn money from battles
-* Poké Ball shop
-* Great Balls
+* Poké shop
+* Master Balls
 * Potions
 * Healing Center
 
@@ -97,7 +97,7 @@ Become the world's first **Rift Master**.
 
 # 🌎 Regions
 
-✅ Rift Region
+✅ Main Rift Region and total 5+ regions and 50+ chapter 15+ gyms
 
 ---
 
@@ -153,10 +153,11 @@ Become the world's first **Rift Master**.
 PokemonSU/
 │
 ├── index.html
-├── assets/
-├── css/
-├── js/
-├── images/
+├── server.js
+├── package.json
+├── package-lock.json
+├── images
+├── database
 └── README.md
 ```
 
