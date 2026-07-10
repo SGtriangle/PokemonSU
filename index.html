@@ -725,7 +725,7 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     </div>
     
     <div class="hud-actions">
-        <button class="sbtn" style="animation: btnPulse 2s infinite alternate; box-shadow: 0 0 10px rgba(56,189,248,0.4);" onclick="claimLoot()">🎁 Daily Loot</button> 
+        <button class="sbtn" style="filter: brightness(1.2); box-shadow: 0 0 15px rgba(56,189,248,0.6);" onclick="claimLoot()">🎁 Daily Loot</button> 
         <button class="gbtn" onclick="logout()">Logout</button>
     </div>
   </div>
@@ -1408,7 +1408,7 @@ function renderAll(){
         </div>
         <small style="color:#94a3b8; display:block; margin-top:8px;">Chapter ${S.ch + 1} of ${CHAPTERS.length}</small>
     </div>
-    <button class="btn" style="max-width: 300px; font-size: 1.2rem; padding: 14px; animation: btnPulse 2s infinite alternate;" onclick="playStory()">🚀 ENGAGE MISSION</button>
+    <button class="btn" style="max-width: 300px; font-size: 1.2rem; padding: 14px; filter: brightness(1.15); box-shadow: 0 0 20px rgba(236,72,153,0.5);" onclick="playStory()">🚀 ENGAGE MISSION</button>
     `;
  } else {
     storyHtml += `<h2 style="color:#4ade80; margin: 40px 0; font-size: 2rem;">🌟 Campaign Complete! 🌟</h2><p style="color:#cbd5e1;">You have conquered all sectors. Focus on PvP and completing the Rift Dex!</p>`;
