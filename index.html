@@ -1827,6 +1827,7 @@ async function startPvP(){
     const launchBotMatch = async (msg) => {
         bLog.innerHTML = msg;
         setTimeout(async()=>{
+            Math.seed = Date.now();
             const names = ['Ash', 'Gary', 'Dawn', 'Cynthia', 'Leon', 'Red', 'Blue', 'Leaf', 'Ethan', 'Lyra', 'Silver', 'Brendan', 'May', 'Wally', 'Steven', 'Lucas', 'Barry', 'Hilbert', 'Hilda', 'Cheren', 'Bianca', 'N', 'Nate', 'Rosa', 'Hugh', 'Calem', 'Serena', 'Elio', 'Selene', 'Hau', 'Gladion', 'Victor', 'Gloria', 'Hop', 'Marnie', 'Florian', 'Juliana', 'Nemona', 'Arven', 'Penny'];
             const rName = names[Math.floor(Math.random()*names.length)];
             bLog.innerHTML = `Match found! Opponent: <b style="color:#fff">${rName}</b> (Elo: ${S.elo + Math.floor(Math.random()*40-20)})`;
@@ -1883,17 +1884,15 @@ async function startPvP(){
 /* ============ BATTLE ENGINE ============ */
 let B=null;
 function startBattle(cfg){
-    // FORCE CLEANUP: Even if a roomId is passed in, if it's a bot match, we null it out
-    if (!cfg.isRealPvP) {
-        cfg.roomId = null;
-    }
+    // Force complete cleanup
+    B = null; 
+    
+    // Ensure Bot battles don't have a Room ID
+    if (!cfg.isRealPvP) cfg.roomId = null;
 
     B = { ...cfg, pi: 0, enemy: cfg.queue.shift(), lock: false };
     
-    // DEBUG: This will show in your F12 console
-    console.log("DEBUG: Battle Started. RoomID is:", B.roomId, "isRealPvP:", B.isRealPvP);
-
-    if(!S.team.some(m=>m.hp>0)) return log2('Your whole team has fainted! Heal at the Center first.');
+    if(!S.team.some(m=>m.hp>0)) return log2('Your whole team has fainted! Visit the Rift Center first.');
     while(S.team[B.pi].hp<=0) B.pi++;
     
     document.getElementById('battle').classList.remove('hidden');
@@ -1949,22 +1948,15 @@ function useMove(i){
     
     drawB();
     
-    // DEBUG: Look at this in your Console
-    console.log("DEBUG: useMove triggered. RoomID:", B.roomId, "isRealPvP:", B.isRealPvP);
-
-    if(e.hp <= 0) {
-        enemyFaint(m);
-        return;
-    }
-
-    // BOT LOGIC: If isRealPvP is false, NEVER wait
-    if(!B.isRealPvP) {
+    // THE FIX: If there is no RoomID, it is a Bot match. DO NOT WAIT.
+    if(!B.roomId) {
+        if(e.hp <= 0) { enemyFaint(m); return; }
         bmsg(m);
         setTimeout(() => enemyTurn(m), 900);
     } else {
-        // Only wait if it's actually real PvP
+        // Only wait if there is a RoomID (Real Online Match)
+        if(socket) socket.emit('playerAction', {room: B.roomId, type: 'move', move: mv.n, damage: r.v});
         bmsg(m + "<br><i style='color:#94a3b8;font-size:0.9rem;'>Waiting for opponent...</i>");
-        if(B.roomId && socket) socket.emit('playerAction', {room: B.roomId, type: 'move', move: mv.n, damage: r.v});
     }
 }
 
