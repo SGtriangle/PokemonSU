@@ -1883,12 +1883,20 @@ async function startPvP(){
 /* ============ BATTLE ENGINE ============ */
 let B=null;
 function startBattle(cfg){
-    // BULLETPROOF: Force isRealPvP to false if it's not a socket-connected match
-    if (cfg.isPvP && !cfg.roomId) cfg.isRealPvP = false;
-    if (cfg.isRealPvP === undefined) cfg.isRealPvP = false;
+    // 1. HARD RESET: Clear the battle variable completely
+    B = null; 
+    
+    // 2. FORCE BOT MODE: If it's not a real network match, ensure no ID exists
+    if (!cfg.roomId) {
+        cfg.isRealPvP = false;
+    }
 
+    // 3. Initialize fresh battle state
     B = { ...cfg, pi: 0, enemy: cfg.queue.shift(), lock: false };
     
+    // 4. Verification Debug (Check your console to see if roomId is actually empty)
+    console.log("DEBUG: Starting Battle. IsRealPvP:", B.isRealPvP, "RoomID:", B.roomId);
+
     if(!S.team.some(m=>m.hp>0)) return log2('Your whole team has fainted! Visit the Rift Center first.');
     while(S.team[B.pi].hp<=0) B.pi++;
     
