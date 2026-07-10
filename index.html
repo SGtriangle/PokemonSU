@@ -765,7 +765,7 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
   <div class="bacts" id="bActs"></div>
 </div></div>
 
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js" async></script>
+<script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.7.2/dist/socket.io.min.js"></script>
 
 <script>
 /* ============ CUSTOM ALERTS ============ */
@@ -1874,7 +1874,7 @@ async function startPvP(){
     }, 7000); 
     return;
  }
- launchBotMatch('Server offline. Playing against simulated bots...<br><i style="color:#94a3b8;font-size:0.9rem;">Estimated wait: 2s</i>');
+ launchBotMatch('Match-making started...<br><i style="color:#94a3b8;font-size:0.9rem;">Estimated wait: 2s</i>');
 }
 
 /* ============ BATTLE ENGINE ============ */
