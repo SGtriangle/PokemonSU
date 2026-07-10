@@ -1886,11 +1886,20 @@ async function startPvP(){
 
 /* ============ BATTLE ENGINE ============ */
 let B=null;
-function startBattle(cfg){B={...cfg,pi:0,enemy:cfg.queue.shift(),lock:false};
- if(!S.team.some(m=>m.hp>0))return log2('Your whole team has fainted! Visit the Rift Center first.');
- while(S.team[B.pi].hp<=0)B.pi++;
- document.getElementById('battle').classList.remove('hidden');
- bmsg(cfg.wild?`A wild <b style="color:#38bdf8">${B.enemy.name}</b> (Lv ${B.enemy.lvl}) appeared!`:`${cfg.trainer[0]} sent out <b style="color:#f87171">${B.enemy.name}</b> (Lv ${B.enemy.lvl})!`);drawB()}
+function startBattle(cfg){
+    // BULLETPROOF: Force isRealPvP to false if it's not a socket-connected match
+    if (cfg.isPvP && !cfg.roomId) cfg.isRealPvP = false;
+    if (cfg.isRealPvP === undefined) cfg.isRealPvP = false;
+
+    B = { ...cfg, pi: 0, enemy: cfg.queue.shift(), lock: false };
+    
+    if(!S.team.some(m=>m.hp>0)) return log2('Your whole team has fainted! Visit the Rift Center first.');
+    while(S.team[B.pi].hp<=0) B.pi++;
+    
+    document.getElementById('battle').classList.remove('hidden');
+    bmsg(cfg.wild ? `A wild <b style="color:#38bdf8">${B.enemy.name}</b> (Lv ${B.enemy.lvl}) appeared!` : `${cfg.trainer[0]} sent out <b style="color:#f87171">${B.enemy.name}</b> (Lv ${B.enemy.lvl})!`);
+    drawB();
+}
 function bmsg(m){bLog.innerHTML=m}
 function drawB(){const p=S.team[B.pi],e=B.enemy;
  eImg.src=SPR(e.id,e.shiny);
