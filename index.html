@@ -1933,19 +1933,41 @@ function drawB(){const p=S.team[B.pi],e=B.enemy;
 function dmg(a,d,mv){let e=1;d.types.forEach(t=>{const c=EFF[mv.t];if(c&&c[t]!=null)e*=c[t]});const stab=a.types.includes(mv.t)?1.5:1;
  return{v:Math.max(1,Math.floor(((2*a.lvl/5+2)*mv.p*a.atk/d.def/50+2)*stab*e*(0.85+Math.random()*0.15))),e}}
 
-function useMove(i){if(B.lock)return;B.lock=true;const p=S.team[B.pi],e=B.enemy,mv=p.moves[i];
- const r=dmg(p,e,mv);
- let sashMsg = '';
- if(e.item === 'focus_sash' && e.hp === e.maxhp && r.v >= e.hp) {
-    r.v = e.hp - 1; e.item = null; sashMsg = ` <br><b style="color:#facc15">Enemy ${e.name} hung on using its Focus Sash!</b>`;
- }
- e.hp-=r.v;
- let effTxt = r.e>1?'<span style="color:#4ade80">It\'s super effective!</span>':r.e===0?'<span style="color:#94a3b8">It had no effect...</span>':r.e<1?'<span style="color:#f87171">Not very effective...</span>':'';
- let m=`<b style="color:#38bdf8">${p.name}</b> used <b>${mv.n}</b>! ${effTxt} (${r.v} dmg)${sashMsg}`;
- drawB();
- if(B.isRealPvP && socket) socket.emit('playerAction', {room: B.roomId, type: 'move', move: mv.n, damage: r.v});
- if(e.hp<=0)return enemyFaint(m);bmsg(m);
- if(!B.isRealPvP) setTimeout(()=>enemyTurn(m),900); else bmsg(m+"<br><i style='color:#94a3b8;font-size:0.9rem;'>Waiting for opponent...</i>");}
+function useMove(i){
+    if(B.lock) return;
+    B.lock = true;
+    const p = S.team[B.pi], e = B.enemy, mv = p.moves[i];
+    const r = dmg(p,e,mv);
+    let sashMsg = '';
+    
+    // Check if enemy has sash
+    if(e.item === 'focus_sash' && e.hp === e.maxhp && r.v >= e.hp) {
+        r.v = e.hp - 1; e.item = null; 
+        sashMsg = ` <br><b style="color:#facc15">Enemy ${e.name} hung on using its Focus Sash!</b>`;
+    }
+    
+    e.hp -= r.v;
+    let effTxt = r.e>1?'<span style="color:#4ade80">It\'s super effective!</span>':r.e===0?'<span style="color:#94a3b8">It had no effect...</span>':r.e<1?'<span style="color:#f87171">Not very effective...</span>':'';
+    let m=`<b style="color:#38bdf8">${p.name}</b> used <b>${mv.n}</b>! ${effTxt} (${r.v} dmg)${sashMsg}`;
+    
+    drawB();
+    
+    // NETWORK SYNC: Only send if we have a roomId
+    if(B.roomId && socket) {
+        socket.emit('playerAction', {room: B.roomId, type: 'move', move: mv.n, damage: r.v});
+    }
+
+    if(e.hp<=0) return enemyFaint(m);
+    bmsg(m);
+
+    // BOT LOGIC: If there is no roomId, it is a bot battle. Trigger enemyTurn immediately.
+    if(!B.roomId) {
+        setTimeout(() => enemyTurn(m), 900);
+    } else {
+        // REAL PVP LOGIC: If there IS a roomId, wait for the server
+        bmsg(m + "<br><i style='color:#94a3b8;font-size:0.9rem;'>Waiting for opponent...</i>");
+    }
+}
 
 function enemyTurn(prev){const p=S.team[B.pi],e=B.enemy;
  if (B.botRank === 'Master' && B.botPots > 0 && (e.hp / e.maxhp) < 0.2) {
