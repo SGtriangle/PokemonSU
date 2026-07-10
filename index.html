@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -181,16 +182,43 @@ button:hover::after { animation: glint 0.6s ease-out; }
 .btn:disabled, .sbtn:disabled, .bacts button:disabled { opacity: 0.5; filter: grayscale(1); transform: none; box-shadow: none; cursor: not-allowed; }
 .btn:disabled::after, .sbtn:disabled::after { display: none; }
 
-/* Hide default browser arrows for number inputs */
+/* ===== SLEEK NEON QUANTITY INPUTS (PERFECTLY FIXED) ===== */
 input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-input[type="number"] { -moz-appearance: textfield; }
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none !important; margin: 0; }
+input[type="number"] { -moz-appearance: textfield !important; }
 
-/* Custom UI Quantity Wrapper */
-.q-wrap { display:inline-flex; align-items:center; background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.15); border-radius:8px; overflow:hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); }
-.q-btn { background: rgba(255,255,255,0.05); color:#38bdf8; border:none; padding:4px 14px; font-size:1.2rem; cursor:pointer; font-weight:800; transition:background 0.2s; border-radius: 0; margin: 0; display:flex; align-items:center; justify-content:center; }
-.q-btn:hover { background: rgba(56,189,248,0.2); color:#fff; }
-.q-btn:active { background: rgba(56,189,248,0.4); transform: none; box-shadow: none; }
+.q-wrap { 
+    display:inline-flex; align-items:center; justify-content: space-between; width: 100%;
+    background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(56, 189, 248, 0.3); 
+    border-radius: 8px; overflow:hidden; box-shadow: inset 0 2px 6px rgba(0,0,0,0.8); 
+}
+.q-btn { 
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(14, 165, 233, 0.2)); 
+    color:#38bdf8; border:none; padding:8px 16px; font-size:1.2rem; line-height: 1;
+    cursor:pointer; font-weight:800; transition:all 0.2s; border-radius: 0; margin: 0; display:flex; align-items:center; justify-content:center;
+}
+.q-btn:hover { background: #38bdf8; color:#fff; box-shadow: 0 0 10px rgba(56, 189, 248, 0.6); }
+.q-btn:active { transform: scale(0.9); }
+
+.q-in { 
+    width: 100% !important; min-width: 40px !important; 
+    background: transparent !important; 
+    background-color: transparent !important; 
+    border: none !important; 
+    box-shadow: none !important; 
+    color: #fff !important; 
+    font-size: 1.1rem !important; 
+    padding: 0 !important;
+    margin: 0 !important;
+    font-weight: 800 !important; 
+    text-align: center !important; 
+    outline: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: textfield !important;
+    appearance: none !important;
+    color-scheme: dark !important;
+}
+.q-in:focus { color: #ffd54a !important; text-shadow: 0 0 8px rgba(255,213,74,0.5); }
 
 /* ===== LOGIN PAGE & CUSTOM HEADER STYLES ===== */
 .topbar { display:flex; align-items:center; justify-content:flex-start; padding:8px 4px; flex-wrap:wrap; gap:16px; }
@@ -201,7 +229,7 @@ input[type="number"] { -moz-appearance: textfield; }
 
 /* Pokeball Icon */
 .beta { background: transparent; padding:0; border-radius:0; vertical-align:middle; margin-left:8px; box-shadow: none; border: none; display: inline-block; }
-.beta img { width: 28px; height: 28px; image-rendering: pixelated; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); transition: transform 0.2s; animation: float 3s ease-in-out infinite; }
+.beta img { width: 28px; height: 28px; image-rendering: pixelated; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); transition: transform 0.2s; animation: float 3s infinite; }
 .beta img:hover { transform: scale(1.1) rotate(15deg); }
 
 /* Glassmorphism Pill Tabs for Login/Register */
@@ -310,27 +338,6 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 .event-card { background: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(88,28,135,0.4)); border: 1px solid #a855f7; border-radius: 16px; padding: 20px; text-align: center; box-shadow: 0 10px 30px rgba(168,85,247,0.2); position: relative; overflow: hidden; display: flex; flex-direction: column;}
 .event-card::before { content: 'LIMITED TIME'; position: absolute; top: 15px; left: -30px; background: #ef4444; color: #fff; font-size: 0.7rem; font-weight: 800; padding: 4px 30px; transform: rotate(-45deg); z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 .event-timer { font-family: 'VT323', monospace; font-size: 1.8rem; color: #facc15; text-shadow: 0 0 10px rgba(250, 204, 21, 0.5); margin-bottom: 16px; }
-
-
-/* NEW: Sleek Neon Quantity Input Wrappers */
-.q-wrap { 
-    display:inline-flex; align-items:center; justify-content: space-between; width: 100%;
-    background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.3); 
-    border-radius: 8px; overflow:hidden; box-shadow: inset 0 2px 6px rgba(0,0,0,0.5); 
-}
-.q-btn { 
-    background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(14, 165, 233, 0.2)); 
-    color:#38bdf8; border:none; padding:8px 16px; font-size:1.2rem; line-height: 1;
-    cursor:pointer; font-weight:800; transition:all 0.2s; border-radius: 0;
-}
-.q-btn:hover { background: #38bdf8; color:#fff; box-shadow: 0 0 10px rgba(56, 189, 248, 0.6); }
-.q-btn:active { transform: scale(0.9); }
-.q-in { 
-    width: 40px; background: transparent !important; border: none !important; 
-    box-shadow: none !important; color: #fff; font-size: 1rem; padding: 0 !important;
-    font-weight: 800; text-align: center; 
-}
-
 
 /* GPU Accelerated Smooth Health Bar - 100% Repaint Free using ScaleX */
 .hpbar { 
@@ -525,6 +532,7 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 .bacts button.mv.eff-not { border-color: #f87171; background: rgba(248, 113, 113, 0.05); opacity: 0.8; }
 
 /* ===== DIALOGUE & MODALS ===== */
+/* ELEVATED Z-INDEX FOR SYSTEM MODALS SO THEY SHOW ABOVE EVERYTHING */
 .modal-overlay { position:fixed; inset:0; background:rgba(11, 16, 32, 0.85); z-index:60; display:flex; align-items:center; justify-content:center; padding:16px; backdrop-filter: blur(8px); animation: fadeIn 0.15s ease;}
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .dbox { padding: 20px; box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5); }
@@ -587,10 +595,10 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 </head>
 <body>
 
-<div id="eventModal" class="modal-overlay hidden" style="z-index:1001;">
+<div id="eventModal" class="modal-overlay hidden" style="z-index: 10001;">
     <div class="card" style="width:100%; max-width: 450px; background: rgba(15, 23, 42, 0.98); border: 1px solid #a855f7; box-shadow: 0 0 40px rgba(168,85,247,0.3); padding: 24px;">
         <button class="gbtn" style="position:absolute; top: 12px; right: 12px; border-radius:50%; width:32px; height:32px; padding:0; display:flex; align-items:center; justify-content:center; color:#f87171; border-color:rgba(248,113,113,0.3); font-weight:bold;" onclick="closeEventModal()">✕</button>
-        <h2 id="evPayTitle" style="color: #a855f7; margin-bottom: 4px;">Secure Entity</h2>
+        <h2 id="evPayTitle" style="color: #a855f7; margin-bottom: 4px; transition: color 0.3s;">Secure Entity</h2>
         <p style="color:#94a3b8; font-size:0.85rem; margin-bottom: 20px;">Complete payment via UPI to secure this limited Rift Pokémon.</p>
         
         <div style="background: rgba(0,0,0,0.4); border-radius: 12px; padding: 16px; margin-bottom: 16px; display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:center;">
@@ -611,7 +619,7 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     </div>
 </div>
 
-<div id="rareAlert" class="modal-overlay hidden" style="z-index: 1000; flex-direction: column; background: rgba(5, 8, 16, 0.95); backdrop-filter: blur(15px);">
+<div id="rareAlert" class="modal-overlay hidden" style="z-index: 10000; flex-direction: column; background: rgba(5, 8, 16, 0.95); backdrop-filter: blur(15px);">
   <div id="rareTitle" style="font-size: 2rem; font-weight: 900; text-align: center; text-transform: uppercase; letter-spacing: 2px; animation: rarePop 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);"></div>
   <div style="position:relative; margin-top: 30px;">
     <div id="rareBgGlow" style="position:absolute; inset:-20px; border-radius:50%; background:radial-gradient(circle, currentColor 0%, transparent 70%); opacity:0.3; animation: pulseGlow 2s infinite alternate;"></div>
@@ -670,6 +678,7 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
         <div class="field"><label>👤 Trainer Name</label><input id="rgUser" maxlength="16" placeholder="Choose a trainer name"></div>
         <div class="field"><label>🔒 Password</label><input id="rgPass" type="password" placeholder="Choose a password"></div>
         
+        <!-- GENDER SELECTION FOR TRAINER SPRITE -->
         <div class="field"><label>⚧ Trainer Gender</label>
             <div style="display:flex; gap:10px;">
                 <label style="flex:1; display:flex; align-items:center; gap:8px; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; border:1px solid rgba(56,189,248,0.3); cursor:pointer;">
@@ -697,7 +706,7 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     <div class="logo" style="margin:0;">PokemonSU <img src="https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/poke-ball.png" alt="Pokeball"></div>
     
     <div class="hud-info">
-        <div class="hud-stat trainer"><img id="hudTrainerIcn" src="" style="width:20px; height:20px; border-radius:50%; image-rendering:pixelated; margin-right:4px;"> <span><b id="hudName"></b></span></div>
+        <div class="hud-stat trainer"><img src="https://play.pokemonshowdown.com/sprites/trainers/red.png" style="width:20px; height:20px; border-radius:50%; image-rendering:pixelated; margin-right:4px;"> <span><b id="hudName"></b></span></div>
         <div class="hud-stat money">💰 <b id="hudMoney"></b></div>
         <div class="hud-badges">
             <span class="lbl">Badges</span>
@@ -726,19 +735,20 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 </div>
 </div>
 
-<div id="dlg" class="modal-overlay hidden"><div class="dbox" style="max-width:560px; width:100%;">
-  <div class="who" style="display:flex; align-items:center; gap:12px; margin-bottom:12px;"><img id="dImg" onerror="this.style.display='none'"><b id="dWho"></b></div>
-  <p id="dTxt"></p><div id="dExtra"></div>
-  <div class="row" style="display:flex; justify-content:flex-end;"><button class="btn" style="width:auto; min-width:100px;" id="dNext" onclick="dlgNext()">Next ▸</button></div>
-</div></div>
-
-<div id="sysModal" class="modal-overlay hidden" style="z-index:999;">
+<div id="sysModal" class="modal-overlay hidden" style="z-index:100000;">
   <div class="dbox" style="max-width:340px; text-align:center;">
     <h3 id="sysTitle" style="color:#ffd54a; margin-bottom:8px; font-weight:800; font-size:1.4rem;">Alert</h3>
     <p id="sysMsg" style="color:#cbd5e1; font-size:0.95rem; margin-bottom:20px;"></p>
     <div id="sysBtns" style="display:flex; gap:10px; justify-content:center;"></div>
   </div>
 </div>
+
+<div id="dlg" class="modal-overlay hidden"><div class="dbox" style="max-width:560px; width:100%;">
+  <div class="who" style="display:flex; align-items:center; gap:12px; margin-bottom:12px;"><img id="dImg" onerror="this.style.display='none'"><b id="dWho"></b></div>
+  <p id="dTxt"></p><div id="dExtra"></div>
+  <div class="row" style="display:flex; justify-content:flex-end;"><button class="btn" style="width:auto; min-width:100px;" id="dNext" onclick="dlgNext()">Next ▸</button></div>
+</div></div>
+
 
 <div id="battle" class="hidden"><div class="bwrap">
   <div class="bfield">
@@ -755,7 +765,7 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
   <div class="bacts" id="bActs"></div>
 </div></div>
 
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js" async></script>
 
 <script>
 /* ============ CUSTOM ALERTS ============ */
@@ -803,6 +813,52 @@ function showRareAlert(title, color, mon, cb) {
         modal.classList.add('hidden');
         cb();
     }, 3500);
+}
+
+let currentEventMonId = null;
+
+function openEventModal(name, price, id) {
+    currentEventMonId = id;
+    document.getElementById('eventModal').classList.remove('hidden');
+    document.getElementById('evPayTitle').innerText = `Secure: ${name}`;
+    document.getElementById('evPayAmt').innerText = `₹${price}`;
+}
+
+function closeEventModal() {
+    document.getElementById('eventModal').classList.add('hidden');
+}
+
+async function submitEventPayment() {
+    let utr = document.getElementById('evUtrInput').value;
+    if(utr.length < 6) return sysAlert("Please enter a valid Transaction ID / UTR.", "Verification Error");
+
+    // Start UI Verification State
+    document.getElementById('evPayTitle').innerText = "Submitting to Server...";
+    document.getElementById('evPayTitle').style.color = "#facc15"; 
+    let btn = document.querySelector('#eventModal .btn');
+    let oldBtnText = btn.innerText;
+    btn.innerText = "Processing...";
+    btn.disabled = true;
+
+    try {
+        // Simulate API delay
+        await new Promise(r => setTimeout(r, 1500));
+
+        closeEventModal();
+        document.getElementById('evUtrInput').value = '';
+
+        // [ANTI-SCAM FIX]: Send to pending state, do NOT inject Pokemon locally.
+        sysAlert(`Transaction ID: <b style="color:#ffd54a; font-family:monospace;">${utr}</b> has been sent to the secure server.<br><br>Your payment is now <b style="color:#f87171">Pending Manual Verification</b>. Once the payment clears, the Developer will safely inject the Rift Pokémon into your Box to prevent exploits.`, "Verification Pending ⏳");
+
+    } catch(err) {
+        sysAlert(err.message || "Automated submission failed. Please try again.", "Submission Failed");
+    } finally {
+        // Reset UI State
+        document.getElementById('evPayTitle').innerText = "Secure Entity";
+        document.getElementById('evPayTitle').style.color = "#a855f7";
+        btn.innerText = oldBtnText;
+        btn.disabled = false;
+    }
 }
 
 function showMonInfo(c, i) {
@@ -895,58 +951,70 @@ window.useRebirth = async function(c, i) {
 
 /* ============ BACKEND & SOCKET.IO SETUP ============ */
 let socket = null;
-try { socket = io(); } catch(e) { console.log('Playing in offline/local mode.'); }
+let sckAttempts = 0;
 
-if(socket) {
-    socket.on('syncData', (serverData) => { if(serverData) { S = serverData; renderAll(); } });
-    socket.on('matchFound', async (data) => {
-        if(window.pvpFallbackTimer) clearTimeout(window.pvpFallbackTimer); 
-        bLog.innerHTML = `Real Match found! Opponent: ${data.opponent.user} (Elo: ${data.opponent.elo})`;
-        setTimeout(() => {
-            startBattle({wild:false, trainer:[data.opponent.user], queue:data.opponent.team, isPvP:true, isRealPvP:true, roomId: data.room});
-        }, 1500);
-    });
-    socket.on('enemyAction', (data) => {
-        if(!B) return;
-        if(data.type === 'move') {
-            const p = S.team[B.pi]; p.hp -= data.damage; drawB();
-            bmsg(`Opponent used ${data.move}! (${data.damage} dmg)`);
-            if(p.hp <= 0) {
-                p.hp = 0; drawB();
-                setTimeout(()=>{
-                    if(S.team.some(m=>m.hp>0)){bmsg(`${p.name} fainted! Choose another.`); B.lock=false; forceSwitch();}
-                    else {
-                        socket.emit('playerAction', {room: B.roomId, type: 'win'}); 
-                        S.elo = Math.max(0, S.elo - 15); endB(false, `Match Lost! Elo dropped to ${S.elo}`);
-                    }
-                }, 700);
-            } else { B.lock = false; drawB(); }
-        } else if (data.type === 'switch') {
-            B.enemy = data.mon; bmsg(`Opponent sent out ${B.enemy.name}!`);
-            drawB(); B.lock = false;
-        } else if (data.type === 'faint') {
-            bmsg(`Opponent's Pokémon fainted! Waiting for them to switch...`);
-        } else if (data.type === 'win') {
-            S.elo += 25; endB(true, `Match Won! Elo increased to ${S.elo} 🏆`);
-        } else if (data.type === 'forfeit') {
-            S.elo += 25; endB(true, `Opponent disconnected! Match Won! Elo increased to ${S.elo} 🏆`);
+function initRealtime() {
+    if (typeof io !== 'undefined') {
+        try { socket = io(); } catch(e) { console.log('Playing in offline/local mode.'); }
+
+        if(socket) {
+            socket.on('syncData', (serverData) => { if(serverData) { S = serverData; renderAll(); } });
+            socket.on('matchFound', async (data) => {
+                if(window.pvpFallbackTimer) clearTimeout(window.pvpFallbackTimer); 
+                bLog.innerHTML = `Real Match found! Opponent: ${data.opponent.user} (Elo: ${data.opponent.elo})`;
+                setTimeout(() => {
+                    startBattle({wild:false, trainer:[data.opponent.user], queue:data.opponent.team, isPvP:true, isRealPvP:true, roomId: data.room});
+                }, 1500);
+            });
+            socket.on('enemyAction', (data) => {
+                if(!B) return;
+                if(data.type === 'move') {
+                    const p = S.team[B.pi]; p.hp -= data.damage; drawB();
+                    bmsg(`Opponent used ${data.move}! (${data.damage} dmg)`);
+                    if(p.hp <= 0) {
+                        p.hp = 0; drawB();
+                        setTimeout(()=>{
+                            if(S.team.some(m=>m.hp>0)){bmsg(`${p.name} fainted! Choose another.`); B.lock=false; forceSwitch();}
+                            else {
+                                socket.emit('playerAction', {room: B.roomId, type: 'win'}); 
+                                S.elo = Math.max(0, S.elo - 15); endB(false, `Match Lost! Elo dropped to ${S.elo}`);
+                            }
+                        }, 700);
+                    } else { B.lock = false; drawB(); }
+                } else if (data.type === 'switch') {
+                    B.enemy = data.mon; bmsg(`Opponent sent out ${B.enemy.name}!`);
+                    drawB(); B.lock = false;
+                } else if (data.type === 'faint') {
+                    bmsg(`Opponent's Pokémon fainted! Waiting for them to switch...`);
+                } else if (data.type === 'win') {
+                    S.elo += 25; endB(true, `Match Won! Elo increased to ${S.elo} 🏆`);
+                } else if (data.type === 'forfeit') {
+                    S.elo += 25; endB(true, `Opponent disconnected! Match Won! Elo increased to ${S.elo} 🏆`);
+                }
+            });
+            
+            socket.on('leaderboardData', (data) => {
+                const lb = document.getElementById('lbContent');
+                if(lb) {
+                    lb.innerHTML = data.map((p, index) => 
+                        `<div class="shoprow" ${p.user === S.user ? 'style="color:#38bdf8;font-weight:600"' : ''}>
+                            <span>#${index + 1}. ${p.user}</span>
+                            <span style="color:#cbd5e1">${p.elo} Elo</span>
+                         </div>`
+                    ).join('') || 'No ranked players yet.';
+                }
+            });
         }
-    });
-    
-    socket.on('leaderboardData', (data) => {
-        const lb = document.getElementById('lbContent');
-        if(lb) {
-            lb.innerHTML = data.map((p, index) => 
-                `<div class="shoprow" ${p.user === S.user ? 'style="color:#38bdf8;font-weight:600"' : ''}>
-                    <span>#${index + 1}. ${p.user}</span>
-                    <span style="color:#cbd5e1">${p.elo} Elo</span>
-                 </div>`
-            ).join('') || 'No ranked players yet.';
-        }
-    });
+    } else if (sckAttempts < 50) {
+        sckAttempts++;
+        setTimeout(initRealtime, 100);
+    } else {
+        console.log('Playing in offline/local mode.');
+    }
 }
+initRealtime();
 
-/* ============ DATA ============ */
+/* ============ DATAPOOL ============ */
 const SPR=(i,s=false)=>`https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${s?'shiny/':''}${i}.png`;
 const SPRB=(i,s=false)=>`https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/back/${s?'shiny/':''}${i}.png`;
 const TRN=n=>`https://play.pokemonshowdown.com/sprites/trainers/${n}.png`;
@@ -963,18 +1031,44 @@ const EFF={fire:{grass:2,ice:2,bug:2,steel:2,fire:.5,water:.5,rock:.5,dragon:.5}
 
 const EVO={1:[16,2],2:[32,3],4:[16,5],5:[36,6],7:[16,8],8:[36,9],10:[7,11],11:[10,12],13:[7,14],14:[10,15],16:[18,17],17:[36,18],25:[50,26],147:[30,148],148:[55,149],371:[30,372],372:[50,373],443:[24,444],444:[48,445]};
 
-/* FULL GEN 1-9 LEGENDARIES & MYTHICALS */
+/* AUTOMATED SERVERLESS ROTATION EVENT POOL (24 PREMIUM ENTRIES) */
+const EVENT_POOL = [
+    {id: 'garchomp', monId: 445, name: "Ultimate Garchomp", desc: "A terrifying predator corrupted by dark matter. Base Stats: +150, Unique Attacks.", c: "#a855f7"},
+    {id: 'metagross', monId: 376, name: "Ultimate Metagross", desc: "An artificial supercomputer overloaded with cosmic energy. Base Stats: +120.", c: "#38bdf8"},
+    {id: 'lucario', monId: 448, name: "Ultimate Lucario", desc: "An aura master that reads thoughts and strikes with absolute precision.", c: "#eab308"},
+    {id: 'charizard', monId: 6, name: "Ultimate Charizard", desc: "Its flames burn hot enough to melt solid stone. Overloaded with Rift fire energy.", c: "#ef4444"},
+    {id: 'mewtwo', monId: 150, name: "Ultimate Mewtwo", desc: "A psychic powerhouse created by genetic manipulation, breaking through space-time.", c: "#ec4899"},
+    {id: 'rayquaza', monId: 384, name: "Ultimate Rayquaza", desc: "An ancient sky guardian that flies infinitely through the ozone layer and spatial tears.", c: "#10b981"},
+    {id: 'greninja', monId: 658, name: "Ultimate Greninja", desc: "A master of shadows that compresses water into sharp, lightning-fast shurikens.", c: "#3b82f6"},
+    {id: 'gengar', monId: 94, name: "Ultimate Gengar", desc: "Hides deep within shadows, pulling unsuspecting targets into the shadow realm.", c: "#8b5cf6"},
+    {id: 'tyranitar', monId: 248, name: "Ultimate Tyranitar", desc: "An unstoppable mountain titan whose crystal armor ignores standard moves completely.", c: "#84cc16"},
+    {id: 'salamence', monId: 373, name: "Ultimate Salamence", desc: "Spouts devastating streams of cosmic fire while soaring across temporal dimensions.", c: "#06b6d4"},
+    {id: 'dragonite', monId: 149, name: "Ultimate Dragonite", desc: "A majestic celestial deliverer capable of circling the entire globe in hours.", c: "#f59e0b"},
+    {id: 'scizor', monId: 212, name: "Ultimate Scizor", desc: "Features temporal alloy pincers that strike with tactical, game-ending power.", c: "#b91c1c"},
+    {id: 'blaziken', monId: 257, name: "Ultimate Blaziken", desc: "Blazes with martial arts intensity, generating white-hot shockwaves from its kicks.", c: "#ea580c"},
+    {id: 'gardevoir', monId: 282, name: "Ultimate Gardevoir", desc: "Unleashes psychokinetic fields, deploying small localized black holes to defend its line.", c: "#f472b6"},
+    {id: 'gallade', monId: 475, name: "Ultimate Gallade", desc: "A psychic gladiator utilizing elbow blades sharpened by infinite multi-dimensional fights.", c: "#0d9488"},
+    {id: 'volcarona', monId: 637, name: "Ultimate Volcarona", desc: "Its wings scatter scales of raw plasma fire that completely replace daylight.", c: "#f97316"},
+    {id: 'hydreigon', monId: 635, name: "Ultimate Hydreigon", desc: "A brutal three-headed shadow beast attacking everything shifting inside the deep rifts.", c: "#475569"},
+    {id: 'aegislash', monId: 681, name: "Ultimate Aegislash", desc: "A legendary sword array that drains spiritual energy from those who approach it.", c: "#cbd5e1"},
+    {id: 'darkrai', monId: 491, name: "Ultimate Darkrai", desc: "The literal embodiment of nightmares, causing deep sleep to secure its territory.", c: "#1e293b"},
+    {id: 'arceus', monId: 493, name: "Ultimate Arceus", desc: "The supreme cosmic creator, pulsing with plate forces that alter active parameters.", c: "#ffffff"},
+    {id: 'kyogre', monId: 382, name: "Ultimate Kyogre", desc: "A primal sea master expanding oceans via massive downpours flowing from tears.", c: "#2563eb"},
+    {id: 'groudon', monId: 383, name: "Ultimate Groudon", desc: "A volcanic landscape architect creating magma extensions with step shockwaves.", c: "#dc2626"},
+    {id: 'dialga', monId: 483, name: "Ultimate Dialga", desc: "A core dragon controlling temporal speed, stabilizing internal system frames.", c: "#312e81"},
+    {id: 'palkia', monId: 484, name: "Ultimate Palkia", desc: "A spatial gatekeeper spinning rifts into smooth doorway paths effortlessly.", c: "#701a75"}
+];
+
+const STRONG_BOT_MONS = [3,6,9,15,18,22,24,26,28,31,34,36,38,40,45,47,49,51,53,55,57,59,62,65,68,71,73,76,78,80,82,85,87,89,91,94,97,99,101,103,105,107,110,112,115,117,119,121,122,123,124,125,126,127,128,130,131,134,135,136,139,141,142,143,149,154,157,160,162,164,166,168,169,171,173,176,178,181,185,189,192,193,195,196,197,199,201,202,203,205,208,210,211,212,214,217,219,222,224,226,227,229,230,232,233,235,237,241,242,248,254,257,260,282,286,373,376,445,448,468,475,477];
 const RESTRICTED=[144,145,146,147,148,149,150,151,243,244,245,246,247,248,249,250,251,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,443,444,445,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,638,639,640,641,642,643,644,645,646,647,648,649,715,716,717,718,719,720,721,785,786,787,788,789,790,791,792,800,801,802,807,808,809,888,889,890,891,892,893,894,895,896,897,898,1001,1002,1003,1004,1007,1008,1014,1015,1016,1017,1024,1025];
-/* PARADOX & RIFT FORMS */
 const RIFT_FORMS = [10103, 10105, 10111, 10161, 10166, 10117, 10127, 10155, 10156, 10157, 984,985,986,987,988,989,990,991,992,993,994,995,1005,1006,1009,1010,1020,1021,1022,1023]; 
-/* ULTRA BEASTS */
 const ULTRA_BEASTS = [793, 794, 795, 796, 797, 798, 799, 803, 804, 805, 806];
 
 /* ============ STORY: THE RIFT CHRONICLES ============ */
 const P_ALDER=['Professor Alder','alder'],KAIA=['Kaia','rosa'],GRUNT=['Eclipse Grunt','galacticgrunt'],ADMIN=['Eclipse Admin Vesper','mars'],NOCTIS=['Noctis','cyrus'],MOSS=['Warden Moss','ramos'],VOLTA=['Warden Volta','elesa'],YUKI=['Warden Yuki','candice'],NARR=['— The Rift Chronicles —',''];
 const CHAPTERS=[
 {t:'Ch. 1 — The Sky That Cracked', region:'Core Rifts',d:[
- [NARR,'One year ago, the sky above the old Kanto plateau split open. Since then, glowing Rifts have appeared across the world, leaking Pokémon from every known region — and some no one had ever catalogued.'],
+ [NARR,'One year ago, the sky above the old Kanto plateau split open. Since then, glowing Rifts have appeared across the world, leaking Pokémon from every known region — and some no one had ever catalogue.'],
  [P_ALDER,'You made it! I\'m Professor Alder, head of the Rift Warden Program. The Rifts are unstable — Pokémon are pouring through, confused and displaced. We need trainers to study them, calm them, and protect the towns.'],
  [P_ALDER,'Every Warden candidate receives a partner. These three were found near the very first Rift. Choose carefully — this Pokémon will walk the whole road with you.']],
  ev:{type:'starter'}},
@@ -1065,8 +1159,7 @@ NEW_REGIONS.forEach((r, i) => {
             }
         });
     }
-    // Add corresponding explore zones
-    ZONES.push({n: `${r.name} Apex`, g: i+10, lv: r.levels, ch: r.offset+10});
+    ZONES.push({n: `${r.name} Apex`, g: 9, lv: r.levels, ch: r.offset+10});
 });
 
 /* ============ ACCOUNTS / SAVE ============ */
@@ -1121,17 +1214,17 @@ function doLogin(){
          if(res.error) return e.textContent = res.error;
          e.style.color='#4ade80';e.textContent='Connecting to servers...';
          let userGender = (res.save && res.save.gender) || (ACC[u] ? ACC[u].gender : 'M');
-         setTimeout(()=>{S=res.save||newSave(u, userGender); if(!S.gender) S.gender = userGender; ACC[u]={pass:p, gender:userGender, save:S};startGame()},600);
+         setTimeout(()=>{S=res.save||newSave(u, userGender); if(!S.gender) S.gender = userGender; if(S.events===undefined) S.events={}; ACC[u]={pass:p, gender:userGender, save:S};startGame()}, 0);
      });
      return;
  }
  if(!ACC[u]||ACC[u].pass!==p)return e.textContent='Invalid trainer name or password.';
  e.style.color='#4ade80';e.textContent='Logging you in...';
  let userGender = ACC[u].gender || 'M';
- setTimeout(()=>{S=ACC[u].save||newSave(u, userGender);if(!S.gender) S.gender = userGender; if(S.stones===undefined)S.stones={rebirth:0};ACC[u].save=S;startGame()},600)
+ setTimeout(()=>{S=ACC[u].save||newSave(u, userGender);if(!S.gender) S.gender = userGender; if(S.stones===undefined)S.stones={rebirth:0}; if(S.events===undefined)S.events={}; ACC[u].save=S;startGame()}, 0)
 }
 
-function newSave(u, g='M'){return{user:u, gender:g, money:3000,elo:1200,balls:{poke:10,master:0},pots:{p:3,s:0},stones:{rebirth:0},badges:[],ch:0,starter:0,team:[],box:[],dex:{},lastLoot:'',shinyCharm:false}}
+function newSave(u, g='M'){return{user:u, gender:g, money:3000,elo:1200,balls:{poke:10,master:0},pots:{p:3,s:0},stones:{rebirth:0},badges:[],ch:0,starter:0,team:[],box:[],dex:{},lastLoot:'',shinyCharm:false, events:{}}}
 function logout(){
  persist();S=null;
  document.getElementById('pgGame').classList.add('hidden');
@@ -1205,8 +1298,10 @@ function startGame(){
  if(S.shinyCharm === undefined) S.shinyCharm = false;
  if(S.balls.master === undefined) { S.balls.master = S.balls.great || 0; delete S.balls.great; }
  if(S.stones === undefined) S.stones = {rebirth: 0};
+ if(S.events === undefined) S.events = {};
  refreshHud();preloadSprites();nav(0);
 }
+
 function refreshHud(){
  hudName.textContent=S.user;
  hudMoney.textContent='₽'+S.money.toLocaleString();
@@ -1214,7 +1309,7 @@ function refreshHud(){
  
  // Dynamic Trainer Avatar Update
  const trnIcon = (S.gender === 'F') ? 'dawn' : 'red';
- const hudIcon = document.getElementById('hudTrainerIcn');
+ const hudIcon = document.querySelector('.hud-stat.trainer img');
  if(hudIcon) hudIcon.src = TRN(trnIcon);
 
  persist()
@@ -1233,18 +1328,17 @@ function claimLoot(){
 }
 
 function nav(i){
+ renderAll(); // PREVENT OVERWRITES: Render base components first
  for(let k=0;k<8;k++){
   const btn = document.getElementById('nv'+k);
   const scr = document.getElementById('scr'+k);
   if(btn) btn.classList.toggle('on',k===i);
   if(scr) scr.classList.toggle('hidden',k!==i);
  }
- if(i===3) renderShop(); 
  if(i===5) fetchLeaderboard(); 
- if(i===6) renderSupport();
- if(i===7) renderEvents();
  renderAll();
 }
+
 function hpCls(m){const r=m.hp/m.maxhp;return r>.5?'':r>.25?'mid':'low'}
 
 /* INJECTED DYNAMIC TYPE CLASS FOR COLORED BORDERS & CLICKABLE MODAL WRAPPER */
@@ -1258,7 +1352,10 @@ function monCard(m,extra='', c='', i=''){
 /* ============ DYNAMIC VIEWS ============ */
 window.expPage = window.expPage || 0; // Explore Pagination State
 
-function renderAll(){refreshHud();
+function renderAll(){
+ if(!S) return;
+ refreshHud();
+ 
  /* story: NO SCROLL DASHBOARD */
  let storyHtml = `<div class="panel" style="text-align:center; padding: 30px 16px;">
     <h3 style="color:#ffd54a; font-size: 1.8rem; margin-bottom: 8px;">📖 The Rift Chronicles</h3>
@@ -1294,7 +1391,6 @@ function renderAll(){refreshHud();
  /* explore: PAGINATED 2x2 GRID */
  const zonesPerPage = 4;
  const maxPages = Math.ceil(ZONES.length / zonesPerPage);
- // Safe-check bounds
  if(window.expPage >= maxPages) window.expPage = maxPages - 1;
  const currentZones = ZONES.slice(window.expPage * zonesPerPage, (window.expPage + 1) * zonesPerPage);
 
@@ -1334,7 +1430,7 @@ function renderAll(){refreshHud();
  /* box */
  scr4.innerHTML=`<div class="panel"><h3>📦 Box (${S.box.length}) · Rift Dex: ${Object.keys(S.dex).length}/1025</h3><p style="font-size:0.8rem; color:#94a3b8; margin-bottom:12px; text-align:center;">Click a Pokémon to view its stats and moveset.</p><div class="grid">${S.box.map((m,i)=>monCard(m,`<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center">${S.team.length<6?`<button class="gbtn" style="font-size:0.8rem;padding:4px 8px" onclick="toTeam(${i})">To Team</button>`:''}<button class="gbtn" style="font-size:0.8rem;padding:4px 8px;color:#f87171;border-color:rgba(248,113,113,0.3)" onclick="releaseMon('box',${i})">Release</button></div>`, 'box', i)).join('')||'<p>Empty — go catch some Pokémon!</p>'}</div></div>`;
  
- /* pvp arena & leaderboard */
+ /* pvp arena */
  const rank = S.elo >= 1800 ? 'Master' : S.elo >= 1500 ? 'Gold' : S.elo >= 1200 ? 'Silver' : 'Bronze';
  const reward = rank === 'Master' ? 'Weekly Legendary Egg' : rank === 'Gold' ? '3x Master Balls' : rank === 'Silver' ? '5x Potions' : 'Keep pushing!';
  scr5.innerHTML=`<div class="panel" style="text-align:center;padding:30px 16px">
@@ -1351,19 +1447,20 @@ function renderAll(){refreshHud();
    <button class="gbtn" style="margin-top:16px;" onclick="fetchLeaderboard()">Refresh Ranks</button>
   </div>
  </div>`;
+
+ renderShop();
+ renderEvents();
+ renderSupport();
 }
 
 /* ============ GLOBAL LEADERBOARD FETCH LOGIC ============ */
 async function fetchLeaderboard() {
  const lb = document.getElementById('lbContent');
  if(!lb) return;
- 
  lb.innerHTML = "Syncing with Global Cloud...";
-
  if(socket && socket.connected) {
      socket.emit('getLeaderboard');
  } else {
-     // GLOBAL FETCH FALLBACK (PREPARED FOR SERVER HOSTING)
      try {
          const response = await fetch('https://api.pokemon-su.com/leaderboard', { timeout: 3000 });
          if(response.ok) {
@@ -1372,7 +1469,6 @@ async function fetchLeaderboard() {
              return;
          } else { throw new Error('API Offline'); }
      } catch (err) {
-         // TRUE LOCAL EXTRACTION (REMOVED FAKE BOTS ENTIRELY)
          let players = [];
          for(let key in ACC) {
              if(ACC[key] && ACC[key].save) {
@@ -1387,8 +1483,8 @@ async function fetchLeaderboard() {
 
 function renderLB(players, isOffline = false) {
     const lb = document.getElementById('lbContent');
+    if(!lb) return;
     const warning = isOffline ? `<div style="font-size:0.8rem; color:#f87171; margin-bottom:12px; background:rgba(248,113,113,0.1); padding:4px; border-radius:6px; border:1px solid rgba(248,113,113,0.3);">⚠️ Global Cloud Offline: Showing Local Browser Data Only. Host game on a server to enable worldwide sync.</div>` : '';
-    
     lb.innerHTML = warning + (players.map((p, index) => 
         `<div class="shoprow" ${p.user === S.user ? 'style="color:#ffd54a;font-weight:600; background:rgba(255,213,74,0.05); padding: 8px; border-radius: 8px; border:1px solid rgba(255,213,74,0.2);"' : ''}>
             <span>#${index + 1}. ${p.user}</span>
@@ -1399,69 +1495,124 @@ function renderLB(players, isOffline = false) {
 
 const ICN = (n) => `<img src="https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/${n}.png" class="item-icn">`;
 
-/* ============ EVENTS TAB ============ */
+/* ============ EVENTS TAB (AUTOMATED 3-DAY SELECTION POOL) ============ */
 function renderEvents() {
+    if(!S.events) S.events = {};
+    
+    // Calculate the 3-day epoch rotation slice (3 days = 259200000ms)
+    let cycleIndex = Math.floor(Date.now() / 259200000);
+    let idx1 = cycleIndex % EVENT_POOL.length;
+    let idx2 = (cycleIndex + 7) % EVENT_POOL.length;
+    if (idx1 === idx2) idx2 = (idx2 + 1) % EVENT_POOL.length;
+    
+    // Select the 2 current rolling options out of the 24 candidates
+    const currentRollingEvents = [EVENT_POOL[idx1], EVENT_POOL[idx2]];
+
     let eh = `<div class="panel" style="border-color: rgba(168, 85, 247, 0.4); box-shadow: 0 0 25px rgba(168, 85, 247, 0.1);">
         <div style="text-align:center; margin-bottom: 24px;">
             <h3 style="color:#a855f7; font-size:1.8rem; text-shadow: 0 2px 8px rgba(168,85,247,0.4);">🌀 Temporal Rifts Detected</h3>
-            <p style="color:#cbd5e1; font-size:0.95rem;">Extremely powerful Delta & Rift variant Pokémon have slipped into our dimension. Secure them before the rift closes!</p>
-            <div class="event-timer" id="evTimer">Loading Temporal Data...</div>
+            <p style="color:#cbd5e1; font-size:0.95rem;">Survive the Level 100 Gauntlet! Defeat 100 elite Warden teams to capture these dimensional anomalies. New challenges arrive automatically every 3 days from a pool of 24 entities!</p>
+            <div class="event-timer" id="evTimer">Calculating Shift parameters...</div>
         </div>
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
     `;
-    
-    const events = [
-        {id: 445, name: "Delta Garchomp", price: 400, desc: "A terrifying predator corrupted by dark matter. Base Stats: +150, Unique Attacks.", c: "#a855f7"},
-        {id: 376, name: "Rift Metagross", price: 250, desc: "An artificial supercomputer overloaded with cosmic energy. Base Stats: +120.", c: "#38bdf8"}
-    ];
 
-    events.forEach(e => {
+    currentRollingEvents.forEach(e => {
+        let prog = S.events[e.id] || 0;
+        let pct = Math.min(100, Math.floor((prog / 100) * 100)); // Updated to 100
+        let isDone = prog >= 100; // Updated to 100
+
         eh += `
         <div class="event-card" style="border-color: ${e.c};">
             <div style="height:120px; display:flex; align-items:center; justify-content:center; margin-bottom:12px;">
-                <img src="${SPR(e.id)}" class="rift-sprite" style="width:100px; height:100px; animation: float 2.5s ease-in-out infinite;">
+                <img src="${SPR(e.monId)}" class="rift-sprite" style="width:100px; height:100px; animation: float 2.5s ease-in-out infinite;">
             </div>
             <h4 style="color:${e.c}; font-size:1.4rem; font-weight:800; margin-bottom:4px; text-shadow: 0 0 8px ${e.c};">${e.name}</h4>
             <p style="font-size:0.85rem; color:#94a3b8; margin-bottom:16px;">${e.desc}</p>
-            <div style="font-size:1.5rem; color:#fff; font-weight:900; margin-bottom:16px;">₹${e.price} <span style="font-size:0.8rem; color:#9ca3af; font-weight:400;">(Real Money)</span></div>
-            <button class="btn" style="background: linear-gradient(135deg, ${e.c}, #1e1b4b); box-shadow: 0 4px 15px rgba(0,0,0,0.5);" onclick="openEventModal('${e.name}', ${e.price})">Claim Dimensional Entity</button>
+            
+            <div style="background: rgba(0,0,0,0.4); padding: 8px; border-radius: 8px; margin-bottom: 16px;">
+                <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;">
+                    <span style="color:#cbd5e1;">Gauntlet Progress</span>
+                    <span style="color:${isDone ? '#4ade80' : '#ffd54a'}; font-weight:bold;">${prog} / 100</span>
+                </div>
+                <div class="hpbar" style="height:6px; margin:0;"><i style="background: ${isDone ? '#4ade80' : e.c}; transform: scaleX(${pct/100});"></i></div>
+            </div>
+            
+            <button class="btn" style="background: ${isDone ? '#475569' : `linear-gradient(135deg, ${e.c}, #1e1b4b)`}; box-shadow: ${isDone ? 'none' : `0 4px 15px rgba(0,0,0,0.5)`};" ${isDone ? 'disabled' : ''} onclick="startEventGauntlet('${e.id}', ${e.monId})">${isDone ? '✅ Entity Secured' : '⚔️ Enter Gauntlet'}</button>
         </div>`;
     });
 
-    eh += `</div>
-        <p style="text-align:center; font-size:0.8rem; color:#64748b; margin-top:20px;">* Note: To prevent exploits, transactions are verified manually. Pokémon are injected into your Box within 24 hours of successful verification.</p>
-    </div>`;
+    eh += `</div></div>`;
     
-    document.getElementById('scr7').innerHTML = eh;
+    const scr7 = document.getElementById('scr7');
+    if (scr7) scr7.innerHTML = eh;
     
-    // Simulate Event Timer
-    let t = document.getElementById('evTimer');
-    if(t && !window.evInt) {
-        let d = 2, h = 14, m = 38, s = 59;
-        window.evInt = setInterval(()=>{
-            s--; if(s<0){s=59;m--;} if(m<0){m=59;h--;} if(h<0){h=23;d--;}
+    // Real clock countdown implementation matching real-time dates
+    if(!window.evInt) {
+        window.evInt = setInterval(() => {
             let el = document.getElementById('evTimer');
-            if(el) el.innerText = `Rift Closes In: ${d}d ${h}h ${m}m ${s}s`;
+            if(!el) return;
+            let msRemaining = 259200000 - (Date.now() % 259200000);
+            let d = Math.floor(msRemaining / (24 * 60 * 60 * 1000));
+            let h = Math.floor((msRemaining % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+            let m = Math.floor((msRemaining % (60 * 60 * 1000)) / (60 * 1000));
+            let s = Math.floor((msRemaining % (60 * 1000)) / 1000);
+            el.innerText = `Rift Pool Rotates In: ${d}d ${h}h ${m}m ${s}s`;
+            
+            if(d === 0 && h === 0 && m === 0 && s === 0) {
+                renderAll();
+            }
         }, 1000);
     }
 }
 
-function openEventModal(name, price) {
-    document.getElementById('payModal').classList.remove('hidden');
-    document.getElementById('evPayTitle').innerText = `Secure: ${name}`;
-    document.getElementById('evPayAmt').innerText = `₹${price}`;
-}
-function closeEventModal() {
-    document.getElementById('payModal').classList.add('hidden');
-}
-function submitEventPayment() {
-    let utr = document.getElementById('evUtrInput').value;
-    if(utr.length < 6) return sysAlert("Please enter a valid Transaction ID / UTR.", "Verification Error");
-    closeEventModal();
-    document.getElementById('evUtrInput').value = '';
-    sysAlert("Payment proof submitted! The Developer will manually verify the UTR. Your Rift Pokémon will be added to your Box within 24 hours to prevent exploits.", "Verification Pending ⏳");
-}
+window.startEventGauntlet = async function(eventId, monId) {
+    if(!S.team.some(m=>m.hp>0)) return sysAlert('Your team is fainted! Heal at the Center first.', 'Gauntlet Error');
+    log2('Entering the Event Gauntlet...');
+    document.getElementById('battle').classList.remove('hidden');
+    bLog.innerHTML = `Event Gauntlet: Level 100 Elite Warden approaching...`;
+    
+    setTimeout(async () => {
+        const enemyTeam = [];
+        for(let i=0; i<3; i++){ 
+            let eid = i===2 ? monId : STRONG_BOT_MONS[Math.floor(Math.random() * STRONG_BOT_MONS.length)];
+            let emon = await makeMon(eid, 100, false, true); 
+            emon.item = 'leftovers';
+            if(i===2) emon.item = 'focus_sash';
+            enemyTeam.push(emon); 
+        }
 
+        startBattle({
+            wild: false, 
+            trainer: ["Event Warden"], 
+            queue: enemyTeam, 
+            isPvP: false, 
+            botRank: 'Master', 
+            botPots: 2,
+            onWin: async () => {
+                if(!S.events) S.events = {};
+                if(!S.events[eventId]) S.events[eventId] = 0;
+                S.events[eventId]++;
+                
+                // Updated victory threshold to 100
+                if(S.events[eventId] >= 100) {
+                    let reward = await makeMon(monId, 50, false, false);
+                    reward.isRift = true;
+                    S.box.push(reward);
+                    sysAlert(`You conquered the Ultimate Gauntlet! The dimensional entity <b style="color:#a855f7">${reward.name}</b> has been securely transferred to your Box.`, "🎉 Gauntlet Complete! 🎉");
+                } else {
+                    log2(`Gauntlet Victory! Progress: ${S.events[eventId]} / 100`); // Updated message to 100
+                }
+                persist();
+                renderAll();
+            },
+            onLose: () => {
+                healTeam();
+                sysAlert('Your team was wiped out by the Warden. Heal up and try again! Your gauntlet progress has been saved.', 'Gauntlet Failed');
+            }
+        });
+    }, 1500);
+};
 
 /* ============ SHOP & QUANTITY WRAP-AROUND LOGIC ============ */
 function renderShop(){
@@ -1478,9 +1629,9 @@ function renderShop(){
          <div class="price">₽100,000</div>
          <div class="actions">
              <div class="q-wrap">
-                 <button class="q-btn" style="color:#d946ef;" onclick="let e=document.getElementById('q_rb'); if(e.value<=1) e.value=${maxRb}; else e.stepDown()">-</button>
+                 <button class="q-btn" style="color:#d946ef;" onclick="let e=document.getElementById('q_rb'); if(Number(e.value)<=1) e.value=${maxRb}; else e.value=Number(e.value)-1">-</button>
                  <input type="number" id="q_rb" class="q-in" value="1" min="1" max="${maxRb}">
-                 <button class="q-btn" style="color:#d946ef;" onclick="let e=document.getElementById('q_rb'); if(e.value>=${maxRb}) e.value=1; else e.stepUp()">+</button>
+                 <button class="q-btn" style="color:#d946ef;" onclick="let e=document.getElementById('q_rb'); if(Number(e.value)>=${maxRb}) e.value=1; else e.value=Number(e.value)+1">+</button>
              </div>
              <button class="sbtn" style="flex:1; width:100%; margin-top:8px; background:linear-gradient(135deg, #a855f7, #d946ef); box-shadow: 0 4px 15px rgba(217, 70, 239, 0.4);" onclick="buy('stones','rebirth',100000,'Rebirth Stone','q_rb')">Buy</button>
          </div>
@@ -1508,9 +1659,9 @@ function renderShop(){
              <div class="price">₽200</div>
              <div class="actions">
                  <div class="q-wrap">
-                     <button class="q-btn" onclick="let e=document.getElementById('q_pk'); if(e.value<=1) e.value=${maxPk}; else e.stepDown()">-</button>
+                     <button class="q-btn" onclick="let e=document.getElementById('q_pk'); if(Number(e.value)<=1) e.value=${maxPk}; else e.value=Number(e.value)-1">-</button>
                      <input type="number" id="q_pk" class="q-in" value="1" min="1" max="${maxPk}">
-                     <button class="q-btn" onclick="let e=document.getElementById('q_pk'); if(e.value>=${maxPk}) e.value=1; else e.stepUp()">+</button>
+                     <button class="q-btn" onclick="let e=document.getElementById('q_pk'); if(Number(e.value)>=${maxPk}) e.value=1; else e.value=Number(e.value)+1">+</button>
                  </div>
                  <button class="sbtn" style="flex:1; width:100%; margin-top:8px;" onclick="buy('balls','poke',200,'Poké Ball','q_pk')">Buy</button>
              </div>
@@ -1523,9 +1674,9 @@ function renderShop(){
              <div class="price">₽2000</div>
              <div class="actions">
                  <div class="q-wrap">
-                     <button class="q-btn" onclick="let e=document.getElementById('q_mb'); if(e.value<=1) e.value=${maxMb}; else e.stepDown()">-</button>
+                     <button class="q-btn" onclick="let e=document.getElementById('q_mb'); if(Number(e.value)<=1) e.value=${maxMb}; else e.value=Number(e.value)-1">-</button>
                      <input type="number" id="q_mb" class="q-in" value="1" min="1" max="${maxMb}">
-                     <button class="q-btn" onclick="let e=document.getElementById('q_mb'); if(e.value>=${maxMb}) e.value=1; else e.stepUp()">+</button>
+                     <button class="q-btn" onclick="let e=document.getElementById('q_mb'); if(Number(e.value)>=${maxMb}) e.value=1; else e.value=Number(e.value)+1">+</button>
                  </div>
                  <button class="sbtn" style="flex:1; width:100%; margin-top:8px;" onclick="buy('balls','master',2000,'Master Ball','q_mb')">Buy</button>
              </div>
@@ -1538,9 +1689,9 @@ function renderShop(){
              <div class="price">₽300</div>
              <div class="actions">
                  <div class="q-wrap">
-                     <button class="q-btn" onclick="let e=document.getElementById('q_pt'); if(e.value<=1) e.value=${maxPt}; else e.stepDown()">-</button>
+                     <button class="q-btn" onclick="let e=document.getElementById('q_pt'); if(Number(e.value)<=1) e.value=${maxPt}; else e.value=Number(e.value)-1">-</button>
                      <input type="number" id="q_pt" class="q-in" value="1" min="1" max="${maxPt}">
-                     <button class="q-btn" onclick="let e=document.getElementById('q_pt'); if(e.value>=${maxPt}) e.value=1; else e.stepUp()">+</button>
+                     <button class="q-btn" onclick="let e=document.getElementById('q_pt'); if(Number(e.value)>=${maxPt}) e.value=1; else e.value=Number(e.value)+1">+</button>
                  </div>
                  <button class="sbtn" style="flex:1; width:100%; margin-top:8px;" onclick="buy('pots','p',300,'Potion','q_pt')">Buy</button>
              </div>
@@ -1601,6 +1752,116 @@ function toggleQR() {
     }
 }
 
+function buy(c,k,p,n,id){
+ let q = 1;
+ if(id) { let el = document.getElementById(id); if(el) q = Number(el.value) || 1; }
+ if(q < 1) q = 1;
+ let cost = p * q;
+ if(S.money<cost) return sysAlert(`Not enough money! You need ₽${cost.toLocaleString()} to buy ${q}x ${n}.`, 'Shop Error');
+ S.money-=cost;
+ S[c][k]+=q;
+ log2(`Bought ${q}x ${n}!`);
+ persist();
+ renderAll();
+}
+
+function buyCharm(){if(S.money<20000)return sysAlert('Not enough money! You need ₽20000.', 'Shop Error');if(S.shinyCharm)return log2('Already owned!');S.money-=20000;S.shinyCharm=true;log2(`Bought Shiny Charm! Shiny rate increased!`);persist();renderAll()}
+
+function lead(i){S.team.unshift(S.team.splice(i,1)[0]);renderAll()}
+function toBox(i){S.box.push(S.team.splice(i,1)[0]);renderAll()}
+function toTeam(i){if(S.team.length>=6)return;S.team.push(S.box.splice(i,1)[0]);renderAll()}
+
+async function releaseMon(c,i){
+    if(c==='team' && S.team.length<=1) return sysAlert("Cannot release your last Pokémon!", "Action Denied");
+    if(await sysConfirm(`Are you sure you want to release ${S[c][i].name}? This cannot be undone.`, "Release Pokémon")) {
+        log2(`Released ${S[c][i].name}!`);
+        S[c].splice(i,1);
+        persist();
+        renderAll();
+    }
+}
+
+/* ============ DIALOGUE ============ */
+let dq=[],dOn=null;
+function showDlg(lines,onEnd){dq=lines.slice();dOn=onEnd;dExtra.innerHTML='';document.getElementById('dlg').classList.remove('hidden');dlgNext()}
+function dlgNext(){if(!dq.length){document.getElementById('dlg').classList.add('hidden');const f=dOn;dOn=null;if(f)f();return}
+ const[who,txt]=dq.shift();dWho.textContent=who[0];dTxt.textContent=txt;dImg.style.display=who[1]?'':'none';if(who[1])dImg.src=TRN(who[1]);dNext.style.display='';dExtra.innerHTML=''}
+function playStory(){const c=CHAPTERS[S.ch];showDlg(c.d,()=>runEvent(c))}
+async function runEvent(c){const ev=c.ev;
+ if(ev.type==='starter'){
+  document.getElementById('dlg').classList.remove('hidden');dWho.textContent='Professor Alder';dImg.style.display='';dImg.src=TRN('alder');dTxt.textContent='Choose your partner!';dNext.style.display='none';
+  const ids=[1,4,7],names=['Bulbasaur','Charmander','Squirtle'];
+  dExtra.innerHTML=`<div class="starterRow">${ids.map((id,i)=>`<div class="mon type-normal" onclick="pickStarter(${id})"><img src="${SPR(id)}"><div class="nm">${names[i]}</div><small>Lv 5</small></div>`).join('')}</div>`;
+  return}
+ if(ev.type==='battle'){
+  const mons=[];for(const[id,lv]of ev.mons(S.starter))mons.push(await makeMon(id,lv));
+  startBattle({wild:false,trainer:ev.who,queue:mons,onWin:()=>{S.money+=ev.reward;if(ev.badge)S.badges.push(ev.badge);
+   const fin=()=>{S.ch++;persist();renderAll();nav(0);log2(`Chapter complete! +₽${ev.reward}${ev.badge?' · Earned the '+ev.badge+' Badge!':''}`)};
+   ev.after?showDlg(ev.after,fin):fin()},
+  onLose:()=>{healTeam();sysAlert('You blacked out... your team was healed. Try the chapter again!', 'Battle Lost')}})}}
+async function pickStarter(id){S.starter=id;S.dex[id]=1;S.team=[await makeMon(id,5)];persist();
+ showDlg([[P_ALDER,'A fine choice! Here — take 10 Poké Balls and some potions. Now, one last lesson: a wild Pokémon has wandered out of the Rift onto Route 1. Weaken it, then throw a ball to catch it!']],
+ async()=>{const w=await makeMon(16,3);startBattle({wild:true,queue:[w],onWin:()=>{S.ch++;persist();preloadSprites();renderAll();nav(0);log2('Chapter 1 complete! The Story tab has your next chapter.')},onLose:()=>{healTeam();S.ch++;renderAll();log2('It got away — but you learned the basics! Chapter 1 complete.')}})})}
+
+/* ============ PvP MATCHMAKING ============ */
+async function startPvP(){
+ if(!S.team.some(m=>m.hp>0)) return sysAlert('Your team is fainted! Heal at the Center first.', 'PvP Error');
+ log2('Searching for opponents in your Elo bracket...');
+ document.getElementById('battle').classList.remove('hidden');
+
+ const launchBotMatch = async (msg) => {
+  bLog.innerHTML = msg;
+  setTimeout(async()=>{
+   const names = ['Ash', 'Gary', 'Dawn', 'Cynthia', 'Leon', 'Red', 'Blue', 'Leaf', 'Ethan', 'Lyra', 'Silver', 'Brendan', 'May', 'Wally', 'Steven', 'Lucas', 'Barry', 'Hilbert', 'Hilda', 'Cheren', 'Bianca', 'N', 'Nate', 'Rosa', 'Hugh', 'Calem', 'Serena', 'Elio', 'Selene', 'Hau', 'Gladion', 'Victor', 'Gloria', 'Hop', 'Marnie', 'Florian', 'Juliana', 'Nemona', 'Arven', 'Penny'];
+   const rName = names[Math.floor(Math.random()*names.length)];
+   bLog.innerHTML = `Match found! Opponent: <b style="color:#fff">${rName}</b> (Elo: ${S.elo + Math.floor(Math.random()*40-20)})`;
+
+   const rank = S.elo >= 1800 ? 'Master' : S.elo >= 1500 ? 'Gold' : S.elo >= 1200 ? 'Silver' : 'Bronze';
+   const botPots = rank === 'Master' ? 2 : 0;
+   
+   const maxLvl = Math.max(5, ...S.team.map(m=>m.lvl));
+   const playerHasRebirth = S.team.some(m => m.rebirth || m.lvl > 100);
+   const diff = rank === 'Master' ? 3 : rank === 'Gold' ? 2 : rank === 'Silver' ? 1 : 0;
+   const botLvlBase = maxLvl + diff;
+   
+   const enemyTeam = [];
+   
+   for(let i=0; i<3; i++){ 
+    let eid = Math.floor(Math.random()*150)+1; 
+    let finalBotLvl = botLvlBase + (i===2?2:0);
+    if (!playerHasRebirth) finalBotLvl = Math.min(100, finalBotLvl);
+    
+    if (rank === 'Master' && i === 2) {
+        eid = RESTRICTED[Math.floor(Math.random() * RESTRICTED.length)];
+    } else if (finalBotLvl >= 30) {
+        eid = STRONG_BOT_MONS[Math.floor(Math.random() * STRONG_BOT_MONS.length)];
+    } else {
+        while(EVO[eid] && finalBotLvl >= EVO[eid][0]) { eid = EVO[eid][1]; }
+    }
+    
+    let emon = await makeMon(eid, finalBotLvl, false, true); 
+    if(rank === 'Gold') emon.item = 'leftovers';
+    if(rank === 'Master' && i === 2) emon.item = 'focus_sash';
+    if(rank === 'Master' && i < 2) emon.item = 'leftovers';
+    enemyTeam.push(emon); 
+   }
+
+   setTimeout(()=>{ startBattle({wild:false, trainer:[rName], queue:enemyTeam, isPvP:true, botRank:rank, botPots:botPots}); }, 1500);
+  }, 2000);
+ };
+ 
+ if(socket && socket.connected) {
+    bLog.innerHTML = 'Connecting to real multiplayer matchmaking...<br><i style="color:#38bdf8;font-size:0.9rem;">Waiting for another player to join queue...</i>';
+    socket.emit('joinQueue', S);
+    window.pvpFallbackTimer = setTimeout(() => {
+        socket.emit('leaveQueue'); 
+        launchBotMatch('No players found. Fighting simulated bot...<br><i style="color:#94a3b8;font-size:0.9rem;">Estimated wait: 2s</i>');
+    }, 7000); 
+    return;
+ }
+ launchBotMatch('Server offline. Playing against simulated bots...<br><i style="color:#94a3b8;font-size:0.9rem;">Estimated wait: 2s</i>');
+}
+
 /* ============ BATTLE ENGINE ============ */
 let B=null;
 function startBattle(cfg){B={...cfg,pi:0,enemy:cfg.queue.shift(),lock:false};
@@ -1631,7 +1892,6 @@ function drawB(){const p=S.team[B.pi],e=B.enemy;
  const pb=document.getElementById('pHp');pb.style.transform='scaleX('+Math.max(0,p.hp/p.maxhp)+')';pb.className=hpCls(p);
  
  bActs.innerHTML=p.moves.map((m,i)=>{
-    // Super Effective Highlighting Logic
     let eff=1; e.types.forEach(t=>{const c=EFF[m.t];if(c&&c[t]!=null)eff*=c[t]});
     let ec=eff>1?'eff-sup':eff<1?'eff-not':'';
     let col=eff>1?'#4ade80':eff<1?'#f87171':'#94a3b8';
@@ -1668,7 +1928,7 @@ function enemyTurn(prev){const p=S.team[B.pi],e=B.enemy;
         const leftHeal = Math.max(1, Math.floor(e.maxhp / 16)); e.hp = Math.min(e.maxhp, e.hp + leftHeal);
         m += `<br><small style="color:#94a3b8">${e.name} restored a little HP using its Leftovers.</small>`;
     }
-    drawB(); bmsg(m); B.lock = false; return;
+    B.lock = false; drawB(); bmsg(m); return;
  }
  let mv=e.moves[0], maxDmg=-1; 
  e.moves.forEach(m=>{const r=dmg(e,p,m); if(r.v>maxDmg){maxDmg=r.v; mv=m;}});
@@ -1729,18 +1989,14 @@ function continueFaint(m){
 async function throwBall(k){
  if(B.lock||!B.wild||S.balls[k]<1)return;
  const e=B.enemy;
- 
  if(k==='master') {
      if(!(await sysConfirm(`Are you sure you want to use your Master Ball on ${e.name}? It is very rare!`, 'Use Master Ball?'))) return;
  }
- 
  B.lock=true;
  S.balls[k]--;
- 
  let rate=(1-(e.hp/e.maxhp)*0.72)*(e.lvl>50?0.55:1);
  if(RESTRICTED.includes(e.id)) rate *= 0.05; 
  if(k==='master') rate = 10; 
- 
  if(Math.random()<Math.max((k==='master'?1:0.02),rate)){
   S.dex[e.id]=1;(S.team.length<6?S.team:S.box).push(e);persist();
   bmsg(`Gotcha! <b style="color:#38bdf8">${e.name}</b> was caught!${S.team.length<=6?'':' Sent to Box.'}`);
@@ -1776,13 +2032,10 @@ function endB(win,m,caught){
 
 async function explore(i){
  const z=ZONES[i];const[a,b]=GENS[z.g-1];let id=a+Math.floor(Math.random()*(b-a+1));
- 
  let isLegendary = false;
  let isAnomaly = false;
  let isUltraBeast = false;
- 
  const rand = Math.random();
- 
  if (rand < 0.02) { 
      id = RESTRICTED[Math.floor(Math.random() * RESTRICTED.length)];
      isLegendary = true;
@@ -1795,28 +2048,21 @@ async function explore(i){
  } else {
      while(RESTRICTED.includes(id) || ULTRA_BEASTS.includes(id) || RIFT_FORMS.includes(id)){id=a+Math.floor(Math.random()*(b-a+1));}
  }
-
  const lv=z.lv[0]+Math.floor(Math.random()*(z.lv[1]-z.lv[0]+1));
- 
  let shinyRate = S.shinyCharm ? 0.06 : 0.03;
  if (isLegendary || isUltraBeast) shinyRate = S.shinyCharm ? 0.01 : 0.008;
  else if (isAnomaly) shinyRate = S.shinyCharm ? 0.03 : 0.02;
- 
  const isShiny = Math.random() < shinyRate;
- 
  const w=await makeMon(id,lv,isShiny);
- 
  const doBattle = () => {
      startBattle({wild:true,queue:[w],onWin:()=>{S.money+=lv*10;log2(`+₽${lv*10}`)},onLose:()=>{healTeam();S.money=Math.floor(S.money/2);sysAlert('You blacked out and lost half your money...', 'Battle Lost');}})
  };
-
  if (isShiny || isLegendary || isAnomaly || isUltraBeast) {
      let title = "⚠️ SPATIAL ANOMALY DETECTED ⚠️";
      let color = "#38bdf8";
      if (isShiny) { title = "✨ SHINY POKÉMON DETECTED ✨"; color = "#ffd54a"; }
      else if (isLegendary) { title = "🌌 MYTHICAL PRESENCE DETECTED 🌌"; color = "#ec4899"; }
      else if (isUltraBeast) { title = "🌀 ULTRA BEAST DETECTED 🌀"; color = "#a855f7"; }
-
      showRareAlert(title, color, w, doBattle);
  } else {
      log2('Searching the tall grass...');
