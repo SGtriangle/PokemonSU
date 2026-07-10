@@ -960,6 +960,9 @@ function initRealtime() {
         if(socket) {
             socket.on('syncData', (serverData) => { if(serverData) { S = serverData; renderAll(); } });
             socket.on('matchFound', async (data) => {
+                // THE GHOST BUG FIX: Ignore self-matches from the server
+                if(data.opponent.user === S.user) return;
+                
                 if(window.pvpFallbackTimer) clearTimeout(window.pvpFallbackTimer); 
                 bLog.innerHTML = `Real Match found! Opponent: ${data.opponent.user} (Elo: ${data.opponent.elo})`;
                 setTimeout(() => {
@@ -1818,7 +1821,7 @@ async function pickStarter(id){S.starter=id;S.dex[id]=1;S.team=[await makeMon(id
  showDlg([[P_ALDER,'A fine choice! Here — take 10 Poké Balls and some potions. Now, one last lesson: a wild Pokémon has wandered out of the Rift onto Route 1. Weaken it, then throw a ball to catch it!']],
  async()=>{const w=await makeMon(16,3);startBattle({wild:true,queue:[w],onWin:()=>{S.ch++;persist();preloadSprites();renderAll();nav(0);log2('Chapter 1 complete! The Story tab has your next chapter.')},onLose:()=>{healTeam();S.ch++;renderAll();log2('It got away — but you learned the basics! Chapter 1 complete.')}})})}
 
-/* ============ PvP MATCHMAKING (UPDATED) ============ */
+/* ============ PvP MATCHMAKING ============ */
 async function startPvP(){
     if(!S.team.some(m=>m.hp>0)) return sysAlert('Your team is fainted! Heal at the Center first.', 'PvP Error');
     log2('Searching for opponents...');
@@ -1827,7 +1830,6 @@ async function startPvP(){
     const launchBotMatch = async (msg) => {
         bLog.innerHTML = msg;
         setTimeout(async()=>{
-            Math.seed = Date.now();
             const names = ['Ash', 'Gary', 'Dawn', 'Cynthia', 'Leon', 'Red', 'Blue', 'Leaf', 'Ethan', 'Lyra', 'Silver', 'Brendan', 'May', 'Wally', 'Steven', 'Lucas', 'Barry', 'Hilbert', 'Hilda', 'Cheren', 'Bianca', 'N', 'Nate', 'Rosa', 'Hugh', 'Calem', 'Serena', 'Elio', 'Selene', 'Hau', 'Gladion', 'Victor', 'Gloria', 'Hop', 'Marnie', 'Florian', 'Juliana', 'Nemona', 'Arven', 'Penny'];
             const rName = names[Math.floor(Math.random()*names.length)];
             bLog.innerHTML = `Match found! Opponent: <b style="color:#fff">${rName}</b> (Elo: ${S.elo + Math.floor(Math.random()*40-20)})`;
@@ -1856,13 +1858,12 @@ async function startPvP(){
                 enemyTeam.push(emon); 
             }
 
-            console.log("DEBUG: Starting Bot Match - Forcing isRealPvP to FALSE");
             startBattle({
                 wild: false, 
                 trainer: [rName], 
                 queue: enemyTeam, 
                 isPvP: true, 
-                isRealPvP: false, // <--- This forces Bot Mode
+                isRealPvP: false, 
                 botRank: rank, 
                 botPots: botPots
             });
@@ -1874,7 +1875,7 @@ async function startPvP(){
         socket.emit('joinQueue', S);
         window.pvpFallbackTimer = setTimeout(() => {
             socket.emit('leaveQueue'); 
-            launchBotMatch('No players found. Fighting simulated bot...');
+            launchBotMatch('No players found. Fighting strong opponents...');
         }, 3000); 
         return;
     }
@@ -1882,19 +1883,11 @@ async function startPvP(){
 }
 
 /* ============ BATTLE ENGINE ============ */
-
+let B=null;
 function startBattle(cfg){
-    // Force complete cleanup
-    B = null; 
-    
-    // Ensure Bot battles don't have a Room ID
-    if (!cfg.isRealPvP) cfg.roomId = null;
-
     B = { ...cfg, pi: 0, enemy: cfg.queue.shift(), lock: false };
-    
     if(!S.team.some(m=>m.hp>0)) return log2('Your whole team has fainted! Visit the Rift Center first.');
     while(S.team[B.pi].hp<=0) B.pi++;
-    
     document.getElementById('battle').classList.remove('hidden');
     bmsg(cfg.wild ? `A wild <b style="color:#38bdf8">${B.enemy.name}</b> (Lv ${B.enemy.lvl}) appeared!` : `${cfg.trainer[0]} sent out <b style="color:#f87171">${B.enemy.name}</b> (Lv ${B.enemy.lvl})!`);
     drawB();
@@ -1941,23 +1934,24 @@ function useMove(i){
     B.lock = true;
     const p = S.team[B.pi], e = B.enemy, mv = p.moves[i];
     const r = dmg(p,e,mv);
+    let sashMsg = '';
+    
+    if(e.item === 'focus_sash' && e.hp === e.maxhp && r.v >= e.hp) {
+        r.v = e.hp - 1; e.item = null; sashMsg = ` <br><b style="color:#facc15">Enemy ${e.name} hung on using its Focus Sash!</b>`;
+    }
     
     e.hp -= r.v;
     let effTxt = r.e>1?'<span style="color:#4ade80">It\'s super effective!</span>':r.e===0?'<span style="color:#94a3b8">It had no effect...</span>':r.e<1?'<span style="color:#f87171">Not very effective...</span>':'';
-    let m=`<b style="color:#38bdf8">${p.name}</b> used <b>${mv.n}</b>! ${effTxt} (${r.v} dmg)`;
+    let m=`<b style="color:#38bdf8">${p.name}</b> used <b>${mv.n}</b>! ${effTxt} (${r.v} dmg)${sashMsg}`;
     
     drawB();
     
-    // THE FIX: If there is no RoomID, it is a Bot match. DO NOT WAIT.
-    if(!B.roomId) {
-        if(e.hp <= 0) { enemyFaint(m); return; }
-        bmsg(m);
-        setTimeout(() => enemyTurn(m), 900);
-    } else {
-        // Only wait if there is a RoomID (Real Online Match)
-        if(socket) socket.emit('playerAction', {room: B.roomId, type: 'move', move: mv.n, damage: r.v});
-        bmsg(m + "<br><i style='color:#94a3b8;font-size:0.9rem;'>Waiting for opponent...</i>");
-    }
+    if(B.isRealPvP && socket) socket.emit('playerAction', {room: B.roomId, type: 'move', move: mv.n, damage: r.v});
+    if(e.hp<=0) return enemyFaint(m);
+    bmsg(m);
+    
+    if(!B.isRealPvP) setTimeout(()=>enemyTurn(m),900); 
+    else bmsg(m+"<br><i style='color:#94a3b8;font-size:0.9rem;'>Waiting for opponent...</i>");
 }
 
 function enemyTurn(prev){const p=S.team[B.pi],e=B.enemy;
