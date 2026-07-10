@@ -1820,61 +1820,68 @@ async function pickStarter(id){S.starter=id;S.dex[id]=1;S.team=[await makeMon(id
 
 /* ============ PvP MATCHMAKING ============ */
 async function startPvP(){
- if(!S.team.some(m=>m.hp>0)) return sysAlert('Your team is fainted! Heal at the Center first.', 'PvP Error');
- log2('Searching for opponents in your Elo bracket...');
- document.getElementById('battle').classList.remove('hidden');
+    if(!S.team.some(m=>m.hp>0)) return sysAlert('Your team is fainted! Heal at the Center first.', 'PvP Error');
+    log2('Searching for opponents...');
+    document.getElementById('battle').classList.remove('hidden');
 
- const launchBotMatch = async (msg) => {
-  bLog.innerHTML = msg;
-  setTimeout(async()=>{
-   const names = ['Ash', 'Gary', 'Dawn', 'Cynthia', 'Leon', 'Red', 'Blue', 'Leaf', 'Ethan', 'Lyra', 'Silver', 'Brendan', 'May', 'Wally', 'Steven', 'Lucas', 'Barry', 'Hilbert', 'Hilda', 'Cheren', 'Bianca', 'N', 'Nate', 'Rosa', 'Hugh', 'Calem', 'Serena', 'Elio', 'Selene', 'Hau', 'Gladion', 'Victor', 'Gloria', 'Hop', 'Marnie', 'Florian', 'Juliana', 'Nemona', 'Arven', 'Penny'];
-   const rName = names[Math.floor(Math.random()*names.length)];
-   bLog.innerHTML = `Match found! Opponent: <b style="color:#fff">${rName}</b> (Elo: ${S.elo + Math.floor(Math.random()*40-20)})`;
+    const launchBotMatch = async (msg) => {
+        bLog.innerHTML = msg;
+        setTimeout(async()=>{
+            const names = ['Ash', 'Gary', 'Dawn', 'Cynthia', 'Leon', 'Red', 'Blue', 'Leaf', 'Ethan', 'Lyra', 'Silver', 'Brendan', 'May', 'Wally', 'Steven', 'Lucas', 'Barry', 'Hilbert', 'Hilda', 'Cheren', 'Bianca', 'N', 'Nate', 'Rosa', 'Hugh', 'Calem', 'Serena', 'Elio', 'Selene', 'Hau', 'Gladion', 'Victor', 'Gloria', 'Hop', 'Marnie', 'Florian', 'Juliana', 'Nemona', 'Arven', 'Penny'];
+            const rName = names[Math.floor(Math.random()*names.length)];
+            bLog.innerHTML = `Match found! Opponent: <b style="color:#fff">${rName}</b> (Elo: ${S.elo + Math.floor(Math.random()*40-20)})`;
 
-   const rank = S.elo >= 1800 ? 'Master' : S.elo >= 1500 ? 'Gold' : S.elo >= 1200 ? 'Silver' : 'Bronze';
-   const botPots = rank === 'Master' ? 2 : 0;
-   
-   const maxLvl = Math.max(5, ...S.team.map(m=>m.lvl));
-   const playerHasRebirth = S.team.some(m => m.rebirth || m.lvl > 100);
-   const diff = rank === 'Master' ? 3 : rank === 'Gold' ? 2 : rank === 'Silver' ? 1 : 0;
-   const botLvlBase = maxLvl + diff;
-   
-   const enemyTeam = [];
-   
-   for(let i=0; i<3; i++){ 
-    let eid = Math.floor(Math.random()*150)+1; 
-    let finalBotLvl = botLvlBase + (i===2?2:0);
-    if (!playerHasRebirth) finalBotLvl = Math.min(100, finalBotLvl);
+            const rank = S.elo >= 1800 ? 'Master' : S.elo >= 1500 ? 'Gold' : S.elo >= 1200 ? 'Silver' : 'Bronze';
+            const botPots = rank === 'Master' ? 2 : 0;
+            
+            const maxLvl = Math.max(5, ...S.team.map(m=>m.lvl));
+            const playerHasRebirth = S.team.some(m => m.rebirth || m.lvl > 100);
+            const diff = rank === 'Master' ? 3 : rank === 'Gold' ? 2 : rank === 'Silver' ? 1 : 0;
+            const botLvlBase = maxLvl + diff;
+            
+            const enemyTeam = [];
+            for(let i=0; i<3; i++){ 
+                let eid = Math.floor(Math.random()*150)+1; 
+                let finalBotLvl = botLvlBase + (i===2?2:0);
+                if (!playerHasRebirth) finalBotLvl = Math.min(100, finalBotLvl);
+                
+                if (rank === 'Master' && i === 2) {
+                    eid = RESTRICTED[Math.floor(Math.random() * RESTRICTED.length)];
+                } else if (finalBotLvl >= 30) {
+                    eid = STRONG_BOT_MONS[Math.floor(Math.random() * STRONG_BOT_MONS.length)];
+                } else {
+                    while(EVO[eid] && finalBotLvl >= EVO[eid][0]) { eid = EVO[eid][1]; }
+                }
+                
+                let emon = await makeMon(eid, finalBotLvl, false, true); 
+                if(rank === 'Gold') emon.item = 'leftovers';
+                if(rank === 'Master' && i === 2) emon.item = 'focus_sash';
+                if(rank === 'Master' && i < 2) emon.item = 'leftovers';
+                enemyTeam.push(emon); 
+            }
+
+            startBattle({
+                wild: false, 
+                trainer: [rName], 
+                queue: enemyTeam, 
+                isPvP: true, 
+                isRealPvP: false, 
+                botRank: rank, 
+                botPots: botPots
+            });
+        }, 1000);
+    };
     
-    if (rank === 'Master' && i === 2) {
-        eid = RESTRICTED[Math.floor(Math.random() * RESTRICTED.length)];
-    } else if (finalBotLvl >= 30) {
-        eid = STRONG_BOT_MONS[Math.floor(Math.random() * STRONG_BOT_MONS.length)];
-    } else {
-        while(EVO[eid] && finalBotLvl >= EVO[eid][0]) { eid = EVO[eid][1]; }
+    if(socket && socket.connected) {
+        bLog.innerHTML = 'Connecting to real multiplayer matchmaking...';
+        socket.emit('joinQueue', S);
+        window.pvpFallbackTimer = setTimeout(() => {
+            socket.emit('leaveQueue'); 
+            launchBotMatch('No players found. Fighting Strong supports...');
+        }, 3000); 
+        return;
     }
-    
-    let emon = await makeMon(eid, finalBotLvl, false, true); 
-    if(rank === 'Gold') emon.item = 'leftovers';
-    if(rank === 'Master' && i === 2) emon.item = 'focus_sash';
-    if(rank === 'Master' && i < 2) emon.item = 'leftovers';
-    enemyTeam.push(emon); 
-   }
-
-   setTimeout(()=>{ startBattle({wild:false, trainer:[rName], queue:enemyTeam, isPvP:true, botRank:rank, botPots:botPots}); }, 1500);
-  }, 2000);
- };
- 
- if(socket && socket.connected) {
-    bLog.innerHTML = 'Connecting to real multiplayer matchmaking...<br><i style="color:#38bdf8;font-size:0.9rem;">Waiting for another player to join queue...</i>';
-    socket.emit('joinQueue', S);
-    window.pvpFallbackTimer = setTimeout(() => {
-        socket.emit('leaveQueue'); 
-        launchBotMatch('No players found. Fighting simulated bot...<br><i style="color:#94a3b8;font-size:0.9rem;">Estimated wait: 2s</i>');
-    }, 7000); 
-    return;
- }
- launchBotMatch('Match-making started...<br><i style="color:#94a3b8;font-size:0.9rem;">Estimated wait: 2s</i>');
+    launchBotMatch('Match-making started...');
 }
 
 /* ============ BATTLE ENGINE ============ */
