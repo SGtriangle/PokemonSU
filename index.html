@@ -1818,7 +1818,7 @@ async function pickStarter(id){S.starter=id;S.dex[id]=1;S.team=[await makeMon(id
  showDlg([[P_ALDER,'A fine choice! Here — take 10 Poké Balls and some potions. Now, one last lesson: a wild Pokémon has wandered out of the Rift onto Route 1. Weaken it, then throw a ball to catch it!']],
  async()=>{const w=await makeMon(16,3);startBattle({wild:true,queue:[w],onWin:()=>{S.ch++;persist();preloadSprites();renderAll();nav(0);log2('Chapter 1 complete! The Story tab has your next chapter.')},onLose:()=>{healTeam();S.ch++;renderAll();log2('It got away — but you learned the basics! Chapter 1 complete.')}})})}
 
-/* ============ PvP MATCHMAKING ============ */
+/* ============ PvP MATCHMAKING (UPDATED) ============ */
 async function startPvP(){
     if(!S.team.some(m=>m.hp>0)) return sysAlert('Your team is fainted! Heal at the Center first.', 'PvP Error');
     log2('Searching for opponents...');
@@ -1833,25 +1833,20 @@ async function startPvP(){
 
             const rank = S.elo >= 1800 ? 'Master' : S.elo >= 1500 ? 'Gold' : S.elo >= 1200 ? 'Silver' : 'Bronze';
             const botPots = rank === 'Master' ? 2 : 0;
-            
             const maxLvl = Math.max(5, ...S.team.map(m=>m.lvl));
             const playerHasRebirth = S.team.some(m => m.rebirth || m.lvl > 100);
             const diff = rank === 'Master' ? 3 : rank === 'Gold' ? 2 : rank === 'Silver' ? 1 : 0;
             const botLvlBase = maxLvl + diff;
-            
             const enemyTeam = [];
+            
             for(let i=0; i<3; i++){ 
                 let eid = Math.floor(Math.random()*150)+1; 
-                let finalBotLvl = botLvlBase + (i===2?2:0);
+                let finalBotLvl = Math.max(5, botLvlBase + (i===2?2:0));
                 if (!playerHasRebirth) finalBotLvl = Math.min(100, finalBotLvl);
                 
-                if (rank === 'Master' && i === 2) {
-                    eid = RESTRICTED[Math.floor(Math.random() * RESTRICTED.length)];
-                } else if (finalBotLvl >= 30) {
-                    eid = STRONG_BOT_MONS[Math.floor(Math.random() * STRONG_BOT_MONS.length)];
-                } else {
-                    while(EVO[eid] && finalBotLvl >= EVO[eid][0]) { eid = EVO[eid][1]; }
-                }
+                if (rank === 'Master' && i === 2) eid = RESTRICTED[Math.floor(Math.random() * RESTRICTED.length)];
+                else if (finalBotLvl >= 30) eid = STRONG_BOT_MONS[Math.floor(Math.random() * STRONG_BOT_MONS.length)];
+                else { while(EVO[eid] && finalBotLvl >= EVO[eid][0]) { eid = EVO[eid][1]; } }
                 
                 let emon = await makeMon(eid, finalBotLvl, false, true); 
                 if(rank === 'Gold') emon.item = 'leftovers';
@@ -1860,12 +1855,13 @@ async function startPvP(){
                 enemyTeam.push(emon); 
             }
 
+            console.log("DEBUG: Starting Bot Match - Forcing isRealPvP to FALSE");
             startBattle({
                 wild: false, 
                 trainer: [rName], 
                 queue: enemyTeam, 
                 isPvP: true, 
-                isRealPvP: false, 
+                isRealPvP: false, // <--- This forces Bot Mode
                 botRank: rank, 
                 botPots: botPots
             });
@@ -1877,7 +1873,7 @@ async function startPvP(){
         socket.emit('joinQueue', S);
         window.pvpFallbackTimer = setTimeout(() => {
             socket.emit('leaveQueue'); 
-            launchBotMatch('No players found. Fighting Strong supports...');
+            launchBotMatch('No players found. Fighting simulated bot...');
         }, 3000); 
         return;
     }
