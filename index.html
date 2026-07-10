@@ -1883,21 +1883,17 @@ async function startPvP(){
 /* ============ BATTLE ENGINE ============ */
 let B=null;
 function startBattle(cfg){
-    // 1. HARD RESET: Clear the battle variable completely
-    B = null; 
-    
-    // 2. FORCE BOT MODE: If it's not a real network match, ensure no ID exists
-    if (!cfg.roomId) {
-        cfg.isRealPvP = false;
+    // FORCE CLEANUP: Even if a roomId is passed in, if it's a bot match, we null it out
+    if (!cfg.isRealPvP) {
+        cfg.roomId = null;
     }
 
-    // 3. Initialize fresh battle state
     B = { ...cfg, pi: 0, enemy: cfg.queue.shift(), lock: false };
     
-    // 4. Verification Debug (Check your console to see if roomId is actually empty)
-    console.log("DEBUG: Starting Battle. IsRealPvP:", B.isRealPvP, "RoomID:", B.roomId);
+    // DEBUG: This will show in your F12 console
+    console.log("DEBUG: Battle Started. RoomID is:", B.roomId, "isRealPvP:", B.isRealPvP);
 
-    if(!S.team.some(m=>m.hp>0)) return log2('Your whole team has fainted! Visit the Rift Center first.');
+    if(!S.team.some(m=>m.hp>0)) return log2('Your whole team has fainted! Heal at the Center first.');
     while(S.team[B.pi].hp<=0) B.pi++;
     
     document.getElementById('battle').classList.remove('hidden');
@@ -1946,34 +1942,29 @@ function useMove(i){
     B.lock = true;
     const p = S.team[B.pi], e = B.enemy, mv = p.moves[i];
     const r = dmg(p,e,mv);
-    let sashMsg = '';
-    
-    // Check if enemy has sash
-    if(e.item === 'focus_sash' && e.hp === e.maxhp && r.v >= e.hp) {
-        r.v = e.hp - 1; e.item = null; 
-        sashMsg = ` <br><b style="color:#facc15">Enemy ${e.name} hung on using its Focus Sash!</b>`;
-    }
     
     e.hp -= r.v;
     let effTxt = r.e>1?'<span style="color:#4ade80">It\'s super effective!</span>':r.e===0?'<span style="color:#94a3b8">It had no effect...</span>':r.e<1?'<span style="color:#f87171">Not very effective...</span>':'';
-    let m=`<b style="color:#38bdf8">${p.name}</b> used <b>${mv.n}</b>! ${effTxt} (${r.v} dmg)${sashMsg}`;
+    let m=`<b style="color:#38bdf8">${p.name}</b> used <b>${mv.n}</b>! ${effTxt} (${r.v} dmg)`;
     
     drawB();
     
-    // NETWORK SYNC: Only send if we have a roomId
-    if(B.roomId && socket) {
-        socket.emit('playerAction', {room: B.roomId, type: 'move', move: mv.n, damage: r.v});
+    // DEBUG: Look at this in your Console
+    console.log("DEBUG: useMove triggered. RoomID:", B.roomId, "isRealPvP:", B.isRealPvP);
+
+    if(e.hp <= 0) {
+        enemyFaint(m);
+        return;
     }
 
-    if(e.hp<=0) return enemyFaint(m);
-    bmsg(m);
-
-    // BOT LOGIC: If there is no roomId, it is a bot battle. Trigger enemyTurn immediately.
-    if(!B.roomId) {
+    // BOT LOGIC: If isRealPvP is false, NEVER wait
+    if(!B.isRealPvP) {
+        bmsg(m);
         setTimeout(() => enemyTurn(m), 900);
     } else {
-        // REAL PVP LOGIC: If there IS a roomId, wait for the server
+        // Only wait if it's actually real PvP
         bmsg(m + "<br><i style='color:#94a3b8;font-size:0.9rem;'>Waiting for opponent...</i>");
+        if(B.roomId && socket) socket.emit('playerAction', {room: B.roomId, type: 'move', move: mv.n, damage: r.v});
     }
 }
 
