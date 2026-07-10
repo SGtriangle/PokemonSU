@@ -1748,7 +1748,7 @@ function renderSupport() {
          <p style="font-size:1rem; color:#cbd5e1; margin-bottom:24px; max-width: 500px; margin-left: auto; margin-right: auto; line-height: 1.6;">
              Building and running PokemonSU takes time and servers. If you enjoy the game, consider supporting its development!
          </p>
-         <button class="btn" id="qrToggleBtn" style="max-width: 260px; font-size: 1.1rem; padding: 12px; margin-bottom: 20px; background: linear-gradient(135deg, #ec4899, #f43f5e); box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);" onclick="toggleQR()">✨ Show QR Code</button>
+         <button class="btn" id="qrToggleBtn" style="max-width: 260px; font-size: 1.1rem; padding: 12px; margin-bottom: 20px; background: linear-gradient(135deg, #ec4899, #f43f5e); box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);" onclick="toggleQR()">✨ Donate</button>
          
          <div id="qrCodeContainer" class="hidden" style="display:flex; flex-wrap:wrap; gap:24px; justify-content:center; align-items:center; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 16px; border: 1px solid rgba(236,72,153,0.2); animation: popIn 0.3s ease-out;">
              <img src="pay_QR.png" alt="Donate QR" style="width:160px; height:160px; border-radius:12px; border:3px solid #ec4899; box-shadow: 0 8px 25px rgba(236, 72, 153, 0.3);">
@@ -1774,7 +1774,7 @@ function toggleQR() {
         btn.style.boxShadow = '0 4px 15px rgba(0,0,0,0.4)';
     } else {
         el.classList.add('hidden');
-        btn.innerHTML = '✨ Show QR Code';
+        btn.innerHTML = '✨ Donate';
         btn.style.background = 'linear-gradient(135deg, #ec4899, #f43f5e)';
         btn.style.boxShadow = '0 4px 15px rgba(236, 72, 153, 0.4)';
     }
