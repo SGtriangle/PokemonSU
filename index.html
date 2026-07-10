@@ -49,7 +49,7 @@ body {
 .wrap { max-width:960px; margin:0 auto; padding:12px; } /* Reduced from 16px */
 
 /* ===== GLASSMORPHISM PANELS & CARDS ===== */
-.panel, .card, .dbox, .blog, .binfo, .hud, .zone, .mon {
+.panel, .card, .dbox, .blog, .binfo, .zone, .mon {
     background: rgba(30, 41, 59, 0.6);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -73,7 +73,47 @@ body {
 
 .mon { padding: 10px; margin-bottom: 10px; position: relative; overflow: hidden; }
 .mon:hover { background: rgba(255, 255, 255, 0.05); transform: translateY(-4px) scale(1.02); z-index: 10; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
-.hud { padding: 10px 16px; margin-bottom: 14px; border-radius: 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px;}
+
+/* NEW: Premium RPG HUD Styling */
+.hud { 
+    background: rgba(15, 23, 42, 0.85); 
+    backdrop-filter: blur(16px); 
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(56, 189, 248, 0.3); 
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 -2px 10px rgba(56, 189, 248, 0.1); 
+    padding: 12px 20px; 
+    display: flex; 
+    flex-wrap: wrap; 
+    align-items: center; 
+    justify-content: space-between; 
+    gap: 16px;
+    position: sticky; /* Keeps HUD at the top while scrolling */
+    top: 0;
+    z-index: 40; /* Below modals, above content */
+    margin: -12px -12px 16px -12px; /* Pulls it flush with the edges of the wrap */
+    border-radius: 0 0 16px 16px;
+}
+
+/* Restyled Logo for HUD */
+.hud .logo { font-family: 'VT323', monospace; font-size:2.2rem; font-weight:400; background: linear-gradient(180deg, #ffcb05 30%, #e6a800 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(2px 2px 0px #2a75bb) drop-shadow(-1px -1px 0px #2a75bb); letter-spacing: 1px; line-height: 0.8; margin-right: 12px; display: flex; align-items: center;}
+.hud .logo img { width: 20px; height: 20px; margin-left: 6px; animation: float 3s infinite;}
+
+.hud-info { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; flex: 1; }
+
+.hud-stat { 
+    display: flex; align-items: center; gap: 8px; 
+    background: rgba(0,0,0,0.4); padding: 6px 12px; border-radius: 20px; 
+    border: 1px solid rgba(255,255,255,0.05); font-size: 0.95rem; font-weight: 600;
+}
+.hud-stat.trainer { color: #f8fafc; border-color: rgba(56, 189, 248, 0.2); }
+.hud-stat.trainer span { color: #38bdf8; display:flex; align-items:center; }
+.hud-stat.money { color: #4ade80; border-color: rgba(74, 222, 128, 0.2); }
+
+.hud-badges { display: flex; align-items: center; gap: 6px; flex-wrap: wrap;}
+.hud-badges .lbl { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-right: 4px; }
+.hud-badges .badge { margin: 0; border: none; background: linear-gradient(135deg, rgba(255,213,74,0.1), rgba(245,158,11,0.2)); border: 1px solid rgba(255,213,74,0.3); box-shadow: 0 2px 8px rgba(245,158,11,0.2);}
+
+.hud-actions { display: flex; gap: 8px; }
 
 /* HEADINGS - Restored to Deep Yellow with Glow */
 .panel h3, .card h2 { color: #ffd54a; margin-bottom: 8px; font-weight: 800; font-size: 1.2rem; letter-spacing: 0.5px; text-shadow: 0 2px 6px rgba(255, 213, 74, 0.3);}
@@ -207,7 +247,7 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     from { opacity: 0; transform: scale(0.98) translateY(10px); } 
     to { opacity: 1; transform: scale(1) translateY(0); } 
 }
-#scr0, #scr1, #scr2, #scr3, #scr4, #scr5, #scr6 { animation: popIn 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+#scr0, #scr1, #scr2, #scr3, #scr4, #scr5, #scr6, #scr7 { animation: popIn 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 
 .nav { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; }
 .zone small { color:#94a3b8; display:block; font-size: .8rem; margin-top: 4px; }
@@ -224,7 +264,10 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 }
 .rebirth-aura { animation: rebirthPulse 1.5s infinite alternate !important; z-index: 10; }
 
-/* DYNAMIC TYPE COLORS */
+/* RIFT/DELTA VISUAL FILTER */
+.rift-sprite { filter: hue-rotate(150deg) saturate(2) contrast(1.2) drop-shadow(0 0 15px rgba(168, 85, 247, 0.8)) !important; }
+
+/* DYNAMIC TYPE COLORS (Assigned via JS HTML Template) */
 .type-normal { border-bottom: 3px solid #9ca3af; box-shadow: 0 4px 10px rgba(156, 163, 175, 0.05); }
 .type-fire { border-bottom: 3px solid #ef4444; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.1); }
 .type-water { border-bottom: 3px solid #3b82f6; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1); }
@@ -262,6 +305,12 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 .shop-card .owned { color: #94a3b8; font-size: 0.85rem; margin: 4px 0 12px; }
 .shop-card .price { color: #ffd54a; font-weight: 800; font-size: 1.3rem; margin-bottom: 16px; text-shadow: 0 2px 4px rgba(255, 213, 74, 0.2); }
 .shop-card .actions { display: flex; gap: 8px; flex-direction: column; align-items: center; justify-content: center; margin-top: auto; }
+
+/* EVENT UI SPECIFICS */
+.event-card { background: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(88,28,135,0.4)); border: 1px solid #a855f7; border-radius: 16px; padding: 20px; text-align: center; box-shadow: 0 10px 30px rgba(168,85,247,0.2); position: relative; overflow: hidden; display: flex; flex-direction: column;}
+.event-card::before { content: 'LIMITED TIME'; position: absolute; top: 15px; left: -30px; background: #ef4444; color: #fff; font-size: 0.7rem; font-weight: 800; padding: 4px 30px; transform: rotate(-45deg); z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+.event-timer { font-family: 'VT323', monospace; font-size: 1.8rem; color: #facc15; text-shadow: 0 0 10px rgba(250, 204, 21, 0.5); margin-bottom: 16px; }
+
 
 /* NEW: Sleek Neon Quantity Input Wrappers */
 .q-wrap { 
@@ -528,10 +577,39 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     
     .bacts button { padding: 6px; font-size: 0.85rem; }
     .blog { min-height: 48px; padding: 10px; font-size: 0.85rem; }
+    
+    /* HUD Compact adjustments */
+    .hud { padding: 8px 12px; gap: 10px; margin: -12px -12px 12px -12px; }
+    .hud .logo { font-size: 1.8rem; }
+    .hud-stat { font-size: 0.85rem; padding: 4px 8px; }
 }
 </style>
 </head>
 <body>
+
+<div id="eventModal" class="modal-overlay hidden" style="z-index:1001;">
+    <div class="card" style="width:100%; max-width: 450px; background: rgba(15, 23, 42, 0.98); border: 1px solid #a855f7; box-shadow: 0 0 40px rgba(168,85,247,0.3); padding: 24px;">
+        <button class="gbtn" style="position:absolute; top: 12px; right: 12px; border-radius:50%; width:32px; height:32px; padding:0; display:flex; align-items:center; justify-content:center; color:#f87171; border-color:rgba(248,113,113,0.3); font-weight:bold;" onclick="closeEventModal()">✕</button>
+        <h2 id="evPayTitle" style="color: #a855f7; margin-bottom: 4px;">Secure Entity</h2>
+        <p style="color:#94a3b8; font-size:0.85rem; margin-bottom: 20px;">Complete payment via UPI to secure this limited Rift Pokémon.</p>
+        
+        <div style="background: rgba(0,0,0,0.4); border-radius: 12px; padding: 16px; margin-bottom: 16px; display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:center;">
+            <img src="GooglePay_QR.png" alt="Donate QR" style="width:120px; height:120px; border-radius:8px; border:2px solid #a855f7;">
+            <div style="text-align:left;">
+                <div style="color:#cbd5e1; font-size:0.8rem;">Amount Due:</div>
+                <div id="evPayAmt" style="font-size: 1.8rem; font-weight: 900; color: #ffd54a; margin-bottom: 8px;">₹0</div>
+                <div style="background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 6px; color:#38bdf8; font-family: 'VT323', monospace; font-size:1.2rem;">ghsubhodeep06@okaxis</div>
+            </div>
+        </div>
+
+        <div class="field">
+            <label style="color:#cbd5e1;">Transaction ID / UTR Proof</label>
+            <input type="text" id="evUtrInput" placeholder="Enter 12-digit UTR number" style="font-family: monospace; font-size: 1.1rem; text-align:center; letter-spacing: 2px;">
+        </div>
+        
+        <button class="btn" style="background: linear-gradient(135deg, #a855f7, #d946ef);" onclick="submitEventPayment()">Submit Payment Proof</button>
+    </div>
+</div>
 
 <div id="rareAlert" class="modal-overlay hidden" style="z-index: 1000; flex-direction: column; background: rgba(5, 8, 16, 0.95); backdrop-filter: blur(15px);">
   <div id="rareTitle" style="font-size: 2rem; font-weight: 900; text-align: center; text-transform: uppercase; letter-spacing: 2px; animation: rarePop 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);"></div>
@@ -580,7 +658,10 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
         <div class="field"><label>👤 Trainer Name</label><input id="liUser" maxlength="16" placeholder="Enter trainer name"></div>
         <div class="field"><label>🔒 Password</label><input id="liPass" type="password" placeholder="Enter password"></div>
         <button class="btn" onclick="doLogin()">Login to Game</button>
-        <div class="links"><a onclick="authTab(1)">🎯 Create New Trainer Account</a><a onclick="sysAlert('The Game Guide: pick a starter, follow the Story tab, explore Rift zones to catch Pokémon, and defeat all Wardens!', 'Game Guide')">📖 View Game Guide</a></div>
+        <div class="links">
+            <a onclick="authTab(1)">🎯 Create New Trainer Account</a>
+            <a onclick="sysAlert('<div style=\'text-align:left; line-height:1.6;\'><b style=\'color:#38bdf8\'>1. Explore:</b> Uncover new Rift zones by playing the Story.<br><b style=\'color:#4ade80\'>2. Catch &amp; Battle:</b> Level up and capture rare shiny/legendary Pokémon.<br><b style=\'color:#d946ef\'>3. Rebirth:</b> Push past Level 100 by awakening your fully leveled Pokémon using a Rebirth Stone.<br><b style=\'color:#ffd54a\'>4. PvP:</b> Queue up to climb the Global Leaderboards!</div>', '📖 Official Game Guide')">📖 View Game Guide</a>
+        </div>
       </div>
       
       <div class="card hidden" id="regCard" style="margin:0; width:100%">
@@ -588,6 +669,18 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
         <div class="err" id="regErr"></div>
         <div class="field"><label>👤 Trainer Name</label><input id="rgUser" maxlength="16" placeholder="Choose a trainer name"></div>
         <div class="field"><label>🔒 Password</label><input id="rgPass" type="password" placeholder="Choose a password"></div>
+        
+        <div class="field"><label>⚧ Trainer Gender</label>
+            <div style="display:flex; gap:10px;">
+                <label style="flex:1; display:flex; align-items:center; gap:8px; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; border:1px solid rgba(56,189,248,0.3); cursor:pointer;">
+                    <input type="radio" name="rgGen" value="M" checked style="width:auto; padding:0; margin:0; box-shadow:none;"> 👦 Male
+                </label>
+                <label style="flex:1; display:flex; align-items:center; gap:8px; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; border:1px solid rgba(248,113,113,0.3); cursor:pointer;">
+                    <input type="radio" name="rgGen" value="F" style="width:auto; padding:0; margin:0; box-shadow:none;"> 👧 Female
+                </label>
+            </div>
+        </div>
+
         <button class="btn" onclick="doRegister()">Create Trainer Account</button>
         <div class="links"><a onclick="authTab(0)">⚡ Already have an account? Login here</a></div>
       </div>
@@ -601,13 +694,23 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 <div id="pgGame" class="hidden">
 <div class="wrap">
   <div class="hud">
-    <div>👤 <b id="hudName"></b> &nbsp; <span style="color:#64748b">|</span> &nbsp; 💰 <b id="hudMoney" style="color:#4ade80"></b></div>
-    <div id="hudBadges"></div>
-    <div style="display:flex; gap:6px;">
-        <button class="sbtn" onclick="claimLoot()">🎁 Daily Loot</button> 
+    <div class="logo" style="margin:0;">PokemonSU <img src="https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/poke-ball.png" alt="Pokeball"></div>
+    
+    <div class="hud-info">
+        <div class="hud-stat trainer"><img id="hudTrainerIcn" src="" style="width:20px; height:20px; border-radius:50%; image-rendering:pixelated; margin-right:4px;"> <span><b id="hudName"></b></span></div>
+        <div class="hud-stat money">💰 <b id="hudMoney"></b></div>
+        <div class="hud-badges">
+            <span class="lbl">Badges</span>
+            <span id="hudBadges"></span>
+        </div>
+    </div>
+    
+    <div class="hud-actions">
+        <button class="sbtn" style="animation: pulseGlow 2s infinite alternate; box-shadow: 0 0 10px rgba(56,189,248,0.4);" onclick="claimLoot()">🎁 Daily Loot</button> 
         <button class="gbtn" onclick="logout()">Logout</button>
     </div>
   </div>
+  
   <div class="nav">
     <button id="nv0" class="on" onclick="nav(0)">📖 Story</button>
     <button id="nv1" onclick="nav(1)">🗺️ Explore</button>
@@ -616,9 +719,10 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     <button id="nv4" onclick="nav(4)">📦 Box / Dex</button>
     <button id="nv5" onclick="nav(5)">🏆 PvP Arena</button>
     <button id="nv6" onclick="nav(6)">❤️ Support</button>
+    <button id="nv7" onclick="nav(7)">🌟 Events</button>
   </div>
   <div id="msg" style="color:#4ade80;font-size:0.9rem;font-weight:600;min-height:20px;margin-bottom:8px;text-align:center;"></div>
-  <div id="scr0"></div><div id="scr1" class="hidden"></div><div id="scr2" class="hidden"></div><div id="scr3" class="hidden"></div><div id="scr4" class="hidden"></div><div id="scr5" class="hidden"></div><div id="scr6" class="hidden"></div>
+  <div id="scr0"></div><div id="scr1" class="hidden"></div><div id="scr2" class="hidden"></div><div id="scr3" class="hidden"></div><div id="scr4" class="hidden"></div><div id="scr5" class="hidden"></div><div id="scr6" class="hidden"></div><div id="scr7" class="hidden"></div>
 </div>
 </div>
 
@@ -659,7 +763,7 @@ function sysConfirm(msg, title='Confirm') {
     return new Promise(res => {
         document.getElementById('sysModal').classList.remove('hidden');
         document.getElementById('sysTitle').textContent = title;
-        document.getElementById('sysMsg').textContent = msg;
+        document.getElementById('sysMsg').innerHTML = msg;
         document.getElementById('sysBtns').innerHTML = `<button class="btn" id="sysYes" style="margin:0; flex:1;">Yes</button><button class="gbtn" id="sysNo" style="margin:0; flex:1;">No</button>`;
         document.getElementById('sysYes').onclick = () => { document.getElementById('sysModal').classList.add('hidden'); res(true); };
         document.getElementById('sysNo').onclick = () => { document.getElementById('sysModal').classList.add('hidden'); res(false); };
@@ -669,7 +773,7 @@ function sysAlert(msg, title='System') {
     return new Promise(res => {
         document.getElementById('sysModal').classList.remove('hidden');
         document.getElementById('sysTitle').textContent = title;
-        document.getElementById('sysMsg').textContent = msg;
+        document.getElementById('sysMsg').innerHTML = msg;
         document.getElementById('sysBtns').innerHTML = `<button class="btn" id="sysOk" style="margin:0; min-width:100px;">Got it</button>`;
         document.getElementById('sysOk').onclick = () => { document.getElementById('sysModal').classList.add('hidden'); res(true); };
     });
@@ -687,6 +791,7 @@ function showRareAlert(title, color, mon, cb) {
     titleEl.style.textShadow = `0 0 15px ${color}`;
     
     imgEl.src = SPR(mon.id, mon.shiny);
+    imgEl.className = mon.isRift ? 'rift-sprite' : '';
     imgEl.style.color = color;
     glowEl.style.color = color;
     
@@ -716,7 +821,8 @@ function showMonInfo(c, i) {
     }).join('');
     
     const rb = m.rebirth ? '<span class="rebirth-star">🌟</span> ' : '';
-    const rba = m.rebirth ? 'rebirth-aura' : '';
+    let rba = m.rebirth ? 'rebirth-aura' : '';
+    if(m.isRift) rba += ' rift-sprite';
     
     let rbBtn = '';
     let hasStone = S.stones && S.stones.rebirth > 0;
@@ -992,18 +1098,19 @@ function alert2(m){const t=document.getElementById('loginErr');t.style.color='#3
 
 function doRegister(){
  const u=rgUser.value.trim(),p=rgPass.value;const e=document.getElementById('regErr');
+ const g=document.querySelector('input[name="rgGen"]:checked').value;
  if(u.length<3)return e.textContent='Trainer name must be 3+ characters.';
  if(p.length<3)return e.textContent='Password must be 3+ characters.';
  
  if(socket && socket.connected) {
-     socket.emit('register', {user: u, pass: p}, (res) => {
+     socket.emit('register', {user: u, pass: p, gender: g}, (res) => {
          if(res.error) return e.textContent = res.error;
-         ACC[u]={pass:p,save:null};persist();authTab(0);alert2('Account registered securely! Log in to begin.')
+         ACC[u]={pass:p, gender:g, save:null};persist();authTab(0);alert2('Account registered securely! Log in to begin.')
      });
      return;
  }
  if(ACC[u])return e.textContent='That trainer name is taken.';
- ACC[u]={pass:p,save:null};persist();authTab(0);alert2('Account created! Log in to begin.')
+ ACC[u]={pass:p, gender:g, save:null};persist();authTab(0);alert2('Account created! Log in to begin.')
 }
 
 function doLogin(){
@@ -1013,16 +1120,18 @@ function doLogin(){
      socket.emit('login', {user: u, pass: p}, (res) => {
          if(res.error) return e.textContent = res.error;
          e.style.color='#4ade80';e.textContent='Connecting to servers...';
-         setTimeout(()=>{S=res.save||newSave(u);ACC[u]={pass:p,save:S};startGame()},600);
+         let userGender = (res.save && res.save.gender) || (ACC[u] ? ACC[u].gender : 'M');
+         setTimeout(()=>{S=res.save||newSave(u, userGender); if(!S.gender) S.gender = userGender; ACC[u]={pass:p, gender:userGender, save:S};startGame()},600);
      });
      return;
  }
  if(!ACC[u]||ACC[u].pass!==p)return e.textContent='Invalid trainer name or password.';
  e.style.color='#4ade80';e.textContent='Logging you in...';
- setTimeout(()=>{S=ACC[u].save||newSave(u);if(S.stones===undefined)S.stones={rebirth:0};ACC[u].save=S;startGame()},600)
+ let userGender = ACC[u].gender || 'M';
+ setTimeout(()=>{S=ACC[u].save||newSave(u, userGender);if(!S.gender) S.gender = userGender; if(S.stones===undefined)S.stones={rebirth:0};ACC[u].save=S;startGame()},600)
 }
 
-function newSave(u){return{user:u,money:3000,elo:1200,balls:{poke:10,master:0},pots:{p:3,s:0},stones:{rebirth:0},badges:[],ch:0,starter:0,team:[],box:[],dex:{},lastLoot:'',shinyCharm:false}}
+function newSave(u, g='M'){return{user:u, gender:g, money:3000,elo:1200,balls:{poke:10,master:0},pots:{p:3,s:0},stones:{rebirth:0},badges:[],ch:0,starter:0,team:[],box:[],dex:{},lastLoot:'',shinyCharm:false}}
 function logout(){
  persist();S=null;
  document.getElementById('pgGame').classList.add('hidden');
@@ -1098,7 +1207,18 @@ function startGame(){
  if(S.stones === undefined) S.stones = {rebirth: 0};
  refreshHud();preloadSprites();nav(0);
 }
-function refreshHud(){hudName.textContent=S.user;hudMoney.textContent='₽'+S.money;hudBadges.innerHTML=S.badges.map(b=>`<span class="badge">🏅 ${b}</span>`).join('')||'<small style="color:#64748b">No badges yet</small>';persist()}
+function refreshHud(){
+ hudName.textContent=S.user;
+ hudMoney.textContent='₽'+S.money.toLocaleString();
+ hudBadges.innerHTML=S.badges.map(b=>`<span class="badge" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(14, 165, 233, 0.2)); border: 1px solid rgba(56, 189, 248, 0.3); color: #38bdf8; text-shadow: none;">🏅 ${b}</span>`).join('')||'<small style="color:#64748b">No badges yet</small>';
+ 
+ // Dynamic Trainer Avatar Update
+ const trnIcon = (S.gender === 'F') ? 'dawn' : 'red';
+ const hudIcon = document.getElementById('hudTrainerIcn');
+ if(hudIcon) hudIcon.src = TRN(trnIcon);
+
+ persist()
+}
 function log2(m){msg.textContent=m;setTimeout(()=>{if(msg.textContent===m)msg.textContent=''},4000)}
 function healTeam(){S.team.forEach(m=>{m.hp=m.maxhp});persist();renderAll()}
 
@@ -1113,7 +1233,7 @@ function claimLoot(){
 }
 
 function nav(i){
- for(let k=0;k<7;k++){
+ for(let k=0;k<8;k++){
   const btn = document.getElementById('nv'+k);
   const scr = document.getElementById('scr'+k);
   if(btn) btn.classList.toggle('on',k===i);
@@ -1122,6 +1242,7 @@ function nav(i){
  if(i===3) renderShop(); 
  if(i===5) fetchLeaderboard(); 
  if(i===6) renderSupport();
+ if(i===7) renderEvents();
  renderAll();
 }
 function hpCls(m){const r=m.hp/m.maxhp;return r>.5?'':r>.25?'mid':'low'}
@@ -1129,7 +1250,8 @@ function hpCls(m){const r=m.hp/m.maxhp;return r>.5?'':r>.25?'mid':'low'}
 /* INJECTED DYNAMIC TYPE CLASS FOR COLORED BORDERS & CLICKABLE MODAL WRAPPER */
 function monCard(m,extra='', c='', i=''){
     const rb = m.rebirth ? '<span class="rebirth-star">🌟</span> ' : '';
-    const rba = m.rebirth ? 'rebirth-aura' : '';
+    let rba = m.rebirth ? 'rebirth-aura' : '';
+    if(m.isRift) rba += ' rift-sprite';
     return`<div class="mon type-${m.types[0]}"><div style="cursor:pointer;" onclick="if('${c}')showMonInfo('${c}',${i})"><img src="${SPR(m.id,m.shiny)}" class="${rba}" onerror="this.src='${SPR(1)}'"><div class="nm">${rb}${m.name}</div><small>Lv ${m.lvl} · ${m.types.join('/')}</small><div class="hpbar"><i class="${hpCls(m)}" style="transform:scaleX(${Math.max(0,m.hp/m.maxhp)})"></i></div><small>${m.hp}/${m.maxhp} HP</small></div>${extra}</div>`
 }
 
@@ -1277,6 +1399,70 @@ function renderLB(players, isOffline = false) {
 
 const ICN = (n) => `<img src="https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/${n}.png" class="item-icn">`;
 
+/* ============ EVENTS TAB ============ */
+function renderEvents() {
+    let eh = `<div class="panel" style="border-color: rgba(168, 85, 247, 0.4); box-shadow: 0 0 25px rgba(168, 85, 247, 0.1);">
+        <div style="text-align:center; margin-bottom: 24px;">
+            <h3 style="color:#a855f7; font-size:1.8rem; text-shadow: 0 2px 8px rgba(168,85,247,0.4);">🌀 Temporal Rifts Detected</h3>
+            <p style="color:#cbd5e1; font-size:0.95rem;">Extremely powerful Delta & Rift variant Pokémon have slipped into our dimension. Secure them before the rift closes!</p>
+            <div class="event-timer" id="evTimer">Loading Temporal Data...</div>
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+    `;
+    
+    const events = [
+        {id: 445, name: "Delta Garchomp", price: 400, desc: "A terrifying predator corrupted by dark matter. Base Stats: +150, Unique Attacks.", c: "#a855f7"},
+        {id: 376, name: "Rift Metagross", price: 250, desc: "An artificial supercomputer overloaded with cosmic energy. Base Stats: +120.", c: "#38bdf8"}
+    ];
+
+    events.forEach(e => {
+        eh += `
+        <div class="event-card" style="border-color: ${e.c};">
+            <div style="height:120px; display:flex; align-items:center; justify-content:center; margin-bottom:12px;">
+                <img src="${SPR(e.id)}" class="rift-sprite" style="width:100px; height:100px; animation: float 2.5s ease-in-out infinite;">
+            </div>
+            <h4 style="color:${e.c}; font-size:1.4rem; font-weight:800; margin-bottom:4px; text-shadow: 0 0 8px ${e.c};">${e.name}</h4>
+            <p style="font-size:0.85rem; color:#94a3b8; margin-bottom:16px;">${e.desc}</p>
+            <div style="font-size:1.5rem; color:#fff; font-weight:900; margin-bottom:16px;">₹${e.price} <span style="font-size:0.8rem; color:#9ca3af; font-weight:400;">(Real Money)</span></div>
+            <button class="btn" style="background: linear-gradient(135deg, ${e.c}, #1e1b4b); box-shadow: 0 4px 15px rgba(0,0,0,0.5);" onclick="openEventModal('${e.name}', ${e.price})">Claim Dimensional Entity</button>
+        </div>`;
+    });
+
+    eh += `</div>
+        <p style="text-align:center; font-size:0.8rem; color:#64748b; margin-top:20px;">* Note: To prevent exploits, transactions are verified manually. Pokémon are injected into your Box within 24 hours of successful verification.</p>
+    </div>`;
+    
+    document.getElementById('scr7').innerHTML = eh;
+    
+    // Simulate Event Timer
+    let t = document.getElementById('evTimer');
+    if(t && !window.evInt) {
+        let d = 2, h = 14, m = 38, s = 59;
+        window.evInt = setInterval(()=>{
+            s--; if(s<0){s=59;m--;} if(m<0){m=59;h--;} if(h<0){h=23;d--;}
+            let el = document.getElementById('evTimer');
+            if(el) el.innerText = `Rift Closes In: ${d}d ${h}h ${m}m ${s}s`;
+        }, 1000);
+    }
+}
+
+function openEventModal(name, price) {
+    document.getElementById('payModal').classList.remove('hidden');
+    document.getElementById('evPayTitle').innerText = `Secure: ${name}`;
+    document.getElementById('evPayAmt').innerText = `₹${price}`;
+}
+function closeEventModal() {
+    document.getElementById('payModal').classList.add('hidden');
+}
+function submitEventPayment() {
+    let utr = document.getElementById('evUtrInput').value;
+    if(utr.length < 6) return sysAlert("Please enter a valid Transaction ID / UTR.", "Verification Error");
+    closeEventModal();
+    document.getElementById('evUtrInput').value = '';
+    sysAlert("Payment proof submitted! The Developer will manually verify the UTR. Your Rift Pokémon will be added to your Box within 24 hours to prevent exploits.", "Verification Pending ⏳");
+}
+
+
 /* ============ SHOP & QUANTITY WRAP-AROUND LOGIC ============ */
 function renderShop(){
  const maxPk = Math.max(1, Math.floor(S.money / 200));
@@ -1415,111 +1601,6 @@ function toggleQR() {
     }
 }
 
-function buy(c,k,p,n,id){
- let q = 1;
- if(id) { let el = document.getElementById(id); if(el) q = parseInt(el.value) || 1; }
- if(q < 1) q = 1;
- let cost = p * q;
- if(S.money<cost) return sysAlert(`Not enough money! You need ₽${cost} to buy ${q}x ${n}.`, 'Shop Error');
- S.money-=cost;
- S[c][k]+=q;
- log2(`Bought ${q}x ${n}!`);
- persist();
- renderAll();
-}
-
-function buyCharm(){if(S.money<20000)return sysAlert('Not enough money! You need ₽20000.', 'Shop Error');if(S.shinyCharm)return log2('Already owned!');S.money-=20000;S.shinyCharm=true;log2(`Bought Shiny Charm! Shiny rate increased!`);persist();renderAll()}
-
-function lead(i){S.team.unshift(S.team.splice(i,1)[0]);renderAll()}
-function toBox(i){S.box.push(S.team.splice(i,1)[0]);renderAll()}
-function toTeam(i){if(S.team.length>=6)return;S.team.push(S.box.splice(i,1)[0]);renderAll()}
-
-async function releaseMon(c,i){
-    if(c==='team' && S.team.length<=1) return sysAlert("Cannot release your last Pokémon!", "Action Denied");
-    if(await sysConfirm(`Are you sure you want to release ${S[c][i].name}? This cannot be undone.`, "Release Pokémon")) {
-        log2(`Released ${S[c][i].name}!`);
-        S[c].splice(i,1);
-        persist();
-        renderAll();
-    }
-}
-
-/* ============ DIALOGUE ============ */
-let dq=[],dOn=null;
-function showDlg(lines,onEnd){dq=lines.slice();dOn=onEnd;dExtra.innerHTML='';document.getElementById('dlg').classList.remove('hidden');dlgNext()}
-function dlgNext(){if(!dq.length){document.getElementById('dlg').classList.add('hidden');const f=dOn;dOn=null;if(f)f();return}
- const[who,txt]=dq.shift();dWho.textContent=who[0];dTxt.textContent=txt;dImg.style.display=who[1]?'':'none';if(who[1])dImg.src=TRN(who[1]);dNext.style.display='';dExtra.innerHTML=''}
-function playStory(){const c=CHAPTERS[S.ch];showDlg(c.d,()=>runEvent(c))}
-async function runEvent(c){const ev=c.ev;
- if(ev.type==='starter'){
-  document.getElementById('dlg').classList.remove('hidden');dWho.textContent='Professor Alder';dImg.style.display='';dImg.src=TRN('alder');dTxt.textContent='Choose your partner!';dNext.style.display='none';
-  const ids=[1,4,7],names=['Bulbasaur','Charmander','Squirtle'];
-  dExtra.innerHTML=`<div class="starterRow">${ids.map((id,i)=>`<div class="mon type-normal" onclick="pickStarter(${id})"><img src="${SPR(id)}"><div class="nm">${names[i]}</div><small>Lv 5</small></div>`).join('')}</div>`;
-  return}
- if(ev.type==='battle'){
-  const mons=[];for(const[id,lv]of ev.mons(S.starter))mons.push(await makeMon(id,lv));
-  startBattle({wild:false,trainer:ev.who,queue:mons,onWin:()=>{S.money+=ev.reward;if(ev.badge)S.badges.push(ev.badge);
-   const fin=()=>{S.ch++;persist();renderAll();nav(0);log2(`Chapter complete! +₽${ev.reward}${ev.badge?' · Earned the '+ev.badge+' Badge!':''}`)};
-   ev.after?showDlg(ev.after,fin):fin()},
-  onLose:()=>{healTeam();sysAlert('You blacked out... your team was healed. Try the chapter again!', 'Battle Lost')}})}}
-async function pickStarter(id){S.starter=id;S.dex[id]=1;S.team=[await makeMon(id,5)];persist();
- showDlg([[P_ALDER,'A fine choice! Here — take 10 Poké Balls and some potions. Now, one last lesson: a wild Pokémon has wandered out of the Rift onto Route 1. Weaken it, then throw a ball to catch it!']],
- async()=>{const w=await makeMon(16,3);startBattle({wild:true,queue:[w],onWin:()=>{S.ch++;persist();preloadSprites();renderAll();nav(0);log2('Chapter 1 complete! The Story tab has your next chapter.')},onLose:()=>{healTeam();S.ch++;renderAll();log2('It got away — but you learned the basics! Chapter 1 complete.')}})})}
-
-/* ============ PvP MATCHMAKING ============ */
-async function startPvP(){
- if(!S.team.some(m=>m.hp>0)) return sysAlert('Your team is fainted! Heal at the Center first.', 'PvP Error');
- log2('Searching for opponents in your Elo bracket...');
- document.getElementById('battle').classList.remove('hidden');
-
- const launchBotMatch = async (msg) => {
-  bLog.innerHTML = msg;
-  setTimeout(async()=>{
-   // Massively Expanded Rival Name Pool
-   const names = ['Ash', 'Gary', 'Dawn', 'Cynthia', 'Leon', 'Red', 'Blue', 'Leaf', 'Ethan', 'Lyra', 'Silver', 'Brendan', 'May', 'Wally', 'Steven', 'Lucas', 'Barry', 'Hilbert', 'Hilda', 'Cheren', 'Bianca', 'N', 'Nate', 'Rosa', 'Hugh', 'Calem', 'Serena', 'Elio', 'Selene', 'Hau', 'Gladion', 'Victor', 'Gloria', 'Hop', 'Marnie', 'Florian', 'Juliana', 'Nemona', 'Arven', 'Penny'];
-   const rName = names[Math.floor(Math.random()*names.length)];
-   bLog.innerHTML = `Match found! Opponent: <b style="color:#fff">${rName}</b> (Elo: ${S.elo + Math.floor(Math.random()*40-20)})`;
-
-   const rank = S.elo >= 1800 ? 'Master' : S.elo >= 1500 ? 'Gold' : S.elo >= 1200 ? 'Silver' : 'Bronze';
-   const botPots = rank === 'Master' ? 2 : 0;
-   
-   // Harder AI Level Scaling (Matches Player's Highest Level + Rank Bonus)
-   const maxLvl = Math.max(5, ...S.team.map(m=>m.lvl));
-   const playerHasRebirth = S.team.some(m => m.rebirth || m.lvl > 100);
-   const diff = rank === 'Master' ? 3 : rank === 'Gold' ? 2 : rank === 'Silver' ? 1 : 0;
-   const botLvlBase = maxLvl + diff;
-   
-   const enemyTeam = [];
-   
-   for(let i=0; i<3; i++){ 
-    let eid = Math.floor(Math.random()*150)+1; 
-    let finalBotLvl = botLvlBase + (i===2?2:0);
-    // CRITICAL FIX: Bots cannot spawn > level 100 (Rebirth) unless the player is also in the Rebirth tier.
-    if (!playerHasRebirth) finalBotLvl = Math.min(100, finalBotLvl);
-    
-    let emon = await makeMon(eid, finalBotLvl, false, true); 
-    if(rank === 'Gold') emon.item = 'leftovers';
-    if(rank === 'Master' && i === 2) emon.item = 'focus_sash';
-    if(rank === 'Master' && i < 2) emon.item = 'leftovers';
-    enemyTeam.push(emon); 
-   }
-
-   setTimeout(()=>{ startBattle({wild:false, trainer:[rName], queue:enemyTeam, isPvP:true, botRank:rank, botPots:botPots}); }, 1500);
-  }, 2000);
- };
- 
- if(socket && socket.connected) {
-    bLog.innerHTML = 'Connecting to real multiplayer matchmaking...<br><i style="color:#38bdf8;font-size:0.9rem;">Waiting for another player to join queue...</i>';
-    socket.emit('joinQueue', S);
-    window.pvpFallbackTimer = setTimeout(() => {
-        socket.emit('leaveQueue'); 
-        launchBotMatch('No players found. Fighting simulated bot...<br><i style="color:#94a3b8;font-size:0.9rem;">Estimated wait: 2s</i>');
-    }, 7000); 
-    return;
- }
- launchBotMatch('Server offline. Playing against simulated bots...<br><i style="color:#94a3b8;font-size:0.9rem;">Estimated wait: 2s</i>');
-}
-
 /* ============ BATTLE ENGINE ============ */
 let B=null;
 function startBattle(cfg){B={...cfg,pi:0,enemy:cfg.queue.shift(),lock:false};
@@ -1530,13 +1611,21 @@ function startBattle(cfg){B={...cfg,pi:0,enemy:cfg.queue.shift(),lock:false};
 function bmsg(m){bLog.innerHTML=m}
 function drawB(){const p=S.team[B.pi],e=B.enemy;
  eImg.src=SPR(e.id,e.shiny);
- e.rebirth ? eImg.classList.add('rebirth-aura') : eImg.classList.remove('rebirth-aura');
+ 
+ let eRba = e.rebirth ? 'rebirth-aura' : '';
+ if(e.isRift) eRba += ' rift-sprite';
+ eImg.className = eRba;
+ 
  eName.innerHTML=(e.rebirth?'<span class="rebirth-star">🌟</span> ':'')+e.name;
  eLvl.textContent='Lv '+e.lvl;eTypes.textContent=e.types.join(' / ');
  const eb=document.getElementById('eHp');eb.style.transform='scaleX('+Math.max(0,e.hp/e.maxhp)+')';eb.className=hpCls(e);
  
  pImg.src=SPRB(p.id,p.shiny);pImg.onerror=()=>{pImg.onerror=null;pImg.src=SPR(p.id,p.shiny)};
- p.rebirth ? pImg.classList.add('rebirth-aura') : pImg.classList.remove('rebirth-aura');
+ 
+ let pRba = p.rebirth ? 'rebirth-aura' : '';
+ if(p.isRift) pRba += ' rift-sprite';
+ pImg.className = pRba;
+ 
  pName.innerHTML=(p.rebirth?'<span class="rebirth-star">🌟</span> ':'')+p.name;
  pLvl.textContent='Lv '+p.lvl;pHpTxt.textContent=p.hp+' / '+p.maxhp+' HP';
  const pb=document.getElementById('pHp');pb.style.transform='scaleX('+Math.max(0,p.hp/p.maxhp)+')';pb.className=hpCls(p);
@@ -1694,13 +1783,13 @@ async function explore(i){
  
  const rand = Math.random();
  
- if (rand < 0.03) { 
+ if (rand < 0.02) { 
      id = RESTRICTED[Math.floor(Math.random() * RESTRICTED.length)];
      isLegendary = true;
- } else if (rand < 0.06) { 
+ } else if (rand < 0.04) { 
      id = ULTRA_BEASTS[Math.floor(Math.random() * ULTRA_BEASTS.length)];
      isUltraBeast = true;
- } else if (rand < 0.11) {
+ } else if (rand < 0.08) {
      id = RIFT_FORMS[Math.floor(Math.random()*RIFT_FORMS.length)];
      isAnomaly = true;
  } else {
@@ -1709,9 +1798,9 @@ async function explore(i){
 
  const lv=z.lv[0]+Math.floor(Math.random()*(z.lv[1]-z.lv[0]+1));
  
- let shinyRate = S.shinyCharm ? 0.07 : 0.04;
- if (isLegendary || isUltraBeast) shinyRate = S.shinyCharm ? 0.02 : 0.01;
- else if (isAnomaly) shinyRate = S.shinyCharm ? 0.04 : 0.03;
+ let shinyRate = S.shinyCharm ? 0.06 : 0.03;
+ if (isLegendary || isUltraBeast) shinyRate = S.shinyCharm ? 0.01 : 0.008;
+ else if (isAnomaly) shinyRate = S.shinyCharm ? 0.03 : 0.02;
  
  const isShiny = Math.random() < shinyRate;
  
