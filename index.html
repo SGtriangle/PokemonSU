@@ -1167,12 +1167,17 @@ let ACC={},S=null,storageOK=true;
 try{ACC=JSON.parse(localStorage.getItem('psu_acc')||'{}')}catch(e){storageOK=false}
 
 function persist(){
- if(!storageOK)return;
- try {
-  if(S)ACC[S.user].save=S;
-  localStorage.setItem('psu_acc',JSON.stringify(ACC));
-  if(socket && S && socket.connected) socket.emit('saveData', {user: S.user, data: S}); 
- } catch(e){}
+    if(!S) return;
+    
+    // 1. Save locally for quick access
+    if(!ACC[S.user]) ACC[S.user] = { pass: '', gender: S.gender };
+    ACC[S.user].save = S;
+    try { localStorage.setItem('psu_acc', JSON.stringify(ACC)); } catch(e) {}
+    
+    // 2. Sync to Cloud Database (The crucial part!)
+    if(socket && socket.connected) {
+        socket.emit('saveData', {user: S.user, data: S});
+    }
 }
 
 function authTab(i){
@@ -1207,21 +1212,31 @@ function doRegister(){
 }
 
 function doLogin(){
- const u=liUser.value.trim(),p=liPass.value;const e=document.getElementById('loginErr');e.style.color='#f87171';
- 
- if(socket && socket.connected) {
-     socket.emit('login', {user: u, pass: p}, (res) => {
-         if(res.error) return e.textContent = res.error;
-         e.style.color='#4ade80';e.textContent='Connecting to servers...';
-         let userGender = (res.save && res.save.gender) || (ACC[u] ? ACC[u].gender : 'M');
-         setTimeout(()=>{S=res.save||newSave(u, userGender); if(!S.gender) S.gender = userGender; if(S.events===undefined) S.events={}; ACC[u]={pass:p, gender:userGender, save:S};startGame()}, 0);
-     });
-     return;
- }
- if(!ACC[u]||ACC[u].pass!==p)return e.textContent='Invalid trainer name or password.';
- e.style.color='#4ade80';e.textContent='Logging you in...';
- let userGender = ACC[u].gender || 'M';
- setTimeout(()=>{S=ACC[u].save||newSave(u, userGender);if(!S.gender) S.gender = userGender; if(S.stones===undefined)S.stones={rebirth:0}; if(S.events===undefined)S.events={}; ACC[u].save=S;startGame()}, 0)
+    const u = liUser.value.trim(), p = liPass.value;
+    const e = document.getElementById('loginErr');
+    e.style.color = '#f87171';
+    
+    if(socket && socket.connected) {
+        e.style.color = '#4ade80';
+        e.textContent = 'Connecting to cloud...';
+        socket.emit('login', {user: u, pass: p}, (res) => {
+            if(res.error) return e.textContent = res.error;
+            
+            // Set up the local environment with server data
+            S = res.save || newSave(u, 'M');
+            if(!S.gender) S.gender = 'M';
+            if(S.events === undefined) S.events = {};
+            
+            // Successfully logged in
+            e.textContent = 'Login successful!';
+            setTimeout(startGame, 500);
+        });
+        return;
+    }
+    // Keep offline fallback for when server isn't available
+    if(!ACC[u] || ACC[u].pass !== p) return e.textContent = 'Invalid trainer name or password.';
+    S = ACC[u].save || newSave(u, ACC[u].gender || 'M');
+    startGame();
 }
 
 function newSave(u, g='M'){return{user:u, gender:g, money:3000,elo:1200,balls:{poke:10,master:0},pots:{p:3,s:0},stones:{rebirth:0},badges:[],ch:0,starter:0,team:[],box:[],dex:{},lastLoot:'',shinyCharm:false, events:{}}}
