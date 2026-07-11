@@ -958,7 +958,34 @@ window.useRebirth = async function(c, i) {
         log2(`✨ ${S[c][i].name} has been Rebirthed! ✨`);
     });
 }
+function showItemInfo(item) {
+    const items = {
+        'poke-ball': { n: 'Poké Ball', d: 'A device for catching wild Pokémon. It is thrown like a ball at a target, comfortably encapsulating it. Essential for building your Rift team.', c: '#38bdf8' },
+        'master-ball': { n: 'Master Ball', d: 'The best Poké Ball with the ultimate level of performance. With it, you will catch any wild Pokémon without fail. Save these for the rarest anomalies!', c: '#a855f7' },
+        'potion': { n: 'Potion', d: 'A spray-type medicine for treating wounds. It can be used to instantly restore 50 HP to a single Pokémon during battle. Crucial for tough Warden fights.', c: '#4ade80' },
+        'dawn-stone': { n: 'Rebirth Stone', d: 'A mystical stone pulsing with Rift energy. Can be used on a Level 100 Pokémon to awaken its hidden potential, allowing it to grow all the way to Level 200!', c: '#d946ef' },
+        'shiny-charm': { n: 'Shiny Charm', d: 'A shining charm said to permanently increase the chance of finding a Shiny Pokémon in the wild. A must-have treasure for dedicated collectors.', c: '#ffd54a' }
+    };
+    
+    const i = items[item];
+    if(!i) return;
 
+    // Inject custom item HTML into the existing modal
+    document.getElementById('infoContent').innerHTML = `
+        <div style="text-align:center; margin-bottom: 16px; position:relative;">
+            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100px; height:100px; background:radial-gradient(circle, ${i.c}40, transparent 70%); border-radius:50%; animation: pulseGlow 2s infinite alternate;"></div>
+            <img src="https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/${item}.png" style="width: 80px; height: 80px; image-rendering: pixelated; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6)); position:relative; z-index:2; animation: float 2.5s ease-in-out infinite;">
+            <h3 style="color:${i.c}; font-size:1.6rem; margin-top:8px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-family: 'Segoe UI', system-ui, sans-serif !important;">${i.n}</h3>
+        </div>
+        
+        <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 16px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
+            <p style="color:#cbd5e1; font-size:1rem; line-height: 1.5; margin:0;">${i.d}</p>
+        </div>
+    `;
+    
+    // Unhide the modal
+    document.getElementById('infoModal').classList.remove('hidden');
+}
 /* ============ BACKEND & SOCKET.IO SETUP ============ */
 let socket = null;
 let sckAttempts = 0;
@@ -1651,7 +1678,7 @@ function renderShop(){
  
  let rebirthShopHtml = S.ch >= 10 ? `
      <div class="shop-card" style="border-color: rgba(168, 85, 247, 0.4); background: rgba(30, 41, 59, 0.8);">
-         <div class="icn-wrap" style="background: radial-gradient(circle, rgba(168, 85, 247, 0.2), transparent); border-color: rgba(168, 85, 247, 0.4);">${ICN('dawn-stone')}</div>
+         <div class="icn-wrap" style="background: radial-gradient(circle, rgba(168, 85, 247, 0.2), transparent); border-color: rgba(168, 85, 247, 0.4); cursor:pointer;" onclick="showItemInfo('dawn-stone')" title="Click for info">${ICN('dawn-stone')}</div>
          <h4 style="color:#d946ef; text-shadow: 0 0 10px rgba(217, 70, 239, 0.5);">Rebirth Stone</h4>
          <div class="owned">Owned: ${S.stones.rebirth}</div>
          <div class="price">₽100,000</div>
@@ -1681,7 +1708,7 @@ function renderShop(){
      
      <div class="shop-grid">
          <div class="shop-card">
-             <div class="icn-wrap">${ICN('poke-ball')}</div>
+             <div class="icn-wrap" style="cursor:pointer;" onclick="showItemInfo('poke-ball')" title="Click for info">${ICN('poke-ball')}</div>
              <h4>Poké Ball</h4>
              <div class="owned">Owned: ${S.balls.poke}</div>
              <div class="price">₽200</div>
@@ -1696,7 +1723,7 @@ function renderShop(){
          </div>
          
          <div class="shop-card">
-             <div class="icn-wrap">${ICN('master-ball')}</div>
+             <div class="icn-wrap" style="cursor:pointer;" onclick="showItemInfo('master-ball')" title="Click for info">${ICN('master-ball')}</div>
              <h4>Master Ball</h4>
              <div class="owned">Owned: ${S.balls.master}</div>
              <div class="price">₽2000</div>
@@ -1711,7 +1738,7 @@ function renderShop(){
          </div>
          
          <div class="shop-card">
-             <div class="icn-wrap">${ICN('potion')}</div>
+             <div class="icn-wrap" style="cursor:pointer;" onclick="showItemInfo('potion')" title="Click for info">${ICN('potion')}</div>
              <h4>Potion</h4>
              <div class="owned">Owned: ${S.pots.p}</div>
              <div class="price">₽300</div>
@@ -1728,7 +1755,7 @@ function renderShop(){
          ${rebirthShopHtml}
          
          <div class="shop-card" style="${S.shinyCharm ? 'opacity:0.7; filter:grayscale(0.8)' : ''}">
-             <div class="icn-wrap" style="background: radial-gradient(circle, rgba(255, 213, 74, 0.15), transparent); border-color: rgba(255, 213, 74, 0.2);">${ICN('shiny-charm')}</div>
+             <div class="icn-wrap" style="background: radial-gradient(circle, rgba(255, 213, 74, 0.15), transparent); border-color: rgba(255, 213, 74, 0.2); cursor:pointer;" onclick="showItemInfo('shiny-charm')" title="Click for info">${ICN('shiny-charm')}</div>
              <h4 style="color:#ffd54a">Shiny Charm</h4>
              <div class="owned">Permanent Upgrade</div>
              <div class="price">₽400000</div>
@@ -1827,7 +1854,11 @@ async function runEvent(c){const ev=c.ev;
    const fin=()=>{S.ch++;persist();renderAll();nav(0);log2(`Chapter complete! +₽${ev.reward}${ev.badge?' · Earned the '+ev.badge+' Badge!':''}`)};
    ev.after?showDlg(ev.after,fin):fin()},
   onLose:()=>{healTeam();sysAlert('You blacked out... your team was healed. Try the chapter again!', 'Battle Lost')}})}}
-async function pickStarter(id){S.starter=id;S.dex[id]=1;S.team=[await makeMon(id,5)];persist();
+async function pickStarter(id){
+ S.starter=id; S.dex[id]=1; 
+ let isShinyStarter = Math.random() < 0.01; // 1% chance for a Shiny Starter
+ S.team=[await makeMon(id, 5, isShinyStarter)]; 
+ persist();
  showDlg([[P_ALDER,'A fine choice! Here — take 10 Poké Balls and some potions. Now, one last lesson: a wild Pokémon has wandered out of the Rift onto Route 1. Weaken it, then throw a ball to catch it!']],
  async()=>{const w=await makeMon(16,3);startBattle({wild:true,queue:[w],onWin:()=>{S.ch++;persist();preloadSprites();renderAll();nav(0);log2('Chapter 1 complete! The Story tab has your next chapter.')},onLose:()=>{healTeam();S.ch++;renderAll();log2('It got away — but you learned the basics! Chapter 1 complete.')}})})}
 
@@ -2080,22 +2111,31 @@ async function explore(i){
  let isAnomaly = false;
  let isUltraBeast = false;
  const rand = Math.random();
- if (rand < 0.02) { 
-     id = RESTRICTED[Math.floor(Math.random() * RESTRICTED.length)];
-     isLegendary = true;
- } else if (rand < 0.04) { 
-     id = ULTRA_BEASTS[Math.floor(Math.random() * ULTRA_BEASTS.length)];
-     isUltraBeast = true;
- } else if (rand < 0.08) {
-     id = RIFT_FORMS[Math.floor(Math.random()*RIFT_FORMS.length)];
-     isAnomaly = true;
- } else {
-     while(RESTRICTED.includes(id) || ULTRA_BEASTS.includes(id) || RIFT_FORMS.includes(id)){id=a+Math.floor(Math.random()*(b-a+1));}
- }
+         if (rand < 0.008) { 
+             // 0.8% chance for Legendary
+             id = RESTRICTED[Math.floor(Math.random() * RESTRICTED.length)];
+             isLegendary = true;
+         } else if (rand < 0.016) { 
+             // 0.8% chance for Ultra Beast
+             id = ULTRA_BEASTS[Math.floor(Math.random() * ULTRA_BEASTS.length)];
+             isUltraBeast = true;
+         } else if (rand < 0.026) {
+             // 1% chance for Anomaly / Rift Form
+             id = RIFT_FORMS[Math.floor(Math.random()*RIFT_FORMS.length)];
+             isAnomaly = true;
+         } else {
+             // 97.4% chance for Normal Regional Spawns
+             while(RESTRICTED.includes(id) || ULTRA_BEASTS.includes(id) || RIFT_FORMS.includes(id)){id=a+Math.floor(Math.random()*(b-a+1));}
+         }
  const lv=z.lv[0]+Math.floor(Math.random()*(z.lv[1]-z.lv[0]+1));
- let shinyRate = S.shinyCharm ? 0.06 : 0.03;
- if (isLegendary || isUltraBeast) shinyRate = S.shinyCharm ? 0.01 : 0.008;
- else if (isAnomaly) shinyRate = S.shinyCharm ? 0.03 : 0.02;
+ // Standard Pokémon: 1% base, 2% with Shiny Charm
+     let shinyRate = S.shinyCharm ? 0.04 : 0.02; 
+     
+     // Legendaries & Ultra Beasts: 0.1% base, 0.5% with Shiny Charm
+     if (isLegendary || isUltraBeast) shinyRate = S.shinyCharm ? 0.008 : 0.005; 
+     
+     // Anomalies / Rift Forms: 0.5% base, 1% with Shiny Charm
+     else if (isAnomaly) shinyRate = S.shinyCharm ? 0.01 : 0.005;
  const isShiny = Math.random() < shinyRate;
  const w=await makeMon(id,lv,isShiny);
  const doBattle = () => {
