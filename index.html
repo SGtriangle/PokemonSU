@@ -791,14 +791,35 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 /* Clean up the sprite strip */
 .strip { background: transparent; box-shadow: none; padding: 0; margin: 0; justify-content: center; }
 
-/* Responsive Mobile Fallback (Snaps back to stacked if screen is small) */
-@media (max-width: 1024px) {
-    .login-split { flex-direction: column; margin-top: 20px; }
-    .hero { text-align: center; }
-    .pills { justify-content: center; }
-    .hero button { margin: 24px auto !important; }
-    .feats { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important; }
-    .rift-notices h3 { text-align: center !important; }
+/* ===== IMPROVED MOBILE RESPONSIVENESS ===== */
+@media (max-width: 850px) {
+    /* Stack the Split Layout */
+    .login-split { flex-direction: column; margin-top: 10px; gap: 20px; }
+    
+    /* Shrink the Hero text so it doesn't overlap */
+    .hero h1 { font-size: 2rem !important; }
+    .hero p { font-size: 0.9rem !important; }
+    
+    /* Stack Feature Cards to 1 column for clean reading */
+    .feats { grid-template-columns: 1fr !important; gap: 8px !important; }
+    .feat { padding: 12px !important; }
+    
+    /* Ensure the Rift Intel dashboard is readable */
+    .rift-notices { padding: 16px !important; }
+    .notice-card { gap: 8px; }
+    
+    /* Prevent any horizontal overflow */
+    #pgLogin .wrap { padding: 8px; }
+    body { overflow-x: hidden; }
+}
+
+@media (max-width: 480px) {
+    /* Even smaller font sizes for compact phone screens */
+    .hero h1 { font-size: 1.5rem !important; }
+    .topbar .logo { font-size: 1.3rem !important; }
+    .rift-notices { padding: 12px !important; }
+    .notice-card b { font-size: 0.8rem !important; }
+    .notice-card div > div { font-size: 0.7rem !important; }
 }
 </style>
 </head>
