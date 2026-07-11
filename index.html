@@ -738,7 +738,7 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     </div>
     
     <div class="hud-actions">
-        <button class="sbtn" style="filter: brightness(1.2); box-shadow: 0 0 15px rgba(56,189,248,0.6);" onclick="claimLoot()">🎁 Daily Loot</button> 
+        <button class="sbtn" style="filter: brightness(1.2); box-shadow: 0 0 15px rgba(56,189,248,0.6);" onclick="claimLoot()">🎁 Daily Reward</button> 
         <button class="gbtn" onclick="logout()">Logout</button>
     </div>
   </div>
@@ -1442,11 +1442,11 @@ function healTeam(){S.team.forEach(m=>{m.hp=m.maxhp});persist();renderAll()}
 
 function claimLoot(){
  const today = new Date().toDateString();
- if(S.lastLoot === today) return log2("You already claimed today's daily loot!");
+ if(S.lastLoot === today) return log2("You already claimed today's daily reward!");
  S.lastLoot = today;
  S.money += 800;
  S.balls.master += 1;
- log2("🎁 Claimed Daily Loot: ₽800 & 1 Master Ball!");
+ log2("🎁 Claimed Daily Reward: ₽800 & 1 Master Ball!");
  persist(); renderAll();
 }
 
