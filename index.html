@@ -1612,7 +1612,7 @@ function renderEvents() {
 
             eh += `
             <div class="event-card" style="border-color: ${e.c};">
-                <div style="height:120px; display:flex; align-items:center; justify-content:center; margin-bottom:12px;">
+                <div style="height:120px; display:flex; align-items:center; justify-content:center; margin-bottom:12px; cursor:pointer;" onclick="showEventMonInfo('${e.id}', ${e.monId})" title="Click to view Entity Intel">
                     <img src="${SPR(e.monId)}" class="rift-sprite" style="width:100px; height:100px; animation: float 2.5s ease-in-out infinite;">
                 </div>
                 <h4 style="color:${e.c}; font-size:1.4rem; font-weight:800; margin-bottom:4px; text-shadow: 0 0 8px ${e.c};">${e.name}</h4>
@@ -1669,7 +1669,72 @@ function renderEvents() {
         }, 1000);
     }
 }
-
+/* ============ EVENT BOSS INTEL / PREVIEW ============ */
+window.showEventMonInfo = async function(eventId, monId) {
+    // 1. Show a loading screen in case the PokéAPI fetch takes a second
+    document.getElementById('infoContent').innerHTML = `<div style="text-align:center; padding: 40px; color:#a855f7; font-weight:bold; animation: pulseGlow 1.5s infinite alternate;">Scanning Dimensional Entity...</div>`;
+    document.getElementById('infoModal').classList.remove('hidden');
+    
+    // 2. Fetch the boss lore from the pool and generate its raw data
+    const ev = EVENT_POOL.find(x => x.id === eventId);
+    const m = await makeMon(monId, 100, false, false);
+    
+    // 3. Apply the 1.2x Reward Boost so the player sees exactly what they will win
+    m.base = {
+        hp: Math.floor(m.base.hp * 1.2),
+        atk: Math.floor(m.base.atk * 1.2),
+        def: Math.floor(m.base.def * 1.2)
+    };
+    calc(m);
+    
+    // 4. Build the UI Badges and Moves
+    const typeBadges = m.types.map(t => `<span class="badge type-${t}" style="border:1px solid; background:rgba(255,255,255,0.05); color:#fff; font-size:0.75rem;">${t}</span>`).join(' ');
+    const movesHtml = m.moves.map(mv => {
+        return `<div style="background:rgba(0,0,0,0.4); padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.05); text-align:center;">
+            <b style="color:#fff; font-size:0.9rem;">${mv.n}</b><br>
+            <small style="color:#94a3b8; font-size:0.75rem;">${mv.t.toUpperCase()} · PWR ${mv.p}</small>
+        </div>`;
+    }).join('');
+    
+    // 5. Inject the final HTML into the existing popup modal
+    document.getElementById('infoContent').innerHTML = `
+        <div style="text-align:center; margin-bottom: 16px; position:relative;">
+            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:120px; height:120px; background:radial-gradient(circle, ${ev.c}40, transparent 70%); border-radius:50%;"></div>
+            <img src="${SPR(m.id)}" class="rift-sprite" style="width: 120px; height: 120px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); position:relative; z-index:2; animation: float 2.5s ease-in-out infinite;">
+            <h3 style="color:${ev.c}; font-size:1.5rem; margin-top:8px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-family: 'Segoe UI', system-ui, sans-serif !important;">${ev.name}</h3>
+            <div style="margin-top:4px;">${typeBadges}</div>
+            <div style="margin-top:8px; font-size:0.85rem; color:#ffd54a; font-weight:bold; letter-spacing: 0.5px;">⭐ REWARD PREVIEW (1.2x STATS) ⭐</div>
+        </div>
+        
+        <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.05);">
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; text-align:center;">
+                <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:8px;">
+                    <small style="color:#94a3b8; font-size:0.7rem; display:block;">HP (Lv 100)</small>
+                    <b style="color:#4ade80; font-size:1.1rem;">${m.maxhp}</b>
+                </div>
+                <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:8px;">
+                    <small style="color:#94a3b8; font-size:0.7rem; display:block;">ATK</small>
+                    <b style="color:#f87171; font-size:1.1rem;">${m.atk}</b>
+                </div>
+                <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:8px;">
+                    <small style="color:#94a3b8; font-size:0.7rem; display:block;">DEF</small>
+                    <b style="color:#38bdf8; font-size:1.1rem;">${m.def}</b>
+                </div>
+            </div>
+        </div>
+        
+        <div>
+            <h4 style="color:#cbd5e1; font-size:0.9rem; margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:4px;">Elite Boss Moveset</h4>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                ${movesHtml}
+            </div>
+        </div>
+        
+        <div style="text-align:center; color:#94a3b8; font-size:0.8rem; margin-top:16px;">
+            Conquer the Gauntlet 100 times to secure this entity!
+        </div>
+    `;
+};
 window.startEventGauntlet = async function(eventId, monId) {
     if(!S.team.some(m=>m.hp>0)) return sysAlert('Your team is fainted! Heal at the Center first.', 'Gauntlet Error');
     log2('Entering the Event Gauntlet...');
