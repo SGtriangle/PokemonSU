@@ -743,6 +743,63 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 
 .notice-card b { font-size: 0.9rem !important; }
 .notice-card div > div { font-size: 0.8rem !important; line-height: 1.4; }
+/* ===== NO-SCROLL SPLIT LAYOUT (DESKTOP) ===== */
+/* Widen the container specifically for the login page to use empty screen space */
+#pgLogin .wrap { max-width: 1300px; }
+
+.login-split {
+    display: flex;
+    gap: 40px;
+    align-items: center; /* Centers everything vertically */
+    margin-top: 4vh; 
+}
+
+/* Left Column Styling */
+.login-left {
+    flex: 1.2; /* Takes up slightly more space for the text/cards */
+    display: flex;
+    flex-direction: column;
+}
+.hero { text-align: left; padding: 0 !important; }
+.hero p { margin-left: 0; margin-right: 0; }
+.pills { justify-content: flex-start; }
+.hero button { margin: 24px 0 !important; }
+
+/* Forces the 3 feature cards to sit nicely in one row */
+.feats { margin: 10px 0 0 0 !important; grid-template-columns: repeat(3, 1fr) !important; gap: 12px; }
+.feat { padding: 14px !important; }
+.feat h3 { font-size: 0.95rem !important; margin-bottom: 4px; }
+.feat p { font-size: 0.75rem !important; }
+
+/* Right Column Styling */
+.login-right {
+    flex: 1; /* Takes up the remaining space */
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Overrides the previous embedded style to stack vertically on the right side */
+.rift-notices {
+    margin: 0 !important;
+    grid-template-columns: 1fr !important; /* Forces 1 vertical column */
+    padding: 20px !important;
+    background: rgba(11, 16, 32, 0.6) !important; /* Slightly more transparent */
+}
+.rift-notices h3 { text-align: left !important; margin-bottom: 12px !important; }
+
+/* Clean up the sprite strip */
+.strip { background: transparent; box-shadow: none; padding: 0; margin: 0; justify-content: center; }
+
+/* Responsive Mobile Fallback (Snaps back to stacked if screen is small) */
+@media (max-width: 1024px) {
+    .login-split { flex-direction: column; margin-top: 20px; }
+    .hero { text-align: center; }
+    .pills { justify-content: center; }
+    .hero button { margin: 24px auto !important; }
+    .feats { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important; }
+    .rift-notices h3 { text-align: center !important; }
+}
 </style>
 </head>
 <body>
@@ -800,20 +857,29 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     <div class="logo">PokemonSU<span class="beta"><img src="https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/poke-ball.png" alt="Pokeball"></span><small>BROWSER ADVENTURE RPG</small></div>
     <div class="tabs"><button id="tabL" class="on" onclick="authTab(0)">Login</button><button id="tabR" onclick="authTab(1)">Register</button></div>
   </div>
-  <div class="hero">
-    <h1>Return to the <span>Rift.</span></h1>
-    <p>Resume right where you left off with your full roster, progress, and daily events. No downloads required — play instantly in your browser!</p>
-    <div class="pills"><span class="pill">Gyms</span><span class="pill">Raids</span><span class="pill">PvP Arena</span></div>
-    
-    <button class="btn" style="max-width:260px; margin:20px auto 0; font-size:1.1rem; animation: float 2s ease-in-out infinite;" onclick="authTab(0)">Start Adventure</button>
+  <div class="login-split">
+      <!-- LEFT SIDE: Welcome Text & Feature Cards -->
+      <div class="login-left">
+          <div class="hero">
+            <h1>Return to the <span>Rift.</span></h1>
+            <p>Resume right where you left off with your full roster, progress, and daily events. No downloads required — play instantly in your browser!</p>
+            <div class="pills"><span class="pill">Gyms</span><span class="pill">Raids</span><span class="pill">PvP Arena</span></div>
+            <button class="btn" style="max-width:260px; font-size:1.1rem; animation: float 2s ease-in-out infinite;" onclick="authTab(0)">Start Adventure</button>
+          </div>
+          
+          <div class="feats">
+            <div class="feat"><h3>🗺️ Adventure</h3><p>Explore routes, hunt encounters, and unlock new travel zones across all nine generations.</p><span>Adventure</span></div>
+            <div class="feat"><h3>⚔️ Competitive</h3><p>Join raids, gym runs, and PvP pushes for rewards and ranking against the toughest Wardens.</p><span>Competitive</span></div>
+            <div class="feat"><h3>📦 Collection</h3><p>Play safari/minigame content and collect rare variant Pokémon from every known region.</p><span>Collection</span></div>
+          </div>
+      </div>
+      
+      <!-- RIGHT SIDE: Rift Intel Dashboard & Pokemon Sprites -->
+      <div class="login-right">
+          <div class="rift-notices" id="loginNotices"></div>
+          <div class="strip" id="strip"></div>
+      </div>
   </div>
-  <div class="rift-notices" id="loginNotices"></div>
-  <div class="feats">
-    <div class="feat"><h3>🗺️ Adventure</h3><p>Explore routes, hunt encounters, and unlock new travel zones across all nine generations.</p><span>Adventure</span></div>
-    <div class="feat"><h3>⚔️ Competitive</h3><p>Join raids, gym runs, and PvP pushes for rewards and ranking against the toughest Wardens.</p><span>Competitive</span></div>
-    <div class="feat"><h3>📦 Collection</h3><p>Play safari/minigame content and collect rare variant Pokémon from every known region.</p><span>Collection</span></div>
-  </div>
-  <div class="strip" id="strip"></div>
   
   <div id="authModal" class="modal-overlay hidden">
     <div style="position:relative; width:100%; max-width:420px;">
