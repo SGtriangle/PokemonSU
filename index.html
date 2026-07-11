@@ -601,10 +601,23 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     .hud .logo { font-size: 1.8rem; }
     .hud-stat { font-size: 0.85rem; padding: 4px 8px; }
 }
+/* ===== DYNAMIC EVENT THEMES (NOSTALGIA UI) ===== */
+#theme-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -10; /* Keeps it strictly in the background */
+    pointer-events: none;
+    transition: opacity 2s ease-in-out; /* Super smooth crossfade */
+    opacity: 0; /* Hidden by default to show original dark theme */
+    background-size: cover, auto 110vh; /* Gradient covers screen, Pokemon is massive */
+    background-position: center, center;
+    background-repeat: no-repeat, no-repeat;
+}
 </style>
 </head>
 <body>
-
+    
+<div id="theme-bg"></div>
 <div id="eventModal" class="modal-overlay hidden" style="z-index: 10001;">
     <div class="card" style="width:100%; max-width: 450px; background: rgba(15, 23, 42, 0.98); border: 1px solid #a855f7; box-shadow: 0 0 40px rgba(168,85,247,0.3); padding: 24px;">
         <button class="gbtn" style="position:absolute; top: 12px; right: 12px; border-radius:50%; width:32px; height:32px; padding:0; display:flex; align-items:center; justify-content:center; color:#f87171; border-color:rgba(248,113,113,0.3); font-weight:bold;" onclick="closeEventModal()">✕</button>
@@ -1363,7 +1376,42 @@ function preloadSprites(){
      new Image().src = `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/${item}.png`;
  });
 }
+/* ============ DYNAMIC THEME ENGINE ============ */
+window.applyDynamicTheme = function() {
+    const bg = document.getElementById('theme-bg');
+    if (!bg) return;
 
+    // Check the current 4-Day cycle state
+    const CYCLE_DURATION = 345600000;
+    const ACTIVE_DURATION = 259200000;
+    let cycleIndex = Math.floor(Date.now() / CYCLE_DURATION);
+    let timeInCurrentCycle = Date.now() % CYCLE_DURATION;
+    let isBreak = timeInCurrentCycle >= ACTIVE_DURATION;
+
+    if (isBreak) {
+        // NO EVENT: Fade out to reveal the default dark space theme
+        bg.style.opacity = '0';
+    } else {
+        // EVENT ACTIVE: Generate the Nostalgia UI
+        let activeBoss = EVENT_POOL[cycleIndex % EVENT_POOL.length];
+        
+        // Fetch High-Res Official Artwork instead of small pixel sprites
+        let hdSprite = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${activeBoss.monId}.png`;
+
+        // Layer 1: The Sky-to-Grass Gradient overlay (set to 85% opacity to dim the image!)
+        // Layer 2: The massive HD Pokemon image
+        bg.style.backgroundImage = `
+            linear-gradient(rgba(3, 105, 161, 0.88), rgba(6, 78, 59, 0.95)), 
+            url('${hdSprite}')
+        `;
+        
+        // Add a subtle glow matching the boss's color for extra flair
+        bg.style.boxShadow = `inset 0 0 150px ${activeBoss.c}40`;
+        
+        // Fade it in!
+        bg.style.opacity = '1';
+    }
+}
 /* ============ GAME UI ============ */
 function startGame(){
  document.getElementById('authModal').classList.add('hidden'); 
@@ -1374,7 +1422,7 @@ function startGame(){
  if(S.balls.master === undefined) { S.balls.master = S.balls.great || 0; delete S.balls.great; }
  if(S.stones === undefined) S.stones = {rebirth: 0};
  if(S.events === undefined) S.events = {};
- refreshHud();preloadSprites();nav(0);
+ refreshHud();applyDynamicTheme();preloadSprites();nav(0);
 }
 
 function refreshHud(){
@@ -1666,6 +1714,7 @@ function renderEvents() {
             // When timer hits exactly 0, refresh the UI
             if(d === 0 && h === 0 && m === 0 && s === 0) {
                 renderAll();
+                applyDynamicTheme();
             }
         }, 1000);
     }
