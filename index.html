@@ -576,30 +576,73 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 #eName, #pName { font-size: 1.05rem !important; font-weight: 700; }
 .shoprow span { font-size: 0.95rem !important; font-weight: 600; }
 
-/* Compact Screen Overrides for Grid layout */
-@media(max-width:520px){ 
-    .bfield { padding: 10px; gap: 4px; border-radius: 12px;}
+/* ===== COMPREHENSIVE MOBILE APP EXPERIENCE ===== */
+@media (max-width: 768px) {
+    /* 1. App-like Bottom Navigation Bar */
+    #pgGame { padding-bottom: 85px; } /* Prevents content from hiding behind the bottom nav */
     
+    .nav { 
+        position: fixed; 
+        bottom: 0; 
+        left: 0; 
+        right: 0; 
+        background: rgba(11, 16, 32, 0.98); 
+        backdrop-filter: blur(20px); 
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(56, 189, 248, 0.4); 
+        margin: 0; 
+        padding: 10px 8px; 
+        display: flex; 
+        flex-wrap: nowrap; 
+        overflow-x: auto; 
+        gap: 8px; 
+        z-index: 100; 
+        box-shadow: 0 -5px 25px rgba(0,0,0,0.8);
+        border-radius: 20px 20px 0 0;
+        overscroll-behavior-x: contain; /* Enables smooth swiping across tabs */
+    }
+    
+    /* Hides the ugly scrollbar in the mobile bottom nav */
+    .nav::-webkit-scrollbar { display: none; }
+    
+    .nav button { 
+        flex: 0 0 auto; 
+        padding: 10px 16px; 
+        font-size: 0.9rem; 
+        border-radius: 14px; 
+        white-space: nowrap;
+    }
+    
+    /* 2. Compact HUD & Grids */
+    .wrap { padding: 8px; }
+    .hud { padding: 10px; gap: 8px; margin: -8px -8px 16px -8px; border-radius: 0 0 16px 16px; }
+    .hud .logo { font-size: 1.2rem; }
+    .hud-info { justify-content: center; }
+    .hud-stat { font-size: 0.85rem; padding: 6px 10px; }
+    
+    /* Dynamically shrink the Pokemon cards to fit 2 per row perfectly on phones */
+    .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+    .shop-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+    
+    .mon img { width: 60px; height: 60px; }
+    
+    /* 3. Streamlined Battle Arena */
+    .bfield { padding: 10px; gap: 4px; border-radius: 12px;}
     .bside:nth-child(1) .binfo { margin: 0; }
     .bside:nth-child(1) .bmon  { margin-top: 0; }
     .bside:nth-child(2) .bmon  { margin-bottom: 0; }
     .bside:nth-child(2) .binfo { margin: 0; }
-    
     .bmon img{ max-width: 95px; } 
     .bmon::before { width: 100px; height: 26px; bottom: 4px; }
     .bmon::after { width: 45px; height: 6px; bottom: 10px; }
-    
     .binfo{ min-width: 120px; padding: 6px 10px; } 
     .binfo b { font-size: 0.9rem; }
     .binfo small { font-size: 0.7rem; }
-    
     .bacts button { padding: 6px; font-size: 0.85rem; }
     .blog { min-height: 48px; padding: 10px; font-size: 0.85rem; }
-    
-    /* HUD Compact adjustments */
-    .hud { padding: 8px 12px; gap: 10px; margin: -12px -12px 12px -12px; }
-    .hud .logo { font-size: 1.8rem; }
-    .hud-stat { font-size: 0.85rem; padding: 4px 8px; }
+
+    /* Modals take up full screen width on phones */
+    .dbox, .card { width: 100%; border-radius: 16px; padding: 16px; }
 }
 /* ===== DYNAMIC EVENT THEMES (NOSTALGIA UI) ===== */
 #theme-bg {
@@ -729,7 +772,12 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     <div class="logo" style="margin:0;">PokemonSU <img src="https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/poke-ball.png" alt="Pokeball"></div>
     
     <div class="hud-info">
-        <div class="hud-stat trainer"><img src="https://play.pokemonshowdown.com/sprites/trainers/red.png" style="width:20px; height:20px; border-radius:50%; image-rendering:pixelated; margin-right:4px;"> <span><b id="hudName"></b></span></div>
+        <div class="hud-stat trainer">
+            <div style="width:24px; height:24px; border-radius:50%; overflow:hidden; margin-right:6px; background:rgba(0,0,0,0.5); display:flex; justify-content:center;">
+                <img id="hudTrnIcon" src="https://play.pokemonshowdown.com/sprites/trainers/red.png" style="height: 60px; max-width: none; image-rendering:pixelated; margin-top: -6px;">
+            </div>
+            <span><b id="hudName"></b></span>
+        </div>
         <div class="hud-stat money">💰 <b id="hudMoney"></b></div>
         <div class="hud-badges">
             <span class="lbl">Badges</span>
@@ -1430,9 +1478,9 @@ function refreshHud(){
  hudMoney.textContent='₽'+S.money.toLocaleString();
  hudBadges.innerHTML=S.badges.map(b=>`<span class="badge" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(14, 165, 233, 0.2)); border: 1px solid rgba(56, 189, 248, 0.3); color: #38bdf8; text-shadow: none;">🏅 ${b}</span>`).join('')||'<small style="color:#64748b">No badges yet</small>';
  
- // Dynamic Trainer Avatar Update
- const trnIcon = (S.gender === 'F') ? 'dawn' : 'red';
- const hudIcon = document.querySelector('.hud-stat.trainer img');
+ // Dynamic Trainer Avatar Update (Zoomed Face)
+ const trnIcon = (S.gender === 'F') ? 'leaf' : 'red';
+ const hudIcon = document.getElementById('hudTrnIcon') || document.querySelector('.hud-stat.trainer img');
  if(hudIcon) hudIcon.src = TRN(trnIcon);
 
  persist()
@@ -2278,10 +2326,29 @@ async function throwBall(k){
  }
  B.lock=true;
  S.balls[k]--;
- let rate=(1-(e.hp/e.maxhp)*0.72)*(e.lvl>50?0.55:1);
- if(RESTRICTED.includes(e.id)) rate *= 0.05; 
- if(k==='master') rate = 10; 
- if(Math.random()<Math.max((k==='master'?1:0.02),rate)){
+ 
+ // 1. Calculate Base Species Difficulty (Higher total stats = harder to catch)
+ let statTotal = e.base.hp + e.base.atk + e.base.def;
+ let baseDifficulty = Math.max(0.15, 200 / statTotal); 
+
+ // 2. Calculate HP Factor (100% HP = 0.33x multiplier | 1% HP = ~1.0x multiplier)
+ let hpFactor = (3 * e.maxhp - 2 * e.hp) / (3 * e.maxhp); 
+
+ // 3. Calculate Level Penalty (Gently decreases catch rate as level goes up)
+ let lvlFactor = Math.max(0.3, 1 - (e.lvl / 200)); 
+
+ // 4. Final Standard Rate (Bumped from 0.45 to 0.55 for a slightly easier time)
+ let rate = 0.55 * baseDifficulty * hpFactor * lvlFactor;
+
+ // 5. Hardcore Modifiers for Special Entities (Slightly softened)
+ if(RESTRICTED.includes(e.id)) rate *= 0.08;      // Legendaries: Very Hard
+ if(ULTRA_BEASTS.includes(e.id)) rate *= 0.10;    // Ultra Beasts: Hard
+ if(RIFT_FORMS.includes(e.id)) rate *= 0.15;      // Anomalies: Tricky
+ 
+ if(k==='master') rate = 10; // Master ball still ignores all math
+ 
+ // Absolute minimum catch chance is now 3% (1 in 33) to prevent endless ball wasting
+ if(Math.random()<Math.max((k==='master'?1:0.03), rate)){
   S.dex[e.id]=1;(S.team.length<6?S.team:S.box).push(e);persist();
   bmsg(`Gotcha! <b style="color:#38bdf8">${e.name}</b> was caught!${S.team.length<=6?'':' Sent to Box.'}`);
   setTimeout(()=>{endB(true,`${e.name} joined you!`,true);preloadSprites();},900)
