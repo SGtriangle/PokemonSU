@@ -687,77 +687,62 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
 }
 
-/* Sidebar Layout (Compact & Fixed for 1080p+ Screens) */
+/* ============ RIFT INTEL (EMBEDDED DASHBOARD) ============ */
 .rift-notices {
-    position: fixed;
-    top: 20px;
-    right: 15px; 
-    width: 260px; 
-    z-index: 50;
-    background: rgba(11, 16, 32, 0.85);
+    width: 100%;
+    background: rgba(11, 16, 32, 0.7);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-left: 3px solid #ef4444;
-    border-radius: 12px;
-    padding: 12px;
-    box-shadow: -10px 10px 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(239, 68, 68, 0.1);
+    border-top: 3px solid #ef4444;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(239, 68, 68, 0.1);
+    margin: 40px 0 10px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
     animation: popIn 0.5s ease-out forwards;
+}
+
+.rift-notices h3 {
+    width: 100%;
+    grid-column: 1 / -1; /* Forces the header to stretch across the top */
+    text-align: center;
+    margin-bottom: 8px !important;
 }
 
 .notice-card {
     background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(20,0,0,0.4));
     border: 1px solid rgba(239, 68, 68, 0.3);
-    border-radius: 10px;
-    padding: 10px;
-    margin-bottom: 10px;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 0;
     display: flex;
-    gap: 10px;
+    gap: 12px;
     align-items: center;
     transition: transform 0.2s, border-color 0.2s;
 }
 
+.notice-card:hover { 
+    transform: translateY(-4px); 
+    border-color: #ef4444; 
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); 
+}
+
 .notice-icon {
-    width: 36px; 
-    height: 36px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     background: #0f172a;
     border: 2px solid #ef4444;
     padding: 2px;
     image-rendering: pixelated;
     box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-    flex-shrink: 0; 
+    flex-shrink: 0;
 }
 
-/* Forces the JavaScript text to scale down nicely in the new compact box */
-.notice-card b { font-size: 0.85rem !important; }
-.notice-card div > div { font-size: 0.75rem !important; line-height: 1.3; }
-
-/* Auto-adapt to Laptops & Phones (Completely prevents overlap) */
-@media (max-width: 1550px) {
-    .rift-notices {
-        position: relative; 
-        width: 95%; 
-        max-width: 960px; 
-        margin: 20px auto 0 auto; 
-        border-left: none; 
-        border-top: 3px solid #ef4444;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 12px;
-        top: 0;
-        right: 0;
-    }
-    
-    /* Centers the Rift Intel header when in horizontal mode */
-    .rift-notices h3 { 
-        width: 100%; 
-        grid-column: 1 / -1; 
-        margin-bottom: 0 !important; 
-        text-align: center; 
-        justify-content: center; 
-    }
-    .notice-card { margin-bottom: 0; }
-}
+.notice-card b { font-size: 0.9rem !important; }
+.notice-card div > div { font-size: 0.8rem !important; line-height: 1.4; }
 </style>
 </head>
 <body>
@@ -809,7 +794,6 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
   <div class="ember"></div><div class="ember"></div><div class="ember"></div><div class="ember"></div>
   
   <!-- The Dynamic Sidebar -->
-  <div class="rift-notices" id="loginNotices"></div>
 
 <div class="wrap" style="position: relative; z-index: 5;">
   <div class="topbar">
@@ -823,7 +807,7 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     
     <button class="btn" style="max-width:260px; margin:20px auto 0; font-size:1.1rem; animation: float 2s ease-in-out infinite;" onclick="authTab(0)">Start Adventure</button>
   </div>
-  
+  <div class="rift-notices" id="loginNotices"></div>
   <div class="feats">
     <div class="feat"><h3>🗺️ Adventure</h3><p>Explore routes, hunt encounters, and unlock new travel zones across all nine generations.</p><span>Adventure</span></div>
     <div class="feat"><h3>⚔️ Competitive</h3><p>Join raids, gym runs, and PvP pushes for rewards and ranking against the toughest Wardens.</p><span>Competitive</span></div>
