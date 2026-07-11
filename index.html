@@ -1092,11 +1092,30 @@ const EVENT_POOL = [
     {id: 'hydreigon', monId: 635, name: "Ultimate Hydreigon", desc: "A brutal three-headed shadow beast attacking everything shifting inside the deep rifts.", c: "#475569"},
     {id: 'aegislash', monId: 681, name: "Ultimate Aegislash", desc: "A legendary sword array that drains spiritual energy from those who approach it.", c: "#cbd5e1"},
     {id: 'darkrai', monId: 491, name: "Ultimate Darkrai", desc: "The literal embodiment of nightmares, causing deep sleep to secure its territory.", c: "#1e293b"},
-    {id: 'arceus', monId: 493, name: "Ultimate Arceus", desc: "The supreme cosmic creator, pulsing with plate forces that alter active parameters.", c: "#ffffff"},
+//    {id: 'arceus', monId: 493, name: "Ultimate Arceus", desc: "The supreme cosmic creator, pulsing with plate forces that alter active parameters.", c: "#ffffff"},
     {id: 'kyogre', monId: 382, name: "Ultimate Kyogre", desc: "A primal sea master expanding oceans via massive downpours flowing from tears.", c: "#2563eb"},
     {id: 'groudon', monId: 383, name: "Ultimate Groudon", desc: "A volcanic landscape architect creating magma extensions with step shockwaves.", c: "#dc2626"},
     {id: 'dialga', monId: 483, name: "Ultimate Dialga", desc: "A core dragon controlling temporal speed, stabilizing internal system frames.", c: "#312e81"},
-    {id: 'palkia', monId: 484, name: "Ultimate Palkia", desc: "A spatial gatekeeper spinning rifts into smooth doorway paths effortlessly.", c: "#701a75"}
+    {id: 'palkia', monId: 484, name: "Ultimate Palkia", desc: "A spatial gatekeeper spinning rifts into smooth doorway paths effortlessly.", c: "#701a75"},
+    {id: 'giratina', monId: 487, name: "Ultimate Giratina", desc: "The ruler of the Distortion World, bending reality with shadowy force.", c: "#9333ea"},
+    {id: 'lugia', monId: 249, name: "Ultimate Lugia", desc: "The guardian of the seas, creating 40-day storms with a flap of its wings.", c: "#3b82f6"},
+    {id: 'ho-oh', monId: 250, name: "Ultimate Ho-Oh", desc: "The guardian of the skies, leaving a trail of rainbow energy in its wake.", c: "#ef4444"},
+    {id: 'zekrom', monId: 644, name: "Ultimate Zekrom", desc: "The dragon of ideals, generating massive anti-gravity fields with its tail.", c: "#334155"},
+    {id: 'reshiram', monId: 643, name: "Ultimate Reshiram", desc: "The dragon of truth, capable of incinerating dimensions with cosmic heat.", c: "#cbd5e1"},
+    {id: 'zygarde', monId: 718, name: "Ultimate Zygarde", desc: "The order Pokémon, rising from the earth's core to eradicate all threats.", c: "#22c55e"},
+    {id: 'necrozma', monId: 800, name: "Ultimate Necrozma", desc: "A prismatic entity that violently absorbs all light from surrounding rifts.", c: "#312e81"},
+    {id: 'sceptile', monId: 254, name: "Ultimate Sceptile", desc: "A master of the jungle, striking with blades faster than the human eye can track.", c: "#16a34a"},
+    {id: 'swampert', monId: 260, name: "Ultimate Swampert", desc: "A swamp behemoth that can tow massive boulders through raging rift currents.", c: "#0284c7"},
+    {id: 'infernape', monId: 392, name: "Ultimate Infernape", desc: "An absolute martial arts striker, crowned with an inextinguishable fiery aura.", c: "#ea580c"},
+    {id: 'gyarados', monId: 130, name: "Ultimate Gyarados", desc: "A terrifying sea serpent capable of obliterating entire cities in a blind rage.", c: "#0284c7"},
+    {id: 'snorlax', monId: 143, name: "Ultimate Snorlax", desc: "An immovable object with a bottomless stomach, absorbing impacts with endless bulk.", c: "#94a3b8"},
+    {id: 'alakazam', monId: 65, name: "Ultimate Alakazam", desc: "A psychic master with an IQ over 5,000, predicting and countering every move instantly.", c: "#eab308"},
+    {id: 'togekiss', monId: 468, name: "Ultimate Togekiss", desc: "A fairy of blessings that rains down unrelenting magical strikes on its foes.", c: "#f472b6"},
+    {id: 'haxorus', monId: 612, name: "Ultimate Haxorus", desc: "Covered in heavy armor, its terrifying tusks can cleave through solid steel.", c: "#ca8a04"},
+    {id: 'milotic', monId: 350, name: "Ultimate Milotic", desc: "A breathtakingly beautiful serpent whose scales deflect the most devastating attacks.", c: "#fda4af"},
+    {id: 'slaking', monId: 289, name: "Ultimate Slaking", desc: "Holds raw power rivaling the gods, unleashing earth-shattering blows in a single strike.", c: "#a8a29e"},
+    {id: 'kingambit', monId: 983, name: "Ultimate Kingambit", desc: "A ruthless supreme commander that grows impossibly strong when fighting a losing battle.", c: "#991b1b"},
+    {id: 'sneasler', monId: 903, name: "Ultimate Sneasler", desc: "A lethal predator from ancient times, delivering highly toxic strikes with unmatched speed.", c: "#c026d3"}
 ];
 
 const STRONG_BOT_MONS = [3,6,9,15,18,22,24,26,28,31,34,36,38,40,45,47,49,51,53,55,57,59,62,65,68,71,73,76,78,80,82,85,87,89,91,94,97,99,101,103,105,107,110,112,115,117,119,121,122,123,124,125,126,127,128,130,131,134,135,136,139,141,142,143,149,154,157,160,162,164,166,168,169,171,173,176,178,181,185,189,192,193,195,196,197,199,201,202,203,205,208,210,211,212,214,217,219,222,224,226,227,229,230,232,233,235,237,241,242,248,254,257,260,282,286,373,376,445,448,468,475,477];
@@ -1550,54 +1569,70 @@ function renderLB(players, isOffline = false) {
 
 const ICN = (n) => `<img src="https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/${n}.png" class="item-icn">`;
 
-/* ============ EVENTS TAB (AUTOMATED 3-DAY SELECTION POOL) ============ */
+/* ============ EVENTS TAB (AUTOMATED 4-DAY CYCLE: 3 ACTIVE, 1 BREAK) ============ */
 function renderEvents() {
     if(!S.events) S.events = {};
     
-    // Calculate the 3-day epoch rotation slice (3 days = 259200000ms)
-    let cycleIndex = Math.floor(Date.now() / 259200000);
+    // Define cycle lengths
+    const CYCLE_DURATION = 345600000; // 4 days in total (3 days active + 1 day break)
+    const ACTIVE_DURATION = 259200000; // 3 days active
+    
+    // Calculate current state
+    let cycleIndex = Math.floor(Date.now() / CYCLE_DURATION);
+    let timeInCurrentCycle = Date.now() % CYCLE_DURATION;
+    let isBreak = timeInCurrentCycle >= ACTIVE_DURATION;
+    
     let idx1 = cycleIndex % EVENT_POOL.length;
     let idx2 = (cycleIndex + 7) % EVENT_POOL.length;
     if (idx1 === idx2) idx2 = (idx2 + 1) % EVENT_POOL.length;
-    
-    // Select the 2 current rolling options out of the 24 candidates
-    const currentRollingEvents = [EVENT_POOL[idx1], EVENT_POOL[idx2]];
 
     let eh = `<div class="panel" style="border-color: rgba(168, 85, 247, 0.4); box-shadow: 0 0 25px rgba(168, 85, 247, 0.1);">
         <div style="text-align:center; margin-bottom: 24px;">
             <h3 style="color:#a855f7; font-size:1.8rem; text-shadow: 0 2px 8px rgba(168,85,247,0.4);">🌀 Temporal Rifts Detected</h3>
-            <p style="color:#cbd5e1; font-size:0.95rem;">Survive the Level 100 Gauntlet! Defeat 100 elite Warden teams to capture these dimensional anomalies. New challenges arrive automatically every 3 days from a pool of 24 entities!</p>
+            <p style="color:#cbd5e1; font-size:0.95rem;">Survive the Level 100 Gauntlet! Defeat 100 elite Warden teams to capture these dimensional anomalies. Rifts are active for 3 days, followed by a 1-day cooldown.</p>
             <div class="event-timer" id="evTimer">Calculating Shift parameters...</div>
-        </div>
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
-    `;
-
-    currentRollingEvents.forEach(e => {
-        let prog = S.events[e.id] || 0;
-        let pct = Math.min(100, Math.floor((prog / 100) * 100)); // Updated to 100
-        let isDone = prog >= 100; // Updated to 100
-
-        eh += `
-        <div class="event-card" style="border-color: ${e.c};">
-            <div style="height:120px; display:flex; align-items:center; justify-content:center; margin-bottom:12px;">
-                <img src="${SPR(e.monId)}" class="rift-sprite" style="width:100px; height:100px; animation: float 2.5s ease-in-out infinite;">
-            </div>
-            <h4 style="color:${e.c}; font-size:1.4rem; font-weight:800; margin-bottom:4px; text-shadow: 0 0 8px ${e.c};">${e.name}</h4>
-            <p style="font-size:0.85rem; color:#94a3b8; margin-bottom:16px;">${e.desc}</p>
-            
-            <div style="background: rgba(0,0,0,0.4); padding: 8px; border-radius: 8px; margin-bottom: 16px;">
-                <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;">
-                    <span style="color:#cbd5e1;">Gauntlet Progress</span>
-                    <span style="color:${isDone ? '#4ade80' : '#ffd54a'}; font-weight:bold;">${prog} / 100</span>
-                </div>
-                <div class="hpbar" style="height:6px; margin:0;"><i style="background: ${isDone ? '#4ade80' : e.c}; transform: scaleX(${pct/100});"></i></div>
-            </div>
-            
-            <button class="btn" style="background: ${isDone ? '#475569' : `linear-gradient(135deg, ${e.c}, #1e1b4b)`}; box-shadow: ${isDone ? 'none' : `0 4px 15px rgba(0,0,0,0.5)`};" ${isDone ? 'disabled' : ''} onclick="startEventGauntlet('${e.id}', ${e.monId})">${isDone ? '✅ Entity Secured' : '⚔️ Enter Gauntlet'}</button>
         </div>`;
-    });
 
-    eh += `</div></div>`;
+    if (isBreak) {
+        // UI for the 1-Day Break
+        eh += `
+        <div style="text-align:center; padding: 40px 20px; background: rgba(0,0,0,0.4); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+            <div style="font-size: 3rem; margin-bottom: 16px; animation: float 3s ease-in-out infinite;">🌌</div>
+            <h4 style="color:#94a3b8; font-size:1.4rem; margin-bottom:12px; text-transform:uppercase; letter-spacing:1px;">The Rift is Stabilizing</h4>
+            <p style="color:#64748b; font-size:1rem; max-width: 400px; margin: 0 auto;">Dimensional energies are currently in a cooldown state to prevent timeline collapse. Rest up, heal your team, and prepare for the next set of temporal anomalies!</p>
+        </div>`;
+    } else {
+        // UI for the Active Event
+        eh += `<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">`;
+        const currentRollingEvents = [EVENT_POOL[idx1], EVENT_POOL[idx2]];
+        currentRollingEvents.forEach(e => {
+            let prog = S.events[e.id] || 0;
+            let pct = Math.min(100, Math.floor((prog / 100) * 100));
+            let isDone = prog >= 100;
+
+            eh += `
+            <div class="event-card" style="border-color: ${e.c};">
+                <div style="height:120px; display:flex; align-items:center; justify-content:center; margin-bottom:12px;">
+                    <img src="${SPR(e.monId)}" class="rift-sprite" style="width:100px; height:100px; animation: float 2.5s ease-in-out infinite;">
+                </div>
+                <h4 style="color:${e.c}; font-size:1.4rem; font-weight:800; margin-bottom:4px; text-shadow: 0 0 8px ${e.c};">${e.name}</h4>
+                <p style="font-size:0.85rem; color:#94a3b8; margin-bottom:16px;">${e.desc}</p>
+                
+                <div style="background: rgba(0,0,0,0.4); padding: 8px; border-radius: 8px; margin-bottom: 16px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;">
+                        <span style="color:#cbd5e1;">Gauntlet Progress</span>
+                        <span style="color:${isDone ? '#4ade80' : '#ffd54a'}; font-weight:bold;">${prog} / 100</span>
+                    </div>
+                    <div class="hpbar" style="height:6px; margin:0;"><i style="background: ${isDone ? '#4ade80' : e.c}; transform: scaleX(${pct/100});"></i></div>
+                </div>
+                
+                <button class="btn" style="background: ${isDone ? '#475569' : `linear-gradient(135deg, ${e.c}, #1e1b4b)`}; box-shadow: ${isDone ? 'none' : `0 4px 15px rgba(0,0,0,0.5)`};" ${isDone ? 'disabled' : ''} onclick="startEventGauntlet('${e.id}', ${e.monId})">${isDone ? '✅ Entity Secured' : '⚔️ Enter Gauntlet'}</button>
+            </div>`;
+        });
+        eh += `</div>`;
+    }
+
+    eh += `</div>`;
     
     const scr7 = document.getElementById('scr7');
     if (scr7) scr7.innerHTML = eh;
@@ -1607,13 +1642,27 @@ function renderEvents() {
         window.evInt = setInterval(() => {
             let el = document.getElementById('evTimer');
             if(!el) return;
-            let msRemaining = 259200000 - (Date.now() % 259200000);
+            
+            let timeInCycle = Date.now() % CYCLE_DURATION;
+            let currentlyInBreak = timeInCycle >= ACTIVE_DURATION;
+            let msRemaining = currentlyInBreak ? (CYCLE_DURATION - timeInCycle) : (ACTIVE_DURATION - timeInCycle);
+            
             let d = Math.floor(msRemaining / (24 * 60 * 60 * 1000));
             let h = Math.floor((msRemaining % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
             let m = Math.floor((msRemaining % (60 * 60 * 1000)) / (60 * 1000));
             let s = Math.floor((msRemaining % (60 * 1000)) / 1000);
-            el.innerText = `Rift Pool Rotates In: ${d}d ${h}h ${m}m ${s}s`;
             
+            if (currentlyInBreak) {
+                el.innerText = `Next Rift Opens In: ${d}d ${h}h ${m}m ${s}s`;
+                el.style.color = '#94a3b8';
+                el.style.textShadow = 'none';
+            } else {
+                el.innerText = `Rift Closes In: ${d}d ${h}h ${m}m ${s}s`;
+                el.style.color = '#facc15';
+                el.style.textShadow = '0 0 10px rgba(250, 204, 21, 0.5)';
+            }
+            
+            // When timer hits exactly 0, refresh the UI
             if(d === 0 && h === 0 && m === 0 && s === 0) {
                 renderAll();
             }
@@ -1651,10 +1700,28 @@ window.startEventGauntlet = async function(eventId, monId) {
                 
                 // Updated victory threshold to 100
                 if(S.events[eventId] >= 100) {
-                    let reward = await makeMon(monId, 50, false, false);
-                    reward.isRift = true;
-                    S.box.push(reward);
-                    sysAlert(`You conquered the Ultimate Gauntlet! The dimensional entity <b style="color:#a855f7">${reward.name}</b> has been securely transferred to your Box.`, "🎉 Gauntlet Complete! 🎉");
+                    if (monId === 493) {
+                        // Prevents Arceus from being caught even if uncommented later
+                        sysAlert("You conquered the Ultimate Gauntlet! Ultimate Arceus acknowledges your absolute authority, but dissolves back into the cosmic fabric of the space-time rift. A divine entity cannot be contained or summoned.", "✨ Divine Disappearance ✨");
+                    } else {
+                        // 1. Generate the reward at Level 100 instead of 50
+                        let reward = await makeMon(monId, 100, false, false);
+                        reward.isRift = true;
+                        
+                        // 2. Safely apply a permanent 1.2x multiplier to its base stats
+                        reward.base = {
+                            hp: Math.floor(reward.base.hp * 1.2),
+                            atk: Math.floor(reward.base.atk * 1.2),
+                            def: Math.floor(reward.base.def * 1.2)
+                        };
+                        
+                        // 3. Recalculate its actual combat stats using the new boosted base stats
+                        calc(reward);
+                        reward.hp = reward.maxhp; // Ensure it starts with full health
+
+                        S.box.push(reward);
+                        sysAlert(`You conquered the Ultimate Gauntlet! The dimensional entity <b style="color:#a855f7">${reward.name}</b> has been securely transferred to your Box.`, "🎉 Gauntlet Complete! 🎉");
+                    }
                 } else {
                     log2(`Gauntlet Victory! Progress: ${S.events[eventId]} / 100`); // Updated message to 100
                 }
@@ -2112,8 +2179,10 @@ async function explore(i){
  let isUltraBeast = false;
  const rand = Math.random();
          if (rand < 0.008) { 
-             // 0.8% chance for Legendary
-             id = RESTRICTED[Math.floor(Math.random() * RESTRICTED.length)];
+             // 0.8% chance for Legendary (Rerolling if Arceus(Banned Pokemon) is selected)
+             do {
+                 id = RESTRICTED[Math.floor(Math.random() * RESTRICTED.length)];
+             } while (id === 493);
              isLegendary = true;
          } else if (rand < 0.016) { 
              // 0.8% chance for Ultra Beast
