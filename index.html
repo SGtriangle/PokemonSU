@@ -656,6 +656,85 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     background-position: center, center;
     background-repeat: no-repeat, no-repeat;
 }
+/* ============ RIFT INTEL SIDEBAR & CORRUPTED LOGIN UI ============ */
+/* The Dimensional Slash Background */
+.corrupted-rift {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: 
+        linear-gradient(45deg, transparent 45%, rgba(239, 68, 68, 0.05) 48%, rgba(239, 68, 68, 0.25) 50%, rgba(239, 68, 68, 0.05) 52%, transparent 55%),
+        linear-gradient(-45deg, transparent 35%, rgba(168, 85, 247, 0.05) 38%, rgba(168, 85, 247, 0.2) 40%, rgba(168, 85, 247, 0.05) 42%, transparent 45%);
+    mix-blend-mode: color-dodge;
+    animation: pulseSlash 4s infinite alternate;
+}
+@keyframes pulseSlash { 0% { opacity: 0.6; } 100% { opacity: 1; filter: brightness(1.5); } }
+
+/* Floating Embers */
+.ember {
+    position: absolute; width: 4px; height: 4px; background: #ef4444; border-radius: 50%;
+    box-shadow: 0 0 10px #ef4444, 0 0 20px #ef4444;
+    animation: floatEmber 5s linear infinite; opacity: 0;
+}
+.ember:nth-child(2) { left: 20%; animation-delay: 1s; animation-duration: 4s; }
+.ember:nth-child(3) { left: 80%; animation-delay: 2s; animation-duration: 6s; }
+.ember:nth-child(4) { left: 50%; animation-delay: 3s; animation-duration: 5s; }
+@keyframes floatEmber {
+    0% { transform: translateY(100vh) scale(1); opacity: 0; }
+    20% { opacity: 0.8; }
+    80% { opacity: 0.8; }
+    100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
+}
+
+/* Sidebar Layout */
+.rift-notices {
+    position: fixed;
+    top: 80px;
+    right: 30px;
+    width: 320px;
+    z-index: 50;
+    background: rgba(11, 16, 32, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-left: 3px solid #ef4444;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: -10px 10px 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(239, 68, 68, 0.1);
+    animation: popIn 0.5s ease-out forwards;
+}
+
+.notice-card {
+    background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(20,0,0,0.4));
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    transition: transform 0.2s, border-color 0.2s;
+}
+.notice-card:hover { transform: translateX(-4px); border-color: #ef4444; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); }
+
+.notice-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #0f172a;
+    border: 2px solid #ef4444;
+    padding: 2px;
+    image-rendering: pixelated;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+/* Auto-adapt to Mobile/Small Screens so it doesn't overlap the login box */
+@media (max-width: 1400px) {
+    .rift-notices {
+        position: static; width: 100%; border-left: none; border-top: 3px solid #ef4444;
+        margin-top: 30px; margin-bottom: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    }
+}
 </style>
 </head>
 <body>
@@ -701,8 +780,15 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
   </div>
 </div>
 
-<div id="pgLogin">
-<div class="wrap">
+<div id="pgLogin" style="position: relative; overflow: hidden;">
+  <!-- Gritty Background Atmosphere -->
+  <div class="corrupted-rift"></div>
+  <div class="ember"></div><div class="ember"></div><div class="ember"></div><div class="ember"></div>
+  
+  <!-- The Dynamic Sidebar -->
+  <div class="rift-notices" id="loginNotices"></div>
+
+<div class="wrap" style="position: relative; z-index: 5;">
   <div class="topbar">
     <div class="logo">PokemonSU<span class="beta"><img src="https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/poke-ball.png" alt="Pokeball"></span><small>BROWSER ADVENTURE RPG</small></div>
     <div class="tabs"><button id="tabL" class="on" onclick="authTab(0)">Login</button><button id="tabR" onclick="authTab(1)">Register</button></div>
@@ -729,8 +815,8 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
       <div class="card" id="loginCard" style="margin:0; width:100%">
         <h2>⚡ Trainer Login</h2><div class="sub">Continue your Pokémon adventure</div>
         <div class="err" id="loginErr"></div>
-        <div class="field"><label>👤 Trainer Name</label><input id="liUser" maxlength="16" placeholder="Enter trainer name" onkeydown="if(event.key === 'Enter') doLogin()"></div>
-        <div class="field"><label>🔒 Password</label><input id="liPass" type="password" placeholder="Enter password" onkeydown="if(event.key === 'Enter') doLogin()"></div>
+        <div class="field"><label>👤 Username</label><input id="liUser" maxlength="16" placeholder="Enter 5+ char username" onkeydown="if(event.key === 'Enter') doLogin()"></div>
+        <div class="field"><label>🔒 Password</label><input id="liPass" type="password" placeholder="Enter 6+ char password" onkeydown="if(event.key === 'Enter') doLogin()"></div>
         <button class="btn" onclick="doLogin()">Login to Game</button>
         <div class="links">
             <a onclick="authTab(1)">🎯 Create New Trainer Account</a>
@@ -741,8 +827,8 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
       <div class="card hidden" id="regCard" style="margin:0; width:100%">
         <h2>🎯 New Trainer</h2><div class="sub">Begin your Rift adventure</div>
         <div class="err" id="regErr"></div>
-        <div class="field"><label>👤 Trainer Name</label><input id="rgUser" maxlength="16" placeholder="Choose a trainer name" onkeydown="if(event.key === 'Enter') doRegister()"></div>
-        <div class="field"><label>🔒 Password</label><input id="rgPass" type="password" placeholder="Choose a password" onkeydown="if(event.key === 'Enter') doRegister()"></div>
+        <div class="field"><label>👤 Username</label><input id="rgUser" maxlength="16" placeholder="Choose a 5+ char username" onkeydown="if(event.key === 'Enter') doRegister()"></div>
+        <div class="field"><label>🔒 Password</label><input id="rgPass" type="password" placeholder="Choose a 6+ char password" onkeydown="if(event.key === 'Enter') doRegister()"></div>
         
         <!-- GENDER SELECTION FOR TRAINER SPRITE -->
         <div class="field"><label>⚧ Trainer Gender</label>
@@ -1317,8 +1403,8 @@ function alert2(m){const t=document.getElementById('loginErr');t.style.color='#3
 function doRegister(){
  const u=rgUser.value.trim(),p=rgPass.value;const e=document.getElementById('regErr');
  const g=document.querySelector('input[name="rgGen"]:checked').value;
- if(u.length<3)return e.textContent='Trainer name must be 3+ characters.';
- if(p.length<3)return e.textContent='Password must be 3+ characters.';
+ if(u.length<5)return e.textContent='Username must be 5+ characters.';
+ if(p.length<6)return e.textContent='Password must be 6+ characters.';
  
  if(socket && socket.connected) {
      socket.emit('register', {user: u, pass: p, gender: g}, (res) => {
@@ -1460,12 +1546,39 @@ window.applyDynamicTheme = function() {
         bg.style.opacity = '1';
     }
 }
+/* ============ TRAINER NAME EDITOR ============ */
+window.changeTrainerName = async function() {
+    if(S.nameChanges >= 2) return sysAlert("You have already changed your Trainer Name the maximum of 2 times.", "Name Change Locked 🔒");
+    
+    let html = `
+        <p style="margin-bottom:12px; color:#cbd5e1; font-size:0.9rem;">You can change your display name <b>${2 - S.nameChanges}</b> more time(s).</p>
+        <input type="text" id="newNameInput" maxlength="12" placeholder="New Trainer Name" style="width:100%; padding:10px; border-radius:8px; border:1px solid #38bdf8; background:rgba(0,0,0,0.5); color:#fff; text-align:center; font-size:1rem; outline:none;">
+    `;
+    
+    if(await sysConfirm(html, "Change Trainer Name ✏️")) {
+        let inputEl = document.getElementById('newNameInput');
+        if(!inputEl) return;
+        
+        let newName = inputEl.value.trim();
+        if(newName.length < 3) {
+            return sysAlert("Trainer Name must be at least 3 characters.", "Invalid Name");
+        }
+        
+        S.displayName = newName;
+        S.nameChanges++;
+        log2("Trainer Name updated successfully!");
+        persist();
+        renderAll();
+    }
+};
 /* ============ GAME UI ============ */
 function startGame(){
  document.getElementById('authModal').classList.add('hidden'); 
  document.getElementById('pgLogin').classList.add('hidden');
  document.getElementById('pgGame').classList.remove('hidden');
  if(S.boxLimit === undefined) S.boxLimit = 30;
+ if(S.displayName === undefined) S.displayName = S.user; // Defaults to their username at first
+ if(S.nameChanges === undefined) S.nameChanges = 0;      // Tracks how many times they've changed it
  if(S.shinyCharm === undefined) S.shinyCharm = false;
  if(S.balls.master === undefined) { S.balls.master = S.balls.great || 0; delete S.balls.great; }
  if(S.stones === undefined) S.stones = {rebirth: 0};
@@ -1474,7 +1587,7 @@ function startGame(){
 }
 
 function refreshHud(){
- hudName.textContent=S.user;
+ hudName.innerHTML = `${S.displayName} <span style="font-size:0.75rem; margin-left:4px; color:#38bdf8; cursor:pointer; background:rgba(0,0,0,0.4); padding:2px 6px; border-radius:6px; border:1px solid rgba(56,189,248,0.3);" onclick="changeTrainerName()" title="Change Name">✏️</span>`;
  hudMoney.textContent='₽'+S.money.toLocaleString();
  hudBadges.innerHTML=S.badges.map(b=>`<span class="badge" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(14, 165, 233, 0.2)); border: 1px solid rgba(56, 189, 248, 0.3); color: #38bdf8; text-shadow: none;">🏅 ${b}</span>`).join('')||'<small style="color:#64748b">No badges yet</small>';
  
@@ -2435,6 +2548,62 @@ async function explore(i){
 
 /* login page sprite strip */
 [25,6,94,448,131,150,384,493].forEach(id=>{const im=document.createElement('img');im.src=SPR(id);im.onerror=()=>im.remove();document.getElementById('strip').append(im)});
+/* ============ RIFT INTEL (LOGIN NOTICES) ============ */
+function renderLoginNotices() {
+    const el = document.getElementById('loginNotices');
+    if (!el) return;
+
+    // Check the active 4-day loop
+    const CYCLE_DURATION = 345600000;
+    const ACTIVE_DURATION = 259200000;
+    let cycleIndex = Math.floor(Date.now() / CYCLE_DURATION);
+    let timeInCurrentCycle = Date.now() % CYCLE_DURATION;
+    let isBreak = timeInCurrentCycle >= ACTIVE_DURATION;
+    
+    // Pull the current and upcoming entities without spoiling too much!
+    let currentBoss = EVENT_POOL[cycleIndex % EVENT_POOL.length];
+    
+    let statusHtml = isBreak 
+        ? `<span style="color:#4ade80; font-size:0.75rem; font-weight:bold; letter-spacing:1px; text-transform:uppercase;">STABILIZING</span>`
+        : `<span style="color:#f87171; font-size:0.75rem; font-weight:bold; letter-spacing:1px; text-transform:uppercase;">CRITICAL THREAT</span>`;
+
+    el.innerHTML = `
+        <h3 style="color:#ef4444; font-weight:900; letter-spacing:2px; margin-bottom:16px; text-shadow:0 0 10px rgba(239,68,68,0.5); display:flex; align-items:center; gap:8px;">
+            <span style="animation: pulseGlow 1s infinite alternate;">⚠️</span> RIFT INTEL
+        </h3>
+        
+        <div class="notice-card">
+            <img src="https://play.pokemonshowdown.com/sprites/trainers/mars.png" class="notice-icon" style="border-color:#38bdf8; box-shadow: 0 0 10px rgba(56,189,248,0.5);">
+            <div>
+                <div style="font-size:0.7rem; color:#94a3b8; text-transform:uppercase;">System Update</div>
+                <b style="color:#38bdf8; font-size:0.95rem;">Catch Rates Overhauled</b>
+                <div style="font-size:0.8rem; color:#cbd5e1; margin-top:2px;">Hardcore catch mechanics deployed. Master your throws.</div>
+            </div>
+        </div>
+
+        <div class="notice-card" style="${isBreak ? 'opacity:0.6; filter:grayscale(1); border-color:#475569;' : ''}">
+            <img src="https://play.pokemonshowdown.com/sprites/trainers/cyrus.png" class="notice-icon" style="${isBreak ? 'border-color:#475569; box-shadow:none;' : 'border-color:#a855f7; box-shadow: 0 0 10px rgba(168,85,247,0.5);'}">
+            <div>
+                ${statusHtml}
+                <b style="color:#a855f7; font-size:0.95rem; display:block;">${isBreak ? 'Cooldown Active' : 'Anomaly: ' + currentBoss.name.split(' ')[1]}</b>
+                <div style="font-size:0.8rem; color:#cbd5e1; margin-top:2px;">${isBreak ? 'Prepare for the next dimensional surge.' : 'Level 100 Gauntlet is now open.'}</div>
+            </div>
+        </div>
+
+        <div class="notice-card">
+            <img src="https://play.pokemonshowdown.com/sprites/trainers/giovanni.png" class="notice-icon" style="border-color:#facc15; box-shadow: 0 0 10px rgba(250,204,21,0.5); filter: brightness(0.8);">
+            <div>
+                <div style="font-size:0.7rem; color:#94a3b8; text-transform:uppercase;">Incoming Shift</div>
+                <b style="color:#facc15; font-size:0.95rem;">Subject: Classified</b>
+                <div style="font-size:0.8rem; color:#cbd5e1; margin-top:2px;">Massive energy spike detected. ETA: Next Cycle.</div>
+            </div>
+        </div>
+    `;
+}
+// Run on load
+renderLoginNotices();
+// Auto-refresh every minute so the timer stays accurate if they idle on the page
+setInterval(renderLoginNotices, 60000);
 </script>
 </body>
 </html>
