@@ -576,73 +576,36 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 #eName, #pName { font-size: 1.05rem !important; font-weight: 700; }
 .shoprow span { font-size: 0.95rem !important; font-weight: 600; }
 
-/* ===== COMPREHENSIVE MOBILE APP EXPERIENCE ===== */
+/* ===== OPTIMIZED MOBILE EXPERIENCE ===== */
 @media (max-width: 768px) {
-    /* 1. App-like Bottom Navigation Bar */
-    #pgGame { padding-bottom: 85px; } /* Prevents content from hiding behind the bottom nav */
-    
-    .nav { 
-        position: fixed; 
-        bottom: 0; 
-        left: 0; 
-        right: 0; 
-        background: rgba(11, 16, 32, 0.98); 
-        backdrop-filter: blur(20px); 
-        -webkit-backdrop-filter: blur(20px);
-        border-top: 1px solid rgba(56, 189, 248, 0.4); 
-        margin: 0; 
-        padding: 10px 8px; 
-        display: flex; 
-        flex-wrap: nowrap; 
-        overflow-x: auto; 
-        gap: 8px; 
-        z-index: 100; 
-        box-shadow: 0 -5px 25px rgba(0,0,0,0.8);
-        border-radius: 20px 20px 0 0;
-        overscroll-behavior-x: contain; /* Enables smooth swiping across tabs */
-    }
-    
-    /* Hides the ugly scrollbar in the mobile bottom nav */
-    .nav::-webkit-scrollbar { display: none; }
-    
-    .nav button { 
-        flex: 0 0 auto; 
-        padding: 10px 16px; 
-        font-size: 0.9rem; 
-        border-radius: 14px; 
-        white-space: nowrap;
-    }
-    
-    /* 2. Compact HUD & Grids */
-    .wrap { padding: 8px; }
-    .hud { padding: 10px; gap: 8px; margin: -8px -8px 16px -8px; border-radius: 0 0 16px 16px; }
-    .hud .logo { font-size: 1.2rem; }
-    .hud-info { justify-content: center; }
-    .hud-stat { font-size: 0.85rem; padding: 6px 10px; }
-    
-    /* Dynamically shrink the Pokemon cards to fit 2 per row perfectly on phones */
-    .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
-    .shop-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
-    
-    .mon img { width: 60px; height: 60px; }
-    
-    /* 3. Streamlined Battle Arena */
-    .bfield { padding: 10px; gap: 4px; border-radius: 12px;}
-    .bside:nth-child(1) .binfo { margin: 0; }
-    .bside:nth-child(1) .bmon  { margin-top: 0; }
-    .bside:nth-child(2) .bmon  { margin-bottom: 0; }
-    .bside:nth-child(2) .binfo { margin: 0; }
-    .bmon img{ max-width: 95px; } 
-    .bmon::before { width: 100px; height: 26px; bottom: 4px; }
-    .bmon::after { width: 45px; height: 6px; bottom: 10px; }
-    .binfo{ min-width: 120px; padding: 6px 10px; } 
-    .binfo b { font-size: 0.9rem; }
-    .binfo small { font-size: 0.7rem; }
-    .bacts button { padding: 6px; font-size: 0.85rem; }
-    .blog { min-height: 48px; padding: 10px; font-size: 0.85rem; }
+    /* 1. Ultra-Compact HUD */
+    .hud { padding: 6px; gap: 4px; margin: -12px -12px 10px -12px; border-radius: 0 0 12px 12px; }
+    .hud .logo { font-size: 1rem !important; }
+    .hud-info { gap: 4px; }
+    .hud-stat { font-size: 0.75rem !important; padding: 4px 6px !important; }
+    .hud-actions button { padding: 4px 8px !important; font-size: 0.75rem !important; }
 
-    /* Modals take up full screen width on phones */
-    .dbox, .card { width: 100%; border-radius: 16px; padding: 16px; }
+    /* 2. Tighten all Panels & Cards */
+    .panel, .card { padding: 10px; margin-bottom: 8px; border-radius: 12px; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+    
+    /* 3. Streamline Battle Arena (Critical for gameplay) */
+    .bwrap { height: calc(100svh - 60px); gap: 6px; }
+    .bfield { padding: 6px; gap: 2px; }
+    
+    /* Shrink combat info so it never overlaps sprites */
+    .binfo { min-width: 100px; padding: 4px 6px; transform: scale(0.9); }
+    .binfo b { font-size: 0.8rem; }
+    .bmon img { max-width: 80px; } 
+    
+    /* Compact Action Buttons */
+    .bacts { gap: 5px; }
+    .bacts button { padding: 4px; font-size: 0.75rem; min-height: 40px; }
+    .blog { min-height: 40px; padding: 6px; font-size: 0.75rem; }
+
+    /* 4. Navigation Bar */
+    .nav { padding: 5px; gap: 4px; border-radius: 16px 16px 0 0; }
+    .nav button { padding: 8px 12px; font-size: 0.8rem; }
 }
 /* ===== DYNAMIC EVENT THEMES (NOSTALGIA UI) ===== */
 #theme-bg {
