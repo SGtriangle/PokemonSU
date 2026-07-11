@@ -1369,6 +1369,7 @@ function startGame(){
  document.getElementById('authModal').classList.add('hidden'); 
  document.getElementById('pgLogin').classList.add('hidden');
  document.getElementById('pgGame').classList.remove('hidden');
+ if(S.boxLimit === undefined) S.boxLimit = 30;
  if(S.shinyCharm === undefined) S.shinyCharm = false;
  if(S.balls.master === undefined) { S.balls.master = S.balls.great || 0; delete S.balls.great; }
  if(S.stones === undefined) S.stones = {rebirth: 0};
@@ -1885,6 +1886,16 @@ function renderShop(){
          </div>
          
          ${rebirthShopHtml}
+
+         <div class="shop-card" style="border-color: #f87171;">
+             <div class="icn-wrap" style="background: radial-gradient(circle, rgba(248, 113, 113, 0.2), transparent); border-color: #f87171;">📦</div>
+             <h4>Storage Expansion</h4>
+             <div class="owned">Capacity: ${S.team.length + S.box.length} / ${6 + (S.boxLimit || 30)}</div>
+             <div class="price">₽5,000</div>
+             <div class="actions">
+                 <button class="sbtn" style="width:100%; margin-top:8px; background: #ef4444;" onclick="buyStorage()">+15 Slots</button>
+             </div>
+         </div>
          
          <div class="shop-card" style="${S.shinyCharm ? 'opacity:0.7; filter:grayscale(0.8)' : ''}">
              <div class="icn-wrap" style="background: radial-gradient(circle, rgba(255, 213, 74, 0.15), transparent); border-color: rgba(255, 213, 74, 0.2); cursor:pointer;" onclick="showItemInfo('shiny-charm')" title="Click for info">${ICN('shiny-charm')}</div>
@@ -1954,6 +1965,16 @@ function buy(c,k,p,n,id){
 
 function buyCharm(){if(S.money<400000)return sysAlert('Not enough money! You need ₽400000.', 'Shop Error');if(S.shinyCharm)return log2('Already owned!');S.money-=400000;S.shinyCharm=true;log2(`Bought Shiny Charm! Shiny rate increased!`);persist();renderAll()}
 
+window.buyStorage = function() {
+    if (S.boxLimit >= 1200) return sysAlert("You have reached the maximum storage capacity of 1200!", "Shop Error");
+    if (S.money < 5000) return sysAlert("Not enough money! You need ₽5,000 to purchase 15 additional storage slots.", "Shop Error");
+    
+    S.money -= 5000;
+    S.boxLimit += 15;
+    log2("Storage expanded by 15 slots!");
+    persist();
+    renderAll();
+}
 function lead(i){S.team.unshift(S.team.splice(i,1)[0]);renderAll()}
 function toBox(i){S.box.push(S.team.splice(i,1)[0]);renderAll()}
 function toTeam(i){if(S.team.length>=6)return;S.team.push(S.box.splice(i,1)[0]);renderAll()}
@@ -2194,6 +2215,13 @@ function continueFaint(m){
 }
 
 async function throwBall(k){
+    // Added For Box limits:
+    const totalCapacity = 6 + (S.boxLimit || 30);
+    const currentCount = S.team.length + S.box.length;
+    if (currentCount >= totalCapacity) {
+        sysAlert(`Your Box and Party are full (${currentCount}/${totalCapacity})! Release some Pokémon to make room.`, "⚠️ Storage Full");
+        return;
+    } // <- end
  if(B.lock||!B.wild||S.balls[k]<1)return;
  const e=B.enemy;
  if(k==='master') {
@@ -2243,33 +2271,34 @@ async function explore(i){
  let isAnomaly = false;
  let isUltraBeast = false;
  const rand = Math.random();
-         if (rand < 0.008) { 
-             // 0.8% chance for Legendary (Rerolling if Arceus(Banned Pokemon) is selected)
+         if (rand < 0.001) { 
+             // 0.1% chance for Legendary (Rerolling if Arceus is selected)
              do {
                  id = RESTRICTED[Math.floor(Math.random() * RESTRICTED.length)];
              } while (id === 493);
              isLegendary = true;
-         } else if (rand < 0.016) { 
-             // 0.8% chance for Ultra Beast
+         } else if (rand < 0.002) { 
+             // 0.1% chance for Ultra Beast
              id = ULTRA_BEASTS[Math.floor(Math.random() * ULTRA_BEASTS.length)];
              isUltraBeast = true;
-         } else if (rand < 0.026) {
-             // 1% chance for Anomaly / Rift Form
+         } else if (rand < 0.004) {
+             // 0.2% chance for Anomaly / Rift Form
              id = RIFT_FORMS[Math.floor(Math.random()*RIFT_FORMS.length)];
              isAnomaly = true;
          } else {
-             // 97.4% chance for Normal Regional Spawns
+             // 99.6% chance for Normal Regional Spawns
              while(RESTRICTED.includes(id) || ULTRA_BEASTS.includes(id) || RIFT_FORMS.includes(id)){id=a+Math.floor(Math.random()*(b-a+1));}
          }
  const lv=z.lv[0]+Math.floor(Math.random()*(z.lv[1]-z.lv[0]+1));
- // Standard Pokémon: 1% base, 2% with Shiny Charm
-     let shinyRate = S.shinyCharm ? 0.04 : 0.02; 
+ 
+ // Standard Pokémon: 0.1% base, 0.25% with Shiny Charm
+     let shinyRate = S.shinyCharm ? 0.0025 : 0.001; 
      
-     // Legendaries & Ultra Beasts: 0.1% base, 0.5% with Shiny Charm
-     if (isLegendary || isUltraBeast) shinyRate = S.shinyCharm ? 0.008 : 0.005; 
+ // Legendaries & Ultra Beasts: 0.01% base, 0.05% with Shiny Charm
+     if (isLegendary || isUltraBeast) shinyRate = S.shinyCharm ? 0.0005 : 0.0001; 
      
-     // Anomalies / Rift Forms: 0.5% base, 1% with Shiny Charm
-     else if (isAnomaly) shinyRate = S.shinyCharm ? 0.01 : 0.005;
+ // Anomalies / Rift Forms: 0.05% base, 0.1% with Shiny Charm
+     else if (isAnomaly) shinyRate = S.shinyCharm ? 0.001 : 0.0005;
  const isShiny = Math.random() < shinyRate;
  const w=await makeMon(id,lv,isShiny);
  const doBattle = () => {
