@@ -374,61 +374,32 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 .event-card::before { content: 'LIMITED TIME'; position: absolute; top: 15px; left: -30px; background: #ef4444; color: #fff; font-size: 0.7rem; font-weight: 800; padding: 4px 30px; transform: rotate(-45deg); z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 .event-timer { font-family: 'VT323', monospace; font-size: 1.8rem; color: #facc15; text-shadow: 0 0 10px rgba(250, 204, 21, 0.5); margin-bottom: 16px; }
 
-/* GPU Accelerated Smooth Health Bar - 100% Repaint Free using ScaleX */
+/* ===== PROGRESS & HEALTH BARS (GLITCH & LAG FIX) ===== */
 .hpbar { 
-    width: 100%; 
-    height: 6px; 
-    background: rgba(0,0,0,0.6); 
-    border-radius: 6px; 
-    margin: 6px 0; 
+    width: 100%; height: 8px; background: rgba(0,0,0,0.6); 
+    border-radius: 6px; margin: 6px 0; 
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.8); 
-    position: relative; /* Anchor for absolute inner bar */
-    transform: translateZ(0); 
+    position: relative; overflow: hidden; 
 }
-/* Buttery Smooth MMO Health Bar Animation */
 .hpbar i { 
-    position: absolute; 
-    top: 0; left: 0; bottom: 0;
-    display: block;
+    position: absolute; top: 0; left: 0; bottom: 0; display: block; 
     width: 100%; 
+    transform-origin: left center !important; /* FIXES THE WEIRD CENTERING GLITCH */
     background: linear-gradient(90deg, #4ade80, #22c55e); 
     border-radius: 6px; 
-    /* Uses a custom bezier curve for a snappy start and smooth glide to a stop */
-    transition: width 0.4s cubic-bezier(0.17, 0.89, 0.32, 1.2), background 0.3s ease; 
-    will-change: width, background; 
+    transition: width 0.3s ease-out, transform 0.3s ease-out, background 0.3s ease; 
 }
 .hpbar i.mid { background: linear-gradient(90deg, #facc15, #eab308); }
-
-@keyframes dangerPulse { 
-    0%, 100% { filter: brightness(1) drop-shadow(0 0 4px rgba(248, 113, 113, 0.5)); } 
-    50% { filter: brightness(1.5) drop-shadow(0 0 10px rgba(248, 113, 113, 1)); } 
-}
-.hpbar i.low { 
-    background: linear-gradient(90deg, #ef4444, #f87171); 
-    animation: dangerPulse 1s ease-in-out infinite; 
-}
+@keyframes dangerPulse { 0%, 100% { filter: drop-shadow(0 0 2px rgba(248,113,113,0.5)); } 50% { filter: drop-shadow(0 0 8px rgba(248,113,113,1)); } }
+.hpbar i.low { background: linear-gradient(90deg, #ef4444, #f87171); animation: dangerPulse 1s infinite; }
 
 /* RARE ENCOUNTER ALERT ANIMATIONS */
-@keyframes rarePop {
-    0% { opacity: 0; transform: scale(0.5) translateY(50px); filter: brightness(2); }
-    70% { transform: scale(1.1); filter: brightness(1); }
-    100% { opacity: 1; transform: scale(1) translateY(0); }
-}
-@keyframes rareGlow {
-    0% { filter: drop-shadow(0 0 10px currentColor); }
-    100% { filter: drop-shadow(0 0 35px currentColor) brightness(1.3); transform: scale(1.05); }
-}
-@keyframes pulseGlow {
-    0% { transform: scale(0.9); opacity: 0.1; }
-    100% { transform: scale(1.1); opacity: 0.4; }
-}
-@keyframes btnPulse {
-    0% { transform: scale3d(0.98, 0.98, 1); }
-    100% { transform: scale3d(1.03, 1.03, 1); }
-}
+@keyframes rarePop { 0% { opacity: 0; transform: scale(0.5) translateY(50px); filter: brightness(2); } 70% { transform: scale(1.1); filter: brightness(1); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes rareGlow { 0% { filter: drop-shadow(0 0 10px currentColor); } 100% { filter: drop-shadow(0 0 35px currentColor) brightness(1.3); transform: scale(1.05); } }
+@keyframes pulseGlow { 0% { transform: scale(0.9); opacity: 0.1; } 100% { transform: scale(1.1); opacity: 0.4; } }
+@keyframes btnPulse { 0% { transform: scale3d(0.98, 0.98, 1); } 100% { transform: scale3d(1.03, 1.03, 1); } }
 
-
-/* ===== BATTLE ARENA (MMO CYBER-RIFT STYLE) ===== */
+/* ===== BATTLE ARENA (AUTHENTIC POKEMON STYLE) ===== */
 #battle { 
     position: fixed; inset: 0; 
     background: rgba(5, 8, 16, 0.98); 
@@ -444,24 +415,24 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     max-height: 800px; 
     display: flex; flex-direction: column; gap: 10px; 
 }
-
-/* ===== AUTHENTIC POKEMON ARENA STYLE ===== */
 .bfield { 
-    border: 2px solid rgba(255,255,255,0.2); 
-    border-radius: 12px; 
-    box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
+    border: 2px solid rgba(255,255,255,0.2); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
     padding: 16px; position: relative; flex: 1 1 0; min-height: 0; margin-bottom: 0; overflow: hidden; 
     display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px;
-    animation: popIn 0.3s ease-out forwards;
-    transition: background 1s ease-in-out; 
+    transition: background 1s ease; 
 }
 
-/* Authentic Horizon Gradients (Sharp split at 45%) */
-.bfield.day { background: linear-gradient(to bottom, #7dd3fc 0%, #38bdf8 45%, #4ade80 45.1%, #16a34a 100%); }
-.bfield.evening { background: linear-gradient(to bottom, #fdba74 0%, #f97316 45%, #4ade80 45.1%, #16a34a 100%); }
-.bfield.night { background: linear-gradient(to bottom, #1e293b 0%, #0f172a 45%, #14532d 45.1%, #064e3b 100%); }
+/* Authentic Horizon Gradients with Grass Texture */
+.bfield.day { background: linear-gradient(to bottom, #7dd3fc 0%, #38bdf8 45%, #4ade80 45%, #16a34a 100%); }
+.bfield.evening { background: linear-gradient(to bottom, #fdba74 0%, #f97316 45%, #4ade80 45%, #16a34a 100%); }
+.bfield.night { background: linear-gradient(to bottom, #1e293b 0%, #0f172a 45%, #14532d 45%, #064e3b 100%); }
 
-/* Grid cleanup */
+.bfield::before {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 55%;
+    background: repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(0,0,0,0.06) 15px, rgba(0,0,0,0.06) 30px);
+    pointer-events: none; z-index: 0;
+}
+
 .bside { display: contents; }
 .bside:nth-child(1) .binfo { grid-column: 1; grid-row: 1; justify-self: start; align-self: start; margin: 10px 0 0 10px; } 
 .bside:nth-child(1) .bmon  { grid-column: 2; grid-row: 1; justify-self: center; align-self: start; } 
@@ -471,46 +442,33 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 /* Classic White HP Boxes */
 .binfo { 
     width: 100%; max-width: 240px; min-width: 150px; z-index: 5; padding: 10px 14px; 
-    background: rgba(248, 250, 252, 0.95);
-    border: 2px solid #475569; 
-    border-radius: 8px 20px 8px 20px; /* Classic Pokemon curved corners */
-    box-shadow: 2px 4px 10px rgba(0,0,0,0.4);
-    transform: translate3d(0,0,0);
+    background: rgba(248, 250, 252, 0.95); border: 2px solid #475569; 
+    border-radius: 8px 20px 8px 20px; box-shadow: 2px 4px 10px rgba(0,0,0,0.4);
 }
-.binfo b { color: #1e293b; font-size: 1.1rem; text-shadow: none; font-weight: 800; }
-.binfo small { color: #64748b; font-size: 0.85rem; font-weight: 600; text-shadow: none; }
-.hpbar { height: 8px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); border: 1px solid #94a3b8; background: #cbd5e1; border-radius: 4px; }
+.binfo b { color: #1e293b; font-size: 1.1rem; font-weight: 800; text-shadow: none; }
+.binfo .hpbar { border: 1px solid #94a3b8; background: #cbd5e1; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); margin: 8px 0 4px 0; }
 
 /* 3D Grass Bases */
 .bmon { width: 100%; max-width: 160px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
-.bmon img { width: auto; height: auto; max-width: 140px; max-height: 20vh; animation: float 2.5s ease-in-out infinite; position: relative; z-index: 3; will-change: transform; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.6)); }
-
+.bmon img { width: auto; height: auto; max-width: 140px; max-height: 20vh; animation: float 2.5s ease-in-out infinite; position: relative; z-index: 3; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.6)); }
 .bmon::before {
-    content: ''; position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
-    width: 110%; max-width: 150px; height: 35px; 
+    content: ''; position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 110%; max-width: 150px; height: 35px; 
     background: radial-gradient(ellipse at center, #86efac 10%, #22c55e 60%, #15803d 100%);
-    border: 2px solid rgba(255,255,255,0.2); border-radius: 50%;
-    z-index: 1; box-shadow: 0 8px 15px rgba(0,0,0,0.4);
+    border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; z-index: 1; box-shadow: 0 8px 15px rgba(0,0,0,0.4);
 }
-
 .bmon::after {
-    content: ''; position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
-    width: 50%; max-width: 70px; height: 10px; 
-    background: rgba(0,0,0,0.4); border-radius: 50%; z-index: 2;
-    animation: shadowScale 2.5s ease-in-out infinite; will-change: transform, opacity; 
+    content: ''; position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); width: 50%; max-width: 70px; height: 10px; 
+    background: rgba(0,0,0,0.4); border-radius: 50%; z-index: 2; animation: shadowScale 2.5s ease-in-out infinite; 
 }
-
 @keyframes shadowScale { 0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; } 50% { transform: translateX(-50%) scale(0.7); opacity: 0.4; } }
-@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
 
 /* Clean Action Panel */
-.bacts { display: flex; flex-direction: column; gap: 8px; flex: 0 0 auto; animation: popIn 0.5s ease-out forwards; }
-.bacts button { padding: 10px; display: flex; align-items: center; justify-content: center; font-size:0.95rem; gap:6px; margin:0; border: 1px solid transparent; transition: all 0.2s; border-radius: 8px; cursor: pointer; }
+.bacts { display: flex; flex-direction: column; gap: 8px; flex: 0 0 auto; }
+.bacts button { border: none; cursor: pointer; transition: transform 0.1s ease, filter 0.1s ease; }
+.bacts button:active { transform: scale(0.98); }
+.bacts button:hover { filter: brightness(1.1); }
 .item-amt { background: rgba(0,0,0,0.6); padding: 2px 8px; border-radius: 6px; font-family: monospace; color: #ffd54a; font-weight: 800; font-size: 0.9rem; border: 1px solid rgba(255,213,74,0.3); }
-
-/* SUPER EFFECTIVE & NOT EFFECTIVE MOVE HIGHLIGHTS */
-.bacts button.mv.eff-sup { border-color: #4ade80; box-shadow: inset 0 0 10px rgba(74, 222, 128, 0.15); background: rgba(74, 222, 128, 0.1); }
-.bacts button.mv.eff-not { border-color: #f87171; background: rgba(248, 113, 113, 0.05); opacity: 0.8; }
 
 /* ===== DIALOGUE & MODALS ===== */
 /* ELEVATED Z-INDEX FOR SYSTEM MODALS SO THEY SHOW ABOVE EVERYTHING */
@@ -2662,21 +2620,35 @@ function drawB(){
     let eRba = e.rebirth ? 'rebirth-aura' : '';
     if(e.isRift) eRba += ' rift-sprite';
     eImg.className = eRba;
-    eName.innerHTML=(e.rebirth?'<span class="rebirth-star">🌟</span> ':'')+e.name;
+    
+    let eTypeColor = TYPE_COLORS[e.types[0]] || '#94a3b8';
+    eName.innerHTML=(e.rebirth?'<span class="rebirth-star">🌟</span> ':'')+e.name + 
+        `<br><small style="font-size:0.75rem; color:${eTypeColor}; text-transform:uppercase; font-weight:800; display:block; margin-top:2px;">${e.types.join(' / ')}</small>`;
+        
     eLvl.textContent='Lv '+e.lvl;
-    const eb=document.getElementById('eHp'); eb.style.width = (Math.max(0, e.hp / e.maxhp) * 100) + '%'; eb.className=hpCls(e);
+    const eb=document.getElementById('eHp'); 
+    eb.style.width = '0'; // Clear previous state to prevent lag
+    eb.style.width = (Math.max(0, e.hp / e.maxhp) * 100) + '%'; 
+    eb.className=hpCls(e);
     
     // Player Render
     pImg.src=SPRB(p.id,p.shiny);pImg.onerror=()=>{pImg.onerror=null;pImg.src=SPR(p.id,p.shiny)};
     let pRba = p.rebirth ? 'rebirth-aura' : '';
     if(p.isRift) pRba += ' rift-sprite';
     pImg.className = pRba;
-    pName.innerHTML=(p.rebirth?'<span class="rebirth-star">🌟</span> ':'')+p.name;
+    
+    let pTypeColor = TYPE_COLORS[p.types[0]] || '#94a3b8';
+    pName.innerHTML=(p.rebirth?'<span class="rebirth-star">🌟</span> ':'')+p.name + 
+        `<br><small style="font-size:0.75rem; color:${pTypeColor}; text-transform:uppercase; font-weight:800; display:block; margin-top:2px;">${p.types.join(' / ')}</small>`;
+        
     pLvl.textContent='Lv '+p.lvl;
     pHpTxt.textContent=p.hp+' / '+p.maxhp;
-    const pb=document.getElementById('pHp'); pb.style.width = (Math.max(0, p.hp / p.maxhp) * 100) + '%'; pb.className=hpCls(p);
+    const pb=document.getElementById('pHp'); 
+    pb.style.width = '0'; // Clear previous state to prevent lag
+    pb.style.width = (Math.max(0, p.hp / p.maxhp) * 100) + '%'; 
+    pb.className=hpCls(p);
     
-    // Classic Colored Move Buttons
+    // Sleek Colored Move Buttons
     const movesHtml = p.moves.map((m,i)=>{
         let eff=1; e.types.forEach(t=>{const c=EFF[m.t];if(c&&c[t]!=null)eff*=c[t]});
         let bgCol = TYPE_COLORS[m.t] || '#9ca3af'; 
@@ -2686,27 +2658,27 @@ function drawB(){
         if(eff<1) titleTxt += ` | Not very effective...`;
         
         return `<button class="mv" ${B.lock?'disabled':''} onclick="useMove(${i})" title="${titleTxt}"
-            style="background: ${bgCol}; border: 2px solid rgba(255,255,255,0.4); border-radius: 10px; color: #fff; padding: 10px; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.2), 0 2px 6px rgba(0,0,0,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center;">
-            <span style="font-size:1.1rem; font-weight:800; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">${m.n}</span>
-            <small style="font-size:0.75rem; font-weight:700; opacity: 0.9; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); margin-top: 4px;">${m.t.toUpperCase()} &nbsp;·&nbsp; ${m.p} PWR</small>
+            style="background: ${bgCol}; border: 1px solid rgba(0,0,0,0.2); border-radius: 6px; color: #fff; padding: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <span style="font-size:1rem; font-weight:800; text-shadow: 1px 1px 1px rgba(0,0,0,0.3);">${m.n}</span>
+            <small style="font-size:0.7rem; font-weight:700; opacity: 0.9; text-shadow: 1px 1px 1px rgba(0,0,0,0.3); margin-top: 2px;">${m.t.toUpperCase()} &nbsp;·&nbsp; ${m.p} PWR</small>
             </button>`;
     }).join('');
 
-    // Clean Sidebar Items
+    // Clearer Item Buttons (Poké Ball / Master Ball)
     const actionsHtml = `
-     <button class="gbtn" ${B.lock||!B.wild?'disabled':''} onclick="throwBall('poke')" style="background: rgba(15, 23, 42, 0.9); justify-content: space-between; padding: 8px 12px;">
-        <span style="display:flex; align-items:center;">${ICN('poke-ball')} Catch</span><span class="item-amt">x${S.balls.poke}</span>
+     <button class="gbtn" ${B.lock||!B.wild?'disabled':''} onclick="throwBall('poke')" style="background: rgba(15, 23, 42, 0.9); justify-content: space-between; padding: 6px 12px; border-radius:6px;">
+        <span style="display:flex; align-items:center;">${ICN('poke-ball')} Poké Ball</span><span class="item-amt">x${S.balls.poke}</span>
      </button>
      
-     <button class="gbtn" ${B.lock||!B.wild?'disabled':''} onclick="throwBall('master')" style="background: rgba(15, 23, 42, 0.9); justify-content: space-between; padding: 8px 12px;">
-        <span style="display:flex; align-items:center;">${ICN('master-ball')} Master</span><span class="item-amt">x${S.balls.master}</span>
+     <button class="gbtn" ${B.lock||!B.wild?'disabled':''} onclick="throwBall('master')" style="background: rgba(15, 23, 42, 0.9); justify-content: space-between; padding: 6px 12px; border-radius:6px;">
+        <span style="display:flex; align-items:center;">${ICN('master-ball')} Master Ball</span><span class="item-amt">x${S.balls.master}</span>
      </button>
      
-     <button class="gbtn" ${B.lock?'disabled':''} onclick="usePot()" style="background: rgba(15, 23, 42, 0.9); justify-content: space-between; padding: 8px 12px;">
-        <span style="display:flex; align-items:center;">${ICN('potion')} Heal</span><span class="item-amt">x${S.pots.p}</span>
+     <button class="gbtn" ${B.lock?'disabled':''} onclick="usePot()" style="background: rgba(15, 23, 42, 0.9); justify-content: space-between; padding: 6px 12px; border-radius:6px;">
+        <span style="display:flex; align-items:center;">${ICN('potion')} Heal Potion</span><span class="item-amt">x${S.pots.p}</span>
      </button>
      
-     <button class="gbtn" ${B.lock?'disabled':''} onclick="switchMon()" style="background: rgba(15, 23, 42, 0.9);">
+     <button class="gbtn" ${B.lock?'disabled':''} onclick="switchMon()" style="background: rgba(15, 23, 42, 0.9); border-radius:6px;">
         🔄 Swap Pkmn
      </button>
     `;
@@ -2714,10 +2686,10 @@ function drawB(){
     bActs.innerHTML = `
         <div style="display:flex; gap: 12px; flex-wrap: wrap;">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: 2; min-width: 250px;">${movesHtml}</div>
-            <div style="display: grid; grid-template-columns: 1fr; gap: 8px; flex: 1; min-width: 150px;">
+            <div style="display: grid; grid-template-columns: 1fr; gap: 6px; flex: 1; min-width: 180px;">
                 ${actionsHtml}
                 <button class="gbtn" ${B.lock||(!B.wild && !B.isPvP)?'disabled':''} onclick="endB(null,B.isPvP?'You forfeited the match!':'You got away safely!')" 
-                    style="border-color: rgba(248,113,113,0.5); color: #f87171; background: rgba(248, 113, 113, 0.1);">
+                    style="border-color: rgba(248,113,113,0.5); color: #f87171; background: rgba(248, 113, 113, 0.1); border-radius:6px;">
                     🏃 Run Away
                 </button>
             </div>
