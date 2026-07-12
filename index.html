@@ -429,112 +429,84 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 }
 
 
-/* ===== BATTLE ARENA (1-SCREEN FIT, AUTO-RESOLVE GRID, NO SCROLLING) ===== */
+/* ===== BATTLE ARENA (MMO CYBER-RIFT STYLE) ===== */
 #battle { 
     position: fixed; inset: 0; 
-    background: rgba(11, 16, 32, 0.98); 
-    backdrop-filter: blur(10px); 
-    -webkit-backdrop-filter: blur(10px);
-    z-index: 50; 
-    padding: 12px; 
+    background: rgba(5, 8, 16, 0.98); /* Much darker overlay */
+    backdrop-filter: blur(12px); 
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 50; padding: 12px; 
     display: flex; align-items: center; justify-content: center; 
-    overscroll-behavior: none; /* Stops background body scrolling completely */
+    overscroll-behavior: none; 
 }
 .bwrap { 
     width: 100%; max-width: 700px; 
-    height: calc(100svh - 24px); /* Perfectly aligns to any mobile or PC browser height */
+    height: calc(100svh - 24px); 
     max-height: 800px; 
     display: flex; flex-direction: column; gap: 10px; 
 }
-.bfield { 
-    /* Authentic Sky-to-Grass Horizon Battle Background */
-    background: linear-gradient(to bottom, #0369a1 0%, #0ea5e9 50%, #166534 50.1%, #064e3b 100%);
-    border: 2px solid rgba(255,255,255,0.1); 
-    border-radius: 20px; 
-    box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 15px 30px rgba(0,0,0,0.5); 
-    padding: 16px; 
-    position: relative; 
-    flex: 1 1 0; /* Dynamic height scaling */
-    min-height: 0; 
-    margin-bottom: 0;
-    overflow: hidden; /* Keeps bases inside */
 
-    /* BULLETPROOF GRID SYSTEM */
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 8px;
+/* Neon Cyber-Grid Arena Background */
+.bfield { 
+    background: radial-gradient(circle at top, #1e293b 0%, #050810 100%);
+    background-image: 
+        linear-gradient(rgba(56, 189, 248, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56, 189, 248, 0.1) 1px, transparent 1px);
+    background-size: 30px 30px;
+    background-position: center bottom;
+    border: 2px solid rgba(56, 189, 248, 0.3); 
+    border-radius: 20px; 
+    box-shadow: inset 0 0 60px rgba(0,0,0,0.9), 0 10px 25px rgba(0,0,0,0.6); 
+    padding: 16px; position: relative; 
+    flex: 1 1 0; min-height: 0; margin-bottom: 0; overflow: hidden; 
+    display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px;
     animation: popIn 0.3s ease-out forwards;
 }
 
-/* Removes wrapper div to let Grid take over completely */
 .bside { display: contents; }
-
-/* Forces elements into their specific quadrants to PREVENT overlap forever */
 .bside:nth-child(1) .binfo { grid-column: 1; grid-row: 1; justify-self: start; align-self: start; margin: 10px 0 0 10px; } 
 .bside:nth-child(1) .bmon  { grid-column: 2; grid-row: 1; justify-self: center; align-self: start; } 
-
 .bside:nth-child(2) .bmon  { grid-column: 1; grid-row: 2; justify-self: center; align-self: end; margin-bottom: 10px; } 
 .bside:nth-child(2) .binfo { grid-column: 2; grid-row: 2; justify-self: end; align-self: end; margin: 0 10px 10px 0; } 
 
+/* Sleek Angled MMO Plates */
 .binfo { 
-    width: 100%; 
-    max-width: 240px; 
-    min-width: 140px; /* Safe minimum */
-    z-index: 5; padding: 10px 14px; background: rgba(15, 23, 42, 0.85); 
-    border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    width: 100%; max-width: 240px; min-width: 150px; 
+    z-index: 5; padding: 10px 20px 10px 12px; 
+    background: linear-gradient(90deg, rgba(15,23,42,0.95), rgba(30,41,59,0.85));
+    border-left: 4px solid #38bdf8; 
+    border-radius: 4px 12px 12px 4px; 
+    clip-path: polygon(0 0, 100% 0, 96% 100%, 0 100%); /* Adds the slant */
+    box-shadow: 0 6px 15px rgba(0,0,0,0.6);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
     transform: translate3d(0,0,0);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
 }
 
-/* AUTHENTIC 3D GRASS BASES & GPU SHADOWS */
-.bmon { 
-    width: 100%;
-    max-width: 160px;
-    position: relative; 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-}
-.bmon img { 
-    width: auto; height: auto; 
-    max-width: 140px; max-height: 20vh; /* Responsive image shrinking */
-    animation: float 2.5s ease-in-out infinite; /* Smoother animation curve */
-    position: relative;
-    z-index: 3;
-    will-change: transform;
-}
+.hpbar { height: 8px; box-shadow: 0 0 5px #000; border: 1px solid rgba(255,255,255,0.1); }
+.binfo b { color: #fff; font-size: 1.1rem; letter-spacing: 0.5px; }
+.binfo small { color:#cbd5e1; font-size: 0.8rem; }
 
-/* The 3D Grass Platform */
+/* Holographic Energy Rings */
+.bmon { width: 100%; max-width: 160px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+.bmon img { width: auto; height: auto; max-width: 140px; max-height: 20vh; animation: float 2.5s ease-in-out infinite; position: relative; z-index: 3; will-change: transform; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.6)); }
+
 .bmon::before {
     content: ''; position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
-    width: 110%; max-width: 150px; height: 35px; 
-    background: radial-gradient(ellipse at center, #4ade80 10%, #166534 70%, #064e3b 100%);
-    border-radius: 50%; border: 2px solid rgba(255,255,255,0.15);
-    z-index: 1; box-shadow: 0 10px 15px rgba(0,0,0,0.6);
+    width: 110%; max-width: 150px; height: 25px; 
+    background: radial-gradient(ellipse at center, rgba(56,189,248,0.3) 0%, rgba(14,165,233,0.1) 60%, transparent 100%);
+    border: 1px solid rgba(56,189,248,0.5); border-radius: 50%;
+    z-index: 1; box-shadow: 0 0 20px rgba(56,189,248,0.4), inset 0 0 10px rgba(56,189,248,0.4);
 }
 
-/* Hardware Accelerated Floating Shadow */
 .bmon::after {
-    content: ''; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-    width: 60%; max-width: 80px; height: 12px; 
-    background: rgba(0,0,0,0.5); border-radius: 50%; z-index: 2;
-    animation: shadowScale 2.5s ease-in-out infinite;
-    will-change: transform, opacity; /* Forces GPU usage completely bypassing CPU */
+    content: ''; position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+    width: 50%; max-width: 70px; height: 10px; 
+    background: rgba(0,0,0,0.6); border-radius: 50%; z-index: 2;
+    animation: shadowScale 2.5s ease-in-out infinite; will-change: transform, opacity; 
 }
 
-/* Shadow logic to perfectly match float logic */
-@keyframes shadowScale {
-    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
-    50% { transform: translateX(-50%) scale(0.85); opacity: 0.3; }
-}
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-8px); }
-}
+@keyframes shadowScale { 0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; } 50% { transform: translateX(-50%) scale(0.7); opacity: 0.4; } }
+@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
 
 .binfo b { color: #fff; font-size: 1.05rem; }
 .binfo small { color:#cbd5e1; font-size: 0.8rem; }
@@ -1387,36 +1359,195 @@ const ZONES=[
  {n:'Sinnoh Rift Gate',g:4,lv:[22,30],ch:5},{n:'Unova Rift Gate',g:5,lv:[28,36],ch:6},
  {n:'Kalos Rift Gate',g:6,lv:[34,42],ch:7},{n:'Alola Rift Gate',g:7,lv:[40,48],ch:8},
  {n:'Galar Rift Gate',g:8,lv:[46,54],ch:9},{n:'Paldea Rift Gate',g:9,lv:[52,62],ch:10}];
-/* ============ MASTER 500+ MOVE DATABASE ============ */
+/* ============ ULTIMATE DAMAGE-FOCUSED MOVESET ENGINE ============ */
 const TM = {
-    normal: [['Tackle',40,1], ['Quick Attack',60,15], ['Swift',60,20], ['Body Slam',85,25], ['Take Down',90,30], ['Slash',70,35], ['Headbutt',70,40], ['Hyper Fang',80,45], ['Crush Claw',75,50], ['Strength',80,55], ['Double-Edge',120,60], ['Facade',70,65], ['Mega Kick',120,70], ['Hyper Voice',90,75], ['Return',100,80], ['Thrash',120,85], ['Lock-On',0,90], ['Giga Impact',150,95], ['Hyper Beam',150,100], ['Boomburst',140,105], ['Extreme Speed',80,110], ['Last Resort',140,115], ['Self-Destruct',200,120], ['Explosion',250,125], ['Judgment',100,130], ['Multi-Attack',120,135], ['Techno Blast',120,140], ['Tera Blast',80,150]],
-    fire: [['Ember',40,1], ['Fire Spin',35,15], ['Flame Wheel',60,20], ['Fire Fang',65,25], ['Incinerate',60,30], ['Flame Charge',50,35], ['Flamethrower',90,40], ['Fire Punch',75,45], ['Lava Plume',80,50], ['Heat Wave',95,55], ['Blaze Kick',85,60], ['Fire Blast',110,65], ['Flare Blitz',120,70], ['Overheat',130,75], ['Eruption',150,80], ['Magma Storm',100,85], ['Mystical Fire',75,90], ['Sacred Fire',100,95], ['Blue Flare',130,100], ['Burn Up',130,105], ['Inferno',100,110], ['Flare Blitz',120,115], ['Fiery Dance',80,120], ['Searing Shot',100,125], ['Mind Blown',150,130], ['Blast Burn',150,140], ['Victory Star',100,150]],
-    water: [['Water Gun',40,1], ['Bubble',40,15], ['Water Pulse',60,20], ['Aqua Jet',40,25], ['Bubble Beam',65,30], ['Water Pledge',80,35], ['Brine',65,40], ['Aqua Tail',90,45], ['Surf',90,50], ['Waterfall',80,55], ['Muddy Water',90,60], ['Hydro Pump',110,65], ['Scald',80,70], ['Liquidation',85,75], ['Hydro Cannon',150,80], ['Water Spout',150,85], ['Crabhammer',100,90], ['Origin Pulse',110,95], ['Razor Shell',75,100], ['Dive',80,105], ['Sparkling Aria',90,110], ['Fishious Rend',85,115], ['Flip Turn',60,120], ['Whirlpool',35,125], ['Waterfall',80,130], ['Steam Eruption',110,140], ['Precipice Blades',120,150]],
-    grass: [['Vine Whip',45,1], ['Absorb',20,15], ['Razor Leaf',55,20], ['Mega Drain',40,25], ['Magical Leaf',60,30], ['Seed Bomb',80,35], ['Giga Drain',75,40], ['Energy Ball',90,45], ['Leaf Blade',90,50], ['Grass Knot',80,55], ['Petal Blizzard',90,60], ['Power Whip',120,65], ['Wood Hammer',120,70], ['Solar Beam',120,75], ['Leaf Storm',130,80], ['Frenzy Plant',150,85], ['Synthesis',0,90], ['Grassy Glide',70,95], ['Bullet Seed',25,100], ['Seed Flare',120,105], ['Drum Beating',80,110], ['Apple Acid',80,115], ['Grav Apple',80,120], ['Branch Poke',50,125], ['Trop Kick',70,130], ['Snap Trap',35,140], ['Jungle Healing',0,150]],
-    electric: [['Thunder Shock',40,1], ['Charge Beam',50,15], ['Spark',65,20], ['Shock Wave',60,25], ['Thunder Punch',75,30], ['Thunderbolt',90,35], ['Discharge',80,40], ['Volt Switch',70,45], ['Wild Charge',90,50], ['Thunder',110,55], ['Plasma Fists',100,60], ['Fusion Bolt',100,65], ['Bolt Strike',130,70], ['Zap Cannon',120,75], ['Electro Ball',80,80], ['Rising Voltage',70,85], ['Thunder Cage',80,90], ['Electrify',0,95], ['Wild Charge',90,100], ['Parabolic Charge',65,105], ['Magnetic Flux',0,110], ['Magnet Rise',0,115], ['Overdrive',80,120], ['Zing Zap',80,125], ['Thunderous Kick',90,130], ['Volt Tackle',120,140], ['Fusion Bolt',100,150]],
-    ice: [['Powder Snow',40,1], ['Ice Shard',40,15], ['Icy Wind',55,20], ['Ice Punch',75,25], ['Aurora Beam',65,30], ['Ice Fang',65,35], ['Avalanche',60,40], ['Ice Beam',90,45], ['Freeze-Dry',70,50], ['Frost Breath',60,55], ['Blizzard',110,60], ['Icicle Crash',85,65], ['Sheer Cold',150,70], ['Triple Axel',20,75], ['Ice Hammer',100,80], ['Glaciate',95,85], ['Ice Burn',140,90], ['Freeze Shock',140,95], ['Subzero Slammer',200,100], ['Frost Breath',60,105], ['Icicle Spear',25,110], ['Haze',0,115], ['Mist',0,120], ['Freeze-Dry',70,125], ['Glacial Lance',130,130], ['Ice Shard',40,140], ['Sheer Cold',150,150]],
-    fighting: [['Rock Smash',40,1], ['Karate Chop',50,15], ['Mach Punch',40,20], ['Low Sweep',65,25], ['Force Palm',60,30], ['Brick Break',75,35], ['Drain Punch',75,40], ['Vital Throw',70,45], ['Submission',80,50], ['Wake-Up Slap',70,55], ['Cross Chop',100,60], ['Superpower',120,65], ['Close Combat',120,70], ['Dynamic Punch',100,75], ['Focus Blast',120,80], ['Hammer Arm',100,85], ['Aura Sphere',80,90], ['Sacred Sword',90,95], ['Storm Throw',60,100], ['Circle Throw',60,105], ['Body Press',80,110], ['Reversal',100,115], ['Meteor Mash',90,120], ['Mach Punch',40,125], ['Aura Sphere',80,130], ['Close Combat',120,140], ['Focus Punch',150,150]],
-    poison: [['Poison Sting',30,1], ['Smog',30,15], ['Acid',40,20], ['Poison Tail',50,25], ['Clear Smog',50,30], ['Sludge',65,35], ['Venoshock',65,40], ['Poison Jab',80,45], ['Sludge Bomb',90,50], ['Shell Side Arm',90,55], ['Toxic Thread',0,60], ['Gunk Shot',120,65], ['Sludge Wave',95,70], ['Cross Poison',70,75], ['Belch',120,80], ['Baneful Bunker',0,85], ['Corrosive Gas',0,90], ['Acid Spray',40,95], ['Poison Fang',50,100], ['Gastro Acid',0,105], ['Toxic',0,110], ['Sludge Bomb',90,115], ['Poison Gas',0,120], ['Venom Drench',0,125], ['Toxic Spikes',0,130], ['Gunk Shot',120,140], ['Baneful Bunker',0,150]],
-    ground: [['Mud-Slap',20,1], ['Sand Tomb',60,15], ['Mud Shot',65,20], ['Bulldoze',60,25], ['Dig',80,30], ['Bone Rush',25,35], ['Stomping Tantrum',75,40], ['Drill Run',80,45], ['Earth Power',90,50], ['Earthquake',100,55], ['High Horsepower',95,60], ['Precipice Blades',120,65], ['Fissure',150,70], ['Sandstorm',0,75], ['Scorching Sands',70,80], ['Magnitude',50,85], ['Bone Club',65,90], ['Mud Bomb',65,95], ['Spikes',0,100], ['Stealth Rock',0,105], ['Precipice Blades',120,110], ['Earth Power',90,115], ['Earthquake',100,120], ['Thousand Arrows',90,125], ['Thousand Waves',90,130], ['High Horsepower',95,140], ['Fissure',150,150]],
-    flying: [['Peck',35,1], ['Gust',40,15], ['Wing Attack',60,20], ['Aerial Ace',60,25], ['Air Cutter',60,30], ['Pluck',60,35], ['Drill Peck',80,40], ['Air Slash',75,45], ['Acrobatics',55,50], ['Bounce',85,55], ['Brave Bird',120,60], ['Hurricane',110,65], ['Sky Attack',140,70], ['Fly',90,75], ['Defog',0,80], ['Roost',0,85], ['Tailwind',0,90], ['Oblivion Wing',80,95], ['Dual Wingbeat',40,100], ['Sky Drop',60,105], ['Dragon Ascent',120,110], ['Hurricane',110,115], ['Brave Bird',120,120], ['Air Slash',75,125], ['Aeroblast',100,130], ['Sky Attack',140,140], ['Dragon Ascent',120,150]],
-    psychic: [['Confusion',50,1], ['Psybeam',65,15], ['Psywave',60,20], ['Zen Headbutt',80,25], ['Extrasensory',80,30], ['Psychic',90,35], ['Psyshock',80,40], ['Signal Beam',75,45], ['Future Sight',120,50], ['Synchronoise',70,55], ['Stored Power',20,60], ['Expanding Force',80,65], ['Psystrike',100,70], ['Psycho Cut',70,75], ['Miracle Eye',0,80], ['Trick',0,85], ['Calm Mind',0,90], ['Hypnosis',0,95], ['Dream Eater',100,100], ['Prismatic Laser',160,105], ['Photon Geyser',100,110], ['Psybeam',65,115], ['Psychic',90,120], ['Psyshock',80,125], ['Zen Headbutt',80,130], ['Future Sight',120,140], ['Prismatic Laser',160,150]],
-    bug: [['Bug Bite',60,1], ['Struggle Bug',50,15], ['Fury Cutter',40,20], ['Infestation',20,25], ['Signal Beam',75,30], ['X-Scissor',80,35], ['Bug Buzz',90,40], ['Leech Life',80,45], ['Lunge',80,50], ['Pin Missile',25,55], ['Megahorn',120,60], ['Attack Order',90,65], ['First Impression',120,70], ['Quiver Dance',0,75], ['Sticky Web',0,80], ['Spider Web',0,85], ['String Shot',0,90], ['Tail Glow',0,95], ['U-turn',70,100], ['Bug Buzz',90,105], ['Megahorn',120,110], ['X-Scissor',80,115], ['Lunge',80,120], ['Signal Beam',75,125], ['Infestation',20,130], ['Bug Bite',60,140], ['First Impression',120,150]],
-    rock: [['Rock Throw',50,1], ['Rollout',30,15], ['Rock Tomb',60,20], ['Smack Down',50,25], ['Rock Slide',75,30], ['Power Gem',80,35], ['Ancient Power',60,40], ['Stone Edge',100,45], ['Rock Wrecker',150,50], ['Head Smash',150,55], ['Stealth Rock',0,60], ['Sandstorm',0,65], ['Rock Polish',0,70], ['Diamond Storm',100,75], ['Accelerock',40,80], ['Meteor Beam',120,85], ['Continental Crush',200,90], ['Rock Blast',25,95], ['Rock Climb',90,100], ['Wide Guard',0,105], ['Diamond Storm',100,110], ['Rock Slide',75,115], ['Stone Edge',100,120], ['Power Gem',80,125], ['Rock Tomb',60,130], ['Rock Wrecker',150,140], ['Head Smash',150,150]],
-    ghost: [['Astonish',30,1], ['Lick',30,15], ['Night Shade',50,20], ['Shadow Punch',60,25], ['Hex',65,30], ['Shadow Ball',80,35], ['Phantom Force',90,40], ['Poltergeist',100,45], ['Shadow Force',120,50], ['Moongeist Beam',100,55], ['Spectral Thief',90,60], ['Spirit Shackle',80,65], ['Ominous Wind',60,70], ['Confuse Ray',0,75], ['Curse',0,80], ['Destiny Bond',0,85], ['Nightmare',0,90], ['Will-O-Wisp',0,95], ['Shadow Claw',70,100], ['Astonish',30,105], ['Moongeist Beam',100,110], ['Shadow Ball',80,115], ['Shadow Force',120,120], ['Hex',65,125], ['Shadow Punch',60,130], ['Poltergeist',100,140], ['Spectral Thief',90,150]],
-    dragon: [['Dragon Rage',40,1], ['Dragon Breath',60,15], ['Dragon Tail',60,20], ['Dragon Claw',80,25], ['Dragon Pulse',85,30], ['Dragon Rush',100,35], ['Outrage',120,40], ['Roar of Time',150,45], ['Draco Meteor',130,50], ['Clangorous Soulblaze',180,55], ['Breaking Swipe',60,60], ['Dragon Dance',0,65], ['Dual Chop',40,70], ['Scale Shot',25,75], ['Core Enforcer',100,80], ['Judgment',100,85], ['Spacial Rend',100,90], ['Dragon Hammer',90,95], ['Dragon Energy',150,100], ['Dragon Claw',80,105], ['Roar of Time',150,110], ['Dragon Pulse',85,115], ['Outrage',120,120], ['Dragon Breath',60,125], ['Dragon Rage',40,130], ['Draco Meteor',130,140], ['Clangorous Soulblaze',180,150]],
-    dark: [['Bite',60,1], ['Pursuit',40,15], ['Assurance',60,20], ['Crunch',80,25], ['Night Slash',75,30], ['Dark Pulse',80,35], ['Foul Play',95,40], ['Knock Off',65,45], ['Sucker Punch',70,50], ['Darkest Lariat',85,55], ['Fiery Wrath',90,60], ['Throat Chop',80,65], ['Payback',50,70], ['Embargo',0,75], ['Nasty Plot',0,80], ['Taunt',0,85], ['Torment',0,90], ['Snarl',55,95], ['Dark Void',0,100], ['Black Hole Eclipse',160,105], ['Fiery Wrath',90,110], ['Dark Pulse',80,115], ['Crunch',80,120], ['Bite',60,125], ['Knock Off',65,130], ['Foul Play',95,140], ['Black Hole Eclipse',160,150]],
-    steel: [['Metal Claw',50,1], ['Bullet Punch',40,15], ['Steel Wing',70,20], ['Iron Head',80,25], ['Flash Cannon',80,30], ['Iron Tail',100,35], ['Meteor Mash',90,40], ['Doom Desire',140,45], ['Steel Beam',140,50], ['Heavy Slam',100,55], ['Smart Strike',70,60], ['Gyro Ball',80,65], ['Autotomize',0,70], ['Shift Gear',0,75], ['Magnetic Flux',0,80], ['King\'s Shield',0,85], ['Bullet Punch',40,90], ['Iron Defense',0,95], ['Metal Sound',0,100], ['Sunsteel Strike',100,105], ['Steel Beam',140,110], ['Iron Head',80,115], ['Meteor Mash',90,120], ['Iron Tail',100,125], ['Metal Claw',50,130], ['Doom Desire',140,140], ['Sunsteel Strike',100,150]],
-    fairy: [['Fairy Wind',40,1], ['Disarming Voice',40,15], ['Draining Kiss',50,20], ['Play Rough',90,25], ['Dazzling Gleam',80,30], ['Moonblast',95,35], ['Fleur Cannon',130,40], ['Light of Ruin',140,45], ['Nature\'s Madness',120,50], ['Misty Terrain',0,55], ['Moonlight',0,60], ['Crafty Shield',0,65], ['Charm',0,70], ['Baby-Doll Eyes',0,75], ['Misty Explosion',100,80], ['Dazzling Gleam',80,85], ['Fairy Lock',0,90], ['Geomancy',0,95], ['Play Rough',90,100], ['Let\'s Snuggle Forever',190,105], ['Light of Ruin',140,110], ['Moonblast',95,115], ['Draining Kiss',50,120], ['Fairy Wind',40,125], ['Nature\'s Madness',120,130], ['Fleur Cannon',130,140], ['Let\'s Snuggle Forever',190,150]]
+    normal: [
+        ['Tackle',40,1], ['Scratch',40,5], ['Pound',40,8], ['Quick Attack',60,12], ['Fake Out',40,15], 
+        ['Cut',50,18], ['Swift',60,22], ['Stomp',65,26], ['Headbutt',70,30], ['Slam',80,35], 
+        ['Body Slam',85,40], ['Take Down',90,45], ['Strength',80,50], ['Double-Edge',120,58], 
+        ['Extreme Speed',80,65], ['Hyper Voice',90,70], ['Return',102,75], ['Thrash',120,80], 
+        ['Hyper Beam',150,85], ['Giga Impact',150,95], 
+        ['Boomburst',140,75,[295, 441, 715, 849]], /* Exploud, Chatot, Noivern, Toxtricity */
+        ['Judgment',100,100,[493]], /* Arceus */
+        ['Relic Song',75,80,[648]], /* Meloetta */
+        ['Crush Grip',120,90,[486]], /* Regigigas */
+        ['Techno Blast',120,95,[649]] /* Genesect */
+    ],
+    fire: [
+        ['Ember',40,1], ['Fire Spin',35,10], ['Flame Charge',50,16], ['Flame Wheel',60,22], 
+        ['Fire Fang',65,28], ['Incinerate',60,32], ['Mystical Fire',75,38], ['Flamethrower',90,45], 
+        ['Fire Punch',75,50], ['Lava Plume',80,55], ['Heat Wave',95,60], ['Blaze Kick',85,65], 
+        ['Fire Blast',110,72], ['Flare Blitz',120,80], ['Overheat',130,85], ['Eruption',150,95], 
+        ['Sacred Fire',100,85,[250, 244]], /* Ho-Oh, Entei */
+        ['Magma Storm',100,85,[485]], /* Heatran */
+        ['Blue Flare',130,95,[643]], /* Reshiram */
+        ['V-create',180,100,[494]], /* Victini */
+        ['Mind Blown',150,100,[806]], /* Blacephalon */
+        ['Armor Cannon',120,90,[936]] /* Armarouge */
+    ],
+    water: [
+        ['Water Gun',40,1], ['Bubble',40,8], ['Aqua Jet',40,14], ['Water Pulse',60,20], 
+        ['Bubble Beam',65,26], ['Brine',65,32], ['Aqua Tail',90,40], ['Waterfall',80,45], 
+        ['Surf',90,52], ['Muddy Water',90,58], ['Liquidation',85,65], ['Scald',80,70], 
+        ['Hydro Pump',110,80], ['Water Spout',150,95], 
+        ['Origin Pulse',110,95,[382]], /* Kyogre */
+        ['Steam Eruption',110,85,[721]], /* Volcanion */
+        ['Fishious Rend',85,75,[882]], /* Dracovish */
+        ['Surging Strikes',75,80,[892]] /* Urshifu-Rapid */
+    ],
+    grass: [
+        ['Vine Whip',45,1], ['Absorb',20,5], ['Mega Drain',40,14], ['Razor Leaf',55,20], 
+        ['Magical Leaf',60,26], ['Giga Drain',75,34], ['Seed Bomb',80,42], ['Energy Ball',90,50], 
+        ['Leaf Blade',90,58], ['Petal Blizzard',90,65], ['Power Whip',120,72], ['Wood Hammer',120,80], 
+        ['Solar Beam',120,85], ['Leaf Storm',130,95], 
+        ['Seed Flare',120,90,[492]], /* Shaymin */
+        ['Frenzy Plant',150,90,[3, 154, 254, 389, 497, 652, 724, 812, 908]], /* Grass Starters */
+        ['Drum Beating',80,75,[812]] /* Rillaboom */
+    ],
+    electric: [
+        ['Thunder Shock',40,1], ['Charge Beam',50,12], ['Spark',65,18], ['Shock Wave',60,24], 
+        ['Thunder Punch',75,30], ['Volt Switch',70,36], ['Thunderbolt',90,45], ['Discharge',80,52], 
+        ['Wild Charge',90,60], ['Thunder',110,75], ['Zap Cannon',120,90], 
+        ['Volt Tackle',120,80,[25, 26]], /* Pikachu, Raichu */
+        ['Bolt Strike',130,95,[644]], /* Zekrom */
+        ['Fusion Bolt',100,85,[644]], /* Zekrom */
+        ['Plasma Fists',100,85,[807]], /* Zeraora */
+        ['Electro Drift',100,95,[1008]] /* Miraidon */
+    ],
+    ice: [
+        ['Powder Snow',40,1], ['Ice Shard',40,12], ['Icy Wind',55,20], ['Ice Punch',75,28], 
+        ['Aurora Beam',65,35], ['Ice Fang',65,42], ['Avalanche',60,50], ['Freeze-Dry',70,58], 
+        ['Ice Beam',90,65], ['Icicle Crash',85,72], ['Blizzard',110,80], ['Sheer Cold',150,95], 
+        ['Glaciate',65,85,[646]], /* Kyurem */
+        ['Freeze Shock',140,95,[646]], /* Kyurem-B */
+        ['Ice Burn',140,95,[646]], /* Kyurem-W */
+        ['Glacial Lance',130,100,[898]] /* Calyrex-Ice */
+    ],
+    fighting: [
+        ['Rock Smash',40,1], ['Mach Punch',40,10], ['Karate Chop',50,16], ['Force Palm',60,22], 
+        ['Low Sweep',65,28], ['Brick Break',75,35], ['Drain Punch',75,42], ['Vital Throw',70,48], 
+        ['Cross Chop',100,55], ['Submission',80,60], ['Dynamic Punch',100,68], ['Superpower',120,75], 
+        ['Close Combat',120,85], ['High Jump Kick',130,90], ['Focus Punch',150,95], 
+        ['Sacred Sword',90,80,[638, 639, 640, 647]], /* Swords of Justice */
+        ['Secret Sword',85,85,[647]], /* Keldeo */
+        ['Meteor Assault',150,95,[865]], /* Sirfetch'd */
+        ['Collision Course',100,95,[1007]] /* Koraidon */
+    ],
+    poison: [
+        ['Poison Sting',30,1], ['Smog',30,10], ['Acid',40,18], ['Clear Smog',50,26], 
+        ['Poison Tail',50,32], ['Venoshock',65,38], ['Poison Fang',50,45], ['Cross Poison',70,52], 
+        ['Poison Jab',80,60], ['Sludge Bomb',90,68], ['Sludge Wave',95,75], ['Gunk Shot',120,85], 
+        ['Belch',120,90], 
+        ['Shell Side Arm',90,85,[807]], /* Galarian Slowbro */
+        ['Dire Claw',80,80,[903]], /* Sneasler */
+        ['Mortal Spin',30,70,[970]] /* Glimmora */
+    ],
+    ground: [
+        ['Mud-Slap',20,1], ['Sand Tomb',60,12], ['Mud Shot',65,20], ['Bulldoze',60,28], 
+        ['Mud Bomb',65,35], ['Dig',80,42], ['Drill Run',80,50], ['Stomping Tantrum',75,58], 
+        ['Earth Power',90,65], ['High Horsepower',95,75], ['Earthquake',100,85], ['Fissure',150,95], 
+        ['Precipice Blades',120,95,[383]], /* Groudon */
+        ['Thousand Arrows',90,90,[718]], /* Zygarde */
+        ['Thousand Waves',90,90,[718]], /* Zygarde */
+        ['Headlong Rush',120,95,[901, 984]] /* Ursaluna, Great Tusk */
+    ],
+    flying: [
+        ['Peck',35,1], ['Gust',40,10], ['Aerial Ace',60,18], ['Air Cutter',60,25], 
+        ['Pluck',60,32], ['Wing Attack',60,38], ['Acrobatics',55,45], ['Air Slash',75,52], 
+        ['Drill Peck',80,60], ['Bounce',85,68], ['Dual Wingbeat',80,75], ['Hurricane',110,85], 
+        ['Brave Bird',120,90], ['Sky Attack',140,95], 
+        ['Aeroblast',100,85,[249]], /* Lugia */
+        ['Oblivion Wing',80,85,[717]], /* Yveltal */
+        ['Dragon Ascent',120,100,[384]], /* Rayquaza */
+        ['Bleakwind Storm',100,95,[641]] /* Tornadus */
+    ],
+    psychic: [
+        ['Confusion',50,1], ['Psybeam',65,14], ['Psywave',60,22], ['Zen Headbutt',80,30], 
+        ['Psyshock',80,38], ['Extrasensory',80,46], ['Psychic',90,55], ['Psycho Cut',70,62], 
+        ['Future Sight',120,75], 
+        ['Psystrike',100,85,[150]], /* Mewtwo */
+        ['Prismatic Laser',160,100,[800]], /* Necrozma */
+        ['Photon Geyser',100,95,[800]], /* Necrozma */
+        ['Freezing Glare',90,85,[144]], /* Galarian Articuno */
+        ['Lumina Crash',80,80,[956]] /* Espathra */
+    ],
+    bug: [
+        ['Bug Bite',60,1], ['Struggle Bug',50,12], ['Fury Cutter',40,20], ['Pin Missile',50,28], 
+        ['Signal Beam',75,35], ['Leech Life',80,42], ['X-Scissor',80,50], ['Lunge',80,58], 
+        ['Bug Buzz',90,68], ['Pollen Puff',90,75], ['Megahorn',120,85], 
+        ['Attack Order',90,70,[416]], /* Vespiquen */
+        ['First Impression',120,80,[768]] /* Golisopod */
+    ],
+    rock: [
+        ['Rock Throw',50,1], ['Rollout',60,12], ['Rock Tomb',60,22], ['Smack Down',50,30], 
+        ['Rock Slide',75,40], ['Power Gem',80,50], ['Stone Edge',100,65], ['Head Smash',150,80], 
+        ['Rock Wrecker',150,90,[464]], /* Rhyperior */
+        ['Diamond Storm',100,85,[719]], /* Diancie */
+        ['Meteor Beam',120,95,[895]], /* Regirock, etc */
+        ['Salt Cure',40,75,[934]] /* Garganacl */
+    ],
+    ghost: [
+        ['Astonish',30,1], ['Lick',30,10], ['Shadow Sneak',40,20], ['Shadow Punch',60,30], 
+        ['Hex',65,38], ['Shadow Claw',70,45], ['Shadow Ball',80,55], ['Phantom Force',90,65], 
+        ['Poltergeist',100,80], 
+        ['Shadow Force',120,90,[487]], /* Giratina */
+        ['Spectral Thief',90,85,[802]], /* Marshadow */
+        ['Moongeist Beam',100,95,[792, 800]], /* Lunala, Necrozma-DW */
+        ['Astral Barrage',120,100,[898]], /* Calyrex-Shadow */
+        ['Bitter Malice',75,80,[571]] /* Hisuian Zoroark */
+    ],
+    dragon: [
+        ['Dragon Rage',40,1], ['Dragon Breath',60,15], ['Dragon Tail',60,25], ['Dragon Claw',80,35], 
+        ['Dragon Pulse',85,45], ['Dragon Rush',100,55], ['Outrage',120,70], ['Draco Meteor',130,85], 
+        ['Roar of Time',150,95,[483]], /* Dialga */
+        ['Spacial Rend',100,95,[484]], /* Palkia */
+        ['Core Enforcer',100,90,[718]], /* Zygarde */
+        ['Clangorous Soulblaze',185,100,[784]], /* Kommo-o */
+        ['Glaive Rush',120,95,[998]] /* Baxcalibur */
+    ],
+    dark: [
+        ['Bite',60,1], ['Pursuit',40,12], ['Assurance',60,22], ['Sucker Punch',70,30], 
+        ['Knock Off',65,40], ['Crunch',80,48], ['Night Slash',75,55], ['Dark Pulse',80,65], 
+        ['Foul Play',95,75], ['Darkest Lariat',85,80], 
+        ['Fiery Wrath',90,85,[146]], /* Galarian Moltres */
+        ['Kowtow Cleave',85,85,[983]], /* Kingambit */
+        ['Ceaseless Edge',65,80,[503]] /* Hisuian Samurott */
+    ],
+    steel: [
+        ['Metal Claw',50,1], ['Bullet Punch',40,12], ['Steel Wing',70,22], ['Smart Strike',70,32], 
+        ['Iron Head',80,42], ['Flash Cannon',80,52], ['Heavy Slam',100,60], ['Iron Tail',100,70], 
+        ['Meteor Mash',90,75], ['Steel Beam',140,85], 
+        ['Doom Desire',140,85,[385]], /* Jirachi */
+        ['Sunsteel Strike',100,95,[791, 800]], /* Solgaleo, Necrozma-DM */
+        ['Double Iron Bash',120,90,[809]], /* Melmetal */
+        ['Behemoth Blade',100,95,[888]], /* Zacian */
+        ['Behemoth Bash',100,95,[889]], /* Zamazenta */
+        ['Gigaton Hammer',160,95,[959]] /* Tinkaton */
+    ],
+    fairy: [
+        ['Fairy Wind',40,1], ['Disarming Voice',40,12], ['Draining Kiss',50,25], ['Play Rough',90,40], 
+        ['Dazzling Gleam',80,55], ['Moonblast',95,70], 
+        ['Fleur Cannon',130,85,[801]], /* Magearna */
+        ['Light of Ruin',140,80,[270]], /* Floette-Eternal */
+        ['Spirit Break',75,75,[861]], /* Grimmsnarl */
+        ['Springtide Storm',100,95,[905]] /* Enamorus */
+    ]
 };
 
 function genMoves(m) {
     let stabPool = [];
     let coveragePool = [];
     
-    // 1. Get all STAB (Same Type) moves available at this Pokémon's current level
+    // 1. Get all STAB moves (Checking Level AND Signature Locks)
     m.types.forEach(t => {
         if(TM[t]) TM[t].forEach(mv => { 
-            if(m.lvl >= mv[2]) stabPool.push({n: mv[0], t: t, p: mv[1]}); 
+            // Is Pokémon high enough level?
+            if(m.lvl >= mv[2]) {
+                // Is this a normal move OR does this Pokémon have the right ID for the signature move?
+                if (!mv[3] || mv[3].includes(m.id)) {
+                    stabPool.push({n: mv[0], t: t, p: mv[1]}); 
+                }
+            }
         });
     });
     
@@ -1424,7 +1555,11 @@ function genMoves(m) {
     ['normal', 'dark', 'fighting'].forEach(t => {
         if (!m.types.includes(t)) {
             TM[t].forEach(mv => {
-                if(m.lvl >= mv[2]) coveragePool.push({n: mv[0], t: t, p: mv[1]});
+                if(m.lvl >= mv[2]) {
+                    if (!mv[3] || mv[3].includes(m.id)) {
+                        coveragePool.push({n: mv[0], t: t, p: mv[1]});
+                    }
+                }
             });
         }
     });
@@ -1443,6 +1578,9 @@ function genMoves(m) {
         }
     });
     
+    // 5. Absolute fallback in case a Lv 1 Pokémon has no valid moves
+    if (finalMoves.length === 0) finalMoves.push({n: 'Tackle', t: 'normal', p: 40});
+
     return finalMoves;
 }
 const EFF={fire:{grass:2,ice:2,bug:2,steel:2,fire:.5,water:.5,rock:.5,dragon:.5},water:{fire:2,ground:2,rock:2,water:.5,grass:.5,dragon:.5},grass:{water:2,ground:2,rock:2,fire:.5,grass:.5,poison:.5,flying:.5,bug:.5,dragon:.5,steel:.5},electric:{water:2,flying:2,electric:.5,grass:.5,dragon:.5,ground:0},ice:{grass:2,ground:2,flying:2,dragon:2,fire:.5,water:.5,ice:.5,steel:.5},fighting:{normal:2,ice:2,rock:2,dark:2,steel:2,poison:.5,flying:.5,psychic:.5,bug:.5,fairy:.5,ghost:0},poison:{grass:2,fairy:2,poison:.5,ground:.5,rock:.5,ghost:.5,steel:0},ground:{fire:2,electric:2,poison:2,rock:2,steel:2,grass:.5,bug:.5,flying:0},flying:{grass:2,fighting:2,bug:2,electric:.5,rock:.5,steel:.5},psychic:{fighting:2,poison:2,psychic:.5,steel:.5,dark:0},bug:{grass:2,psychic:2,dark:2,fire:.5,fighting:.5,poison:.5,flying:.5,ghost:.5,steel:.5,fairy:.5},rock:{fire:2,ice:2,flying:2,bug:2,fighting:.5,ground:.5,steel:.5},ghost:{psychic:2,ghost:2,dark:.5,normal:0},dragon:{dragon:2,steel:.5,fairy:0},dark:{psychic:2,ghost:2,fighting:.5,dark:.5,fairy:.5},steel:{ice:2,rock:2,fairy:2,fire:.5,water:.5,electric:.5,steel:.5},fairy:{fighting:2,dragon:2,dark:2,fire:.5,poison:.5,steel:.5},normal:{rock:.5,steel:.5,ghost:0}};
@@ -2529,38 +2667,56 @@ function startBattle(cfg){
     drawB();
 }
 function bmsg(m){bLog.innerHTML=m}
-function drawB(){const p=S.team[B.pi],e=B.enemy;
- eImg.src=SPR(e.id,e.shiny);
- 
- let eRba = e.rebirth ? 'rebirth-aura' : '';
- if(e.isRift) eRba += ' rift-sprite';
- eImg.className = eRba;
- 
- eName.innerHTML=(e.rebirth?'<span class="rebirth-star">🌟</span> ':'')+e.name;
- eLvl.textContent='Lv '+e.lvl;eTypes.textContent=e.types.join(' / ');
- const eb=document.getElementById('eHp');eb.style.transform='scaleX('+Math.max(0,e.hp/e.maxhp)+')';eb.className=hpCls(e);
- 
- pImg.src=SPRB(p.id,p.shiny);pImg.onerror=()=>{pImg.onerror=null;pImg.src=SPR(p.id,p.shiny)};
- 
- let pRba = p.rebirth ? 'rebirth-aura' : '';
- if(p.isRift) pRba += ' rift-sprite';
- pImg.className = pRba;
- 
- pName.innerHTML=(p.rebirth?'<span class="rebirth-star">🌟</span> ':'')+p.name;
- pLvl.textContent='Lv '+p.lvl;pHpTxt.textContent=p.hp+' / '+p.maxhp+' HP';
- const pb=document.getElementById('pHp');pb.style.transform='scaleX('+Math.max(0,p.hp/p.maxhp)+')';pb.className=hpCls(p);
- 
- bActs.innerHTML=p.moves.map((m,i)=>{
-    let eff=1; e.types.forEach(t=>{const c=EFF[m.t];if(c&&c[t]!=null)eff*=c[t]});
-    let ec=eff>1?'eff-sup':eff<1?'eff-not':'';
-    let col=eff>1?'#4ade80':eff<1?'#f87171':'#94a3b8';
-    return `<button class="mv ${ec}" ${B.lock?'disabled':''} onclick="useMove(${i})">${m.n}<br><small style="color:${col};font-size:0.8rem;font-weight:400;margin-top:2px;">${m.t.toUpperCase()} · PWR ${m.p}</small></button>`;
- }).join('')+
- `<button ${B.lock||!B.wild?'disabled':''} onclick="throwBall('poke')">${ICN('poke-ball')} Poké Ball ×${S.balls.poke}</button>
-  <button ${B.lock||!B.wild?'disabled':''} onclick="throwBall('master')">${ICN('master-ball')} Master Ball ×${S.balls.master}</button>
-  <button ${B.lock?'disabled':''} onclick="usePot()">${ICN('potion')} Potion (${S.pots.p}/${S.pots.s})</button>
-  <button ${B.lock?'disabled':''} onclick="switchMon()">🔄 Switch</button>
-  <button ${B.lock||(!B.wild && !B.isPvP)?'disabled':''} onclick="endB(null,B.isPvP?'You forfeited the match!':'You got away safely!')">🏃 Run</button>`}
+/* Color mapping for every Pokemon Type */
+const TYPE_COLORS = {
+    normal: '#9ca3af', fire: '#ef4444', water: '#3b82f6', grass: '#22c55e', electric: '#eab308',
+    ice: '#38bdf8', fighting: '#b91c1c', poison: '#a855f7', ground: '#b45309', flying: '#818cf8',
+    psychic: '#ec4899', bug: '#84cc16', rock: '#78350f', ghost: '#6366f1', dragon: '#4f46e5',
+    dark: '#334155', steel: '#64748b', fairy: '#f472b6'
+};
+
+function drawB(){
+    const p=S.team[B.pi],e=B.enemy;
+    
+    // Enemy Render
+    eImg.src=SPR(e.id,e.shiny);
+    let eRba = e.rebirth ? 'rebirth-aura' : '';
+    if(e.isRift) eRba += ' rift-sprite';
+    eImg.className = eRba;
+    eName.innerHTML=(e.rebirth?'<span class="rebirth-star">🌟</span> ':'')+e.name;
+    eLvl.textContent='Lv '+e.lvl;
+    eTypes.innerHTML=e.types.map(t=>`<span style="color:${TYPE_COLORS[t]}; font-weight:900; text-transform:uppercase; font-size:0.7rem;">${t}</span>`).join(' / ');
+    const eb=document.getElementById('eHp');eb.style.transform='scaleX('+Math.max(0,e.hp/e.maxhp)+')';eb.className=hpCls(e);
+    
+    // Player Render
+    pImg.src=SPRB(p.id,p.shiny);pImg.onerror=()=>{pImg.onerror=null;pImg.src=SPR(p.id,p.shiny)};
+    let pRba = p.rebirth ? 'rebirth-aura' : '';
+    if(p.isRift) pRba += ' rift-sprite';
+    pImg.className = pRba;
+    pName.innerHTML=(p.rebirth?'<span class="rebirth-star">🌟</span> ':'')+p.name;
+    pLvl.textContent='Lv '+p.lvl;
+    pHpTxt.textContent=p.hp+' / '+p.maxhp+' HP';
+    const pb=document.getElementById('pHp');pb.style.transform='scaleX('+Math.max(0,p.hp/p.maxhp)+')';pb.className=hpCls(p);
+    
+    // Dynamic Action Buttons
+    bActs.innerHTML=p.moves.map((m,i)=>{
+        let eff=1; e.types.forEach(t=>{const c=EFF[m.t];if(c&&c[t]!=null)eff*=c[t]});
+        let ec=eff>1?'eff-sup':eff<1?'eff-not':'';
+        let col=eff>1?'#4ade80':eff<1?'#f87171':'#e2e8f0'; 
+        let bgCol = TYPE_COLORS[m.t] || '#9ca3af'; // Pulls the exact type color
+        
+        return `<button class="mv ${ec}" ${B.lock?'disabled':''} onclick="useMove(${i})" 
+            style="background: linear-gradient(135deg, rgba(0,0,0,0.8), ${bgCol}44); border-left: 4px solid ${bgCol}; color: #fff; justify-content: flex-start; padding-left: 12px; text-align: left;">
+            <span style="font-size:1.05rem; font-weight:800; letter-spacing: 0.5px;">${m.n}</span><br>
+            <small style="color:${col}; font-size:0.75rem; font-weight:600; text-shadow: 1px 1px 2px #000; margin-top:2px;">${m.t.toUpperCase()} · PWR ${m.p}</small>
+            </button>`;
+    }).join('')+
+    `<button class="gbtn" ${B.lock||!B.wild?'disabled':''} onclick="throwBall('poke')">${ICN('poke-ball')} Catch</button>
+     <button class="gbtn" ${B.lock||!B.wild?'disabled':''} onclick="throwBall('master')">${ICN('master-ball')} Master</button>
+     <button class="gbtn" ${B.lock?'disabled':''} onclick="usePot()">${ICN('potion')} Heal (${S.pots.p})</button>
+     <button class="gbtn" ${B.lock?'disabled':''} onclick="switchMon()">🔄 Swap</button>
+     <button class="gbtn" ${B.lock||(!B.wild && !B.isPvP)?'disabled':''} onclick="endB(null,B.isPvP?'You forfeited the match!':'You got away safely!')" style="grid-column: span 2; border-color: rgba(248,113,113,0.3); color: #f87171;">🏃 Run Away</button>`
+}
 
 function dmg(a,d,mv){let e=1;d.types.forEach(t=>{const c=EFF[mv.t];if(c&&c[t]!=null)e*=c[t]});const stab=a.types.includes(mv.t)?1.5:1;
  return{v:Math.max(1,Math.floor(((2*a.lvl/5+2)*mv.p*a.atk/d.def/50+2)*stab*e*(0.85+Math.random()*0.15))),e}}
