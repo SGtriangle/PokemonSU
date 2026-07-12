@@ -76,46 +76,75 @@ body {
 .mon { padding: 10px; margin-bottom: 10px; position: relative; overflow: hidden; }
 .mon:hover { background: rgba(255, 255, 255, 0.05); transform: translateY(-4px) scale(1.02); z-index: 10; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
 
-/* NEW: Premium RPG HUD Styling */
+/* ===== MMO / RPGXP STYLE HUD ===== */
 .hud { 
-    background: rgba(15, 23, 42, 0.85); 
-    backdrop-filter: blur(16px); 
-    -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(56, 189, 248, 0.3); 
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 -2px 10px rgba(56, 189, 248, 0.1); 
-    padding: 12px 20px; 
+    background: linear-gradient(to bottom, rgba(15, 23, 42, 0.95), rgba(5, 8, 16, 0.98)); 
+    border-bottom: 2px solid #38bdf8; /* Crisp border typical of fan games */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.1); 
+    padding: 8px 16px; 
     display: flex; 
     flex-wrap: wrap; 
     align-items: center; 
     justify-content: space-between; 
-    gap: 16px;
-    position: sticky; /* Keeps HUD at the top while scrolling */
+    gap: 12px;
+    position: sticky; 
     top: 0;
-    z-index: 40; /* Below modals, above content */
-    margin: -12px -12px 16px -12px; /* Pulls it flush with the edges of the wrap */
-    border-radius: 0 0 16px 16px;
+    z-index: 40; 
+    margin: -12px -12px 16px -12px; 
+    border-radius: 0 0 8px 8px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
-/* Restyled Logo for HUD (Static) */
-.hud .logo { font-family: 'Press Start 2P', system-ui; font-size:1.3rem; font-weight:400; background: linear-gradient(180deg, #ffcb05 30%, #e6a800 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(2px 2px 0px #2a75bb) drop-shadow(-1px -1px 0px #2a75bb); letter-spacing: 0px; line-height: 1.2; margin-right: 12px; display: flex; align-items: center;}
-.hud .logo img { width: 20px; height: 20px; margin-left: 6px; }
+.hud .logo { font-family: 'Press Start 2P', system-ui; font-size:1.1rem; font-weight:400; background: linear-gradient(180deg, #ffcb05 30%, #e6a800 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(2px 2px 0px #2a75bb); margin-right: auto; }
+.hud .logo img { width: 16px; height: 16px; margin-left: 4px; vertical-align: baseline; }
 
-.hud-info { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; flex: 1; }
+.hud-info { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; flex: 1; justify-content: flex-end; }
 
-.hud-stat { 
-    display: flex; align-items: center; gap: 8px; 
-    background: rgba(0,0,0,0.4); padding: 6px 12px; border-radius: 20px; 
-    border: 1px solid rgba(255,255,255,0.05); font-size: 0.95rem; font-weight: 600;
+/* The MMO "Trainer Plate" */
+.hud-plate {
+    display: flex; align-items: center; gap: 0;
+    background: rgba(0,0,0,0.6); 
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
 }
-.hud-stat.trainer { color: #f8fafc; border-color: rgba(56, 189, 248, 0.2); }
-.hud-stat.trainer span { color: #38bdf8; display:flex; align-items:center; }
-.hud-stat.money { color: #4ade80; border-color: rgba(74, 222, 128, 0.2); }
 
-.hud-badges { display: flex; align-items: center; gap: 6px; flex-wrap: wrap;}
-.hud-badges .lbl { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-right: 4px; }
-.hud-badges .badge { margin: 0; border: none; background: linear-gradient(135deg, rgba(255,213,74,0.1), rgba(245,158,11,0.2)); border: 1px solid rgba(255,213,74,0.3); box-shadow: 0 2px 8px rgba(245,158,11,0.2);}
+.hud-plate .avatar-box {
+    background: rgba(56, 189, 248, 0.15);
+    padding: 4px;
+    border-right: 1px solid rgba(56, 189, 248, 0.3);
+    display: flex; align-items: center; justify-content: center;
+}
 
-.hud-actions { display: flex; gap: 8px; }
+.hud-plate .name-box {
+    padding: 4px 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    border-right: 1px solid rgba(255,255,255,0.05);
+}
+.hud-plate .name-box:hover { background: rgba(255,255,255,0.1); color: #38bdf8; }
+
+.hud-plate .money-box {
+    padding: 4px 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #4ade80;
+    font-family: monospace;
+    letter-spacing: 0.5px;
+}
+
+.hud-badges { display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.4); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); }
+.hud-badges .lbl { font-size: 0.65rem; color: #94a3b8; text-transform: uppercase; font-weight: 800; margin-right: 4px; }
+.hud-badges .badge { margin: 0; padding: 2px 6px; font-size: 0.7rem; border-radius: 4px; }
+
+.hud-actions { display: flex; gap: 6px; align-items: center; margin-left: 8px; }
+.hud-actions button { margin: 0; border-radius: 6px; font-size: 0.8rem; padding: 6px 12px; }
+.hud-actions .sbtn { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4); border: 1px solid #34d399; }
+.hud-actions .sbtn:hover { filter: brightness(1.2); }
 
 /* HEADINGS - Restored to Deep Yellow with Glow */
 .panel h3, .card h2 { color: #ffd54a; margin-bottom: 8px; font-weight: 800; font-size: 1.2rem; letter-spacing: 0.5px; text-shadow: 0 2px 6px rgba(255, 213, 74, 0.3);}
@@ -578,12 +607,14 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 
 /* ===== OPTIMIZED MOBILE EXPERIENCE ===== */
 @media (max-width: 768px) {
-    /* 1. Ultra-Compact HUD */
-    .hud { padding: 6px; gap: 4px; margin: -12px -12px 10px -12px; border-radius: 0 0 12px 12px; }
-    .hud .logo { font-size: 1rem !important; }
-    .hud-info { gap: 4px; }
-    .hud-stat { font-size: 0.75rem !important; padding: 4px 6px !important; }
-    .hud-actions button { padding: 4px 8px !important; font-size: 0.75rem !important; }
+    /* 1. Ultra-Compact MMO HUD */
+    .hud { padding: 6px; gap: 8px; margin: -12px -12px 10px -12px; border-radius: 0 0 8px 8px; justify-content: center; }
+    .hud .logo { font-size: 1rem !important; margin: 0 auto; }
+    .hud-info { gap: 6px; width: 100%; justify-content: center; }
+    .hud-plate .name-box, .hud-plate .money-box { padding: 4px 8px; font-size: 0.8rem; }
+    .hud-badges { padding: 2px 6px; }
+    .hud-actions { width: 100%; justify-content: center; margin: 0; }
+    .hud-actions button { padding: 6px 12px !important; font-size: 0.75rem !important; flex: 1; max-width: 150px; }
 
     /* 2. Tighten all Panels & Cards */
     .panel, .card { padding: 10px; margin-bottom: 8px; border-radius: 12px; }
@@ -912,16 +943,21 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 <div id="pgGame" class="hidden">
 <div class="wrap">
   <div class="hud">
-    <div class="logo" style="margin:0;">PokemonSU <img src="https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/poke-ball.png" alt="Pokeball"></div>
+    <div class="logo">PokemonSU <img src="https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/poke-ball.png" alt="Pokeball"></div>
     
     <div class="hud-info">
-        <div class="hud-stat trainer">
-            <div style="width:24px; height:24px; border-radius:50%; overflow:hidden; margin-right:6px; background:rgba(0,0,0,0.5); display:flex; justify-content:center;">
-                <img id="hudTrnIcon" src="https://play.pokemonshowdown.com/sprites/trainers/red.png" style="height: 60px; max-width: none; image-rendering:pixelated; margin-top: -6px;">
+        <!-- Unified MMO Trainer Plate -->
+        <div class="hud-plate">
+            <div class="avatar-box">
+                <div style="width:22px; height:22px; border-radius:50%; overflow:hidden; background:#000; display:flex; justify-content:center;">
+                    <img id="hudTrnIcon" src="https://play.pokemonshowdown.com/sprites/trainers/red.png" style="height: 55px; max-width: none; image-rendering:pixelated; margin-top: -4px;">
+                </div>
             </div>
-            <span><b id="hudName"></b></span>
+            <!-- Clickable Name Area -->
+            <div class="name-box" onclick="changeTrainerName()" title="Tap to rename" id="hudName"></div>
+            <div class="money-box">💰 <span id="hudMoney"></span></div>
         </div>
-        <div class="hud-stat money">💰 <b id="hudMoney"></b></div>
+
         <div class="hud-badges">
             <span class="lbl">Badges</span>
             <span id="hudBadges"></span>
@@ -929,7 +965,7 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     </div>
     
     <div class="hud-actions">
-        <button class="sbtn" style="filter: brightness(1.2); box-shadow: 0 0 15px rgba(56,189,248,0.6);" onclick="claimLoot()">🎁 Daily Reward</button> 
+        <button class="sbtn" onclick="claimLoot()">🎁 Daily Reward</button> 
         <button class="gbtn" onclick="logout()">Logout</button>
     </div>
   </div>
@@ -1644,13 +1680,15 @@ function startGame(){
 }
 
 function refreshHud(){
- hudName.innerHTML = `${S.displayName} <span style="font-size:0.75rem; margin-left:4px; color:#38bdf8; cursor:pointer; background:rgba(0,0,0,0.4); padding:2px 6px; border-radius:6px; border:1px solid rgba(56,189,248,0.3);" onclick="changeTrainerName()" title="Change Name">✏️</span>`;
- hudMoney.textContent='₽'+S.money.toLocaleString();
- hudBadges.innerHTML=S.badges.map(b=>`<span class="badge" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(14, 165, 233, 0.2)); border: 1px solid rgba(56, 189, 248, 0.3); color: #38bdf8; text-shadow: none;">🏅 ${b}</span>`).join('')||'<small style="color:#64748b">No badges yet</small>';
+ // Injects just the text; the MMO plate handles the layout and clicks natively
+ hudName.textContent = S.displayName;
+ hudMoney.textContent = S.money.toLocaleString();
+ 
+ hudBadges.innerHTML=S.badges.map(b=>`<span class="badge" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(14, 165, 233, 0.2)); border: 1px solid rgba(56, 189, 248, 0.3); color: #38bdf8; text-shadow: none;">🏅 ${b}</span>`).join('')||'<small style="color:#64748b">None</small>';
  
  // Dynamic Trainer Avatar Update (Zoomed Face)
  const trnIcon = (S.gender === 'F') ? 'leaf' : 'red';
- const hudIcon = document.getElementById('hudTrnIcon') || document.querySelector('.hud-stat.trainer img');
+ const hudIcon = document.getElementById('hudTrnIcon');
  if(hudIcon) hudIcon.src = TRN(trnIcon);
 
  persist()
