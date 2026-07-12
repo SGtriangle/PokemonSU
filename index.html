@@ -607,51 +607,53 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 
 /* ===== COMPREHENSIVE NATIVE MOBILE APP FIX ===== */
 @media (max-width: 768px) {
-    /* 1. Global Shrink: Instantly scales down all text, padding, and margins proportionally */
-    html { font-size: 13.5px !important; }
-
-    /* 2. Lock the Viewport: Prevents mobile browser bouncing and rubber-banding */
+    /* 1. Global Viewport Lock: Stops bouncy scrolling entirely */
     body { overflow: hidden !important; position: fixed; inset: 0; background: #0b1020; }
     #pgGame, #pgLogin { height: 100svh; width: 100vw; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
-    .wrap { padding: 6px; padding-bottom: 95px !important; /* Forces content above the bottom nav */ }
+    .wrap { padding: 8px; padding-bottom: 80px !important; /* Clears bottom nav */ }
 
-    /* 3. Ultra-Compact MMO HUD */
-    .hud { padding: 6px; gap: 6px; margin: 0 0 12px 0; border-radius: 8px; justify-content: center; position: sticky; top: 0; z-index: 50; }
-    .hud .logo { font-size: 1rem !important; margin: 0 auto; }
-    .hud-info { gap: 6px; width: 100%; justify-content: center; }
-    .hud-plate .name-box, .hud-plate .money-box { padding: 4px 8px; font-size: 0.85rem; }
-    .hud-badges { padding: 2px 6px; font-size: 0.7rem; }
-    .hud-actions { width: 100%; justify-content: center; margin: 0; }
-    .hud-actions button { padding: 6px 12px !important; font-size: 0.8rem !important; flex: 1; max-width: 150px; margin: 0; }
+    /* 2. Ultra-Compact MMO HUD */
+    /* Hides the text logo on mobile gameplay to save a MASSIVE amount of screen space */
+    .hud .logo { display: none !important; } 
+    .hud { padding: 8px; gap: 8px; border-radius: 0 0 12px 12px; margin: -8px -8px 12px -8px; position: sticky; top: 0; z-index: 50; }
+    .hud-info { width: 100%; justify-content: space-between; }
+    .hud-plate .name-box, .hud-plate .money-box { padding: 4px 6px; font-size: 0.8rem; }
+    .hud-actions { width: 100%; justify-content: space-between; margin: 0; }
+    .hud-actions button { padding: 8px !important; font-size: 0.85rem !important; flex: 1; margin: 0; }
 
-    /* 4. Tiny Grids & Cards (Fit much more on the screen) */
-    .panel, .card { padding: 10px; margin-bottom: 8px; border-radius: 12px; }
-    
+    /* 3. Panels & Grids (Fixes the overlapping) */
+    .panel, .card { padding: 12px; border-radius: 12px; }
     /* Disables internal scrolling on mobile. Let the native smooth page scroll handle it! */
-    .grid, .shop-grid, #lbContent { max-height: none !important; overflow: visible !important; }
+    .grid, .shop-grid, #lbContent { max-height: none !important; overflow: visible !important; padding-right: 0 !important; }
     
-    .grid { grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 6px; }
-    .mon img { max-width: 55px; max-height: 55px; margin-bottom: 0; }
-    .mon .nm { font-size: 0.85rem !important; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+    .mon img { max-width: 60px; max-height: 60px; }
     
-    .shop-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
-    .shop-card { padding: 10px; }
-    .shop-card .icn-wrap { width: 44px; height: 44px; margin-bottom: 6px; }
-    .shop-card .icn-wrap .item-icn { width: 28px; height: 28px; }
+    .shop-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
 
-    /* 5. Streamline Battle Arena */
-    .bwrap { height: calc(100svh - 60px); max-height: none; gap: 4px; }
-    .bfield { padding: 6px; gap: 2px; flex: 1.2; }
-    .binfo { min-width: 90px; padding: 4px 6px; transform: scale(0.85); margin: 0 !important; }
-    .bmon img { max-width: 80px; } 
-    .bacts { gap: 4px; }
-    .bacts button { padding: 4px; font-size: 0.75rem; min-height: 38px; }
-    .blog { min-height: 38px; padding: 6px; font-size: 0.75rem; }
+    /* 4. Streamline Battle Arena (Zero Overlap Grid) */
+    .bwrap { height: calc(100svh - 80px); gap: 6px; margin: 0 auto; max-height: none; }
+    .bfield { padding: 8px; gap: 4px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+    
+    /* Safely shrinks the combat info without causing grid overlap bugs */
+    .binfo { padding: 4px 6px; min-width: 0; width: 100%; transform: none !important; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+    .binfo b { font-size: 0.75rem !important; }
+    .binfo small { font-size: 0.65rem !important; }
+    .hpbar { height: 4px; margin: 4px 0; }
+    
+    .bmon img { max-width: 90px; max-height: 12vh; } 
+    .bmon::before { width: 80px; height: 20px; bottom: 4px; }
+    .bmon::after { width: 40px; height: 8px; bottom: 10px; }
 
-    /* 6. Navigation Bar */
-    .nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(11, 16, 32, 0.98); padding: 6px; gap: 4px; border-radius: 16px 16px 0 0; z-index: 100; box-shadow: 0 -5px 25px rgba(0,0,0,0.8); display: flex; overflow-x: auto; overscroll-behavior-x: contain; margin: 0; }
+    /* Fixed height log & tight action buttons */
+    .blog { min-height: 44px; max-height: 50px; padding: 6px; font-size: 0.75rem; line-height: 1.2; }
+    .bacts { gap: 6px; }
+    .bacts button { padding: 6px 2px; font-size: 0.75rem; min-height: 40px; }
+
+    /* 5. Navigation Bar */
+    .nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(11, 16, 32, 0.98); padding: 8px 6px; gap: 6px; border-radius: 16px 16px 0 0; z-index: 100; box-shadow: 0 -5px 20px rgba(0,0,0,0.8); display: flex; overflow-x: auto; margin: 0; flex-wrap: nowrap; overscroll-behavior-x: contain; }
     .nav::-webkit-scrollbar { display: none; }
-    .nav button { flex: 0 0 auto; padding: 8px 12px; font-size: 0.8rem; border-radius: 10px; margin: 0; }
+    .nav button { flex: 0 0 auto; padding: 8px 14px; font-size: 0.85rem; border-radius: 10px; margin: 0; }
 }
 /* ===== DYNAMIC EVENT THEMES (NOSTALGIA UI) ===== */
 #theme-bg {
