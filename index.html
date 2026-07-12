@@ -1387,7 +1387,63 @@ const ZONES=[
  {n:'Sinnoh Rift Gate',g:4,lv:[22,30],ch:5},{n:'Unova Rift Gate',g:5,lv:[28,36],ch:6},
  {n:'Kalos Rift Gate',g:6,lv:[34,42],ch:7},{n:'Alola Rift Gate',g:7,lv:[40,48],ch:8},
  {n:'Galar Rift Gate',g:8,lv:[46,54],ch:9},{n:'Paldea Rift Gate',g:9,lv:[52,62],ch:10}];
-const TM={normal:[['Tackle',40],['Body Slam',85]],fire:[['Ember',40],['Flamethrower',90]],water:[['Water Gun',40],['Surf',90]],grass:[['Vine Whip',45],['Energy Ball',90]],electric:[['Thunder Shock',40],['Thunderbolt',90]],ice:[['Powder Snow',40],['Ice Beam',90]],fighting:[['Karate Chop',50],['Close Combat',100]],poison:[['Poison Sting',40],['Sludge Bomb',90]],ground:[['Mud-Slap',45],['Earthquake',100]],flying:[['Gust',40],['Air Slash',75]],psychic:[['Confusion',50],['Psychic',90]],bug:[['Bug Bite',60],['X-Scissor',80]],rock:[['Rock Throw',50],['Stone Edge',100]],ghost:[['Lick',40],['Shadow Ball',80]],dragon:[['Dragon Breath',60],['Dragon Pulse',85]],dark:[['Bite',60],['Dark Pulse',80]],steel:[['Metal Claw',50],['Iron Head',80]],fairy:[['Fairy Wind',40],['Moonblast',95]]};
+const TM = {
+    normal: [['Tackle',40,1], ['Quick Attack',60,15], ['Swift',60,25], ['Body Slam',85,35], ['Take Down',90,45], ['Double-Edge',120,65], ['Hyper Beam',150,80], ['Giga Impact',150,100], ['Boomburst',140,110], ['Hyper Voice',180,120]],
+    fire: [['Ember',40,1], ['Fire Fang',65,15], ['Flame Wheel',60,25], ['Flamethrower',90,35], ['Heat Wave',100,45], ['Fire Blast',110,65], ['Flare Blitz',120,80], ['Eruption',150,100], ['Sacred Fire',100,110], ['Blue Flare',190,120]],
+    water: [['Water Gun',40,1], ['Water Pulse',60,15], ['Bubble Beam',65,25], ['Surf',90,35], ['Aqua Tail',90,45], ['Muddy Water',90,65], ['Hydro Pump',110,80], ['Water Spout',150,100], ['Origin Pulse',110,110], ['Steam Eruption',180,120]],
+    grass: [['Vine Whip',45,1], ['Magical Leaf',60,15], ['Razor Leaf',55,25], ['Energy Ball',90,35], ['Seed Bomb',80,45], ['Petal Blizzard',90,65], ['Solar Beam',120,80], ['Leaf Storm',130,100], ['Frenzy Plant',150,110], ['Seed Flare',190,120]],
+    electric: [['Thunder Shock',40,1], ['Spark',65,15], ['Shock Wave',60,25], ['Thunderbolt',90,35], ['Discharge',80,45], ['Wild Charge',90,65], ['Thunder',110,80], ['Zap Cannon',150,100], ['Volt Tackle',120,110], ['Bolt Strike',190,120]],
+    ice: [['Powder Snow',40,1], ['Icy Wind',55,15], ['Ice Shard',40,25], ['Aurora Beam',65,35], ['Ice Fang',65,45], ['Ice Beam',90,65], ['Blizzard',110,80], ['Sheer Cold',150,100], ['Ice Burn',140,110], ['Glaciate',180,120]],
+    fighting: [['Rock Smash',40,1], ['Mach Punch',40,15], ['Brick Break',75,25], ['Vital Throw',70,35], ['Cross Chop',100,45], ['Dynamic Punch',120,65], ['Close Combat',120,80], ['Focus Punch',150,100], ['Sacred Sword',90,110], ['Aura Sphere',180,120]],
+    poison: [['Poison Sting',30,1], ['Smog',30,15], ['Clear Smog',50,25], ['Venoshock',65,35], ['Poison Fang',50,45], ['Sludge Bomb',90,65], ['Gunk Shot',120,80], ['Sludge Wave',130,100], ['Shell Side Arm',102,110], ['Acid Downpour',180,120]],
+    ground: [['Mud-Slap',20,1], ['Sand Tomb',60,15], ['Mud Shot',65,25], ['Bulldoze',60,35], ['Drill Run',80,45], ['Earth Power',90,65], ['Earthquake',100,80], ['Precipice Blades',120,100], ['Fissure',150,110], ['Continental Crush',200,120]],
+    flying: [['Peck',35,1], ['Gust',40,15], ['Aerial Ace',60,25], ['Pluck',80,35], ['Air Slash',75,45], ['Drill Peck',80,65], ['Brave Bird',120,80], ['Sky Attack',140,100], ['Aeroblast',100,110], ['Oblivion Wing',180,120]],
+    psychic: [['Confusion',50,1], ['Psybeam',65,15], ['Zen Headbutt',80,25], ['Psychic',90,35], ['Extrasensory',120,45], ['Psyshock',80,65], ['Future Sight',120,80], ['Prismatic Laser',160,100], ['Psystrike',100,110], ['Hyperspace Hole',180,120]],
+    bug: [['Bug Bite',60,1], ['Struggle Bug',50,15], ['Signal Beam',75,25], ['X-Scissor',80,35], ['Bug Buzz',90,45], ['Lunge',80,65], ['Megahorn',120,80], ['Attack Order',90,100], ['First Impression',120,110], ['Infestation',180,120]],
+    rock: [['Rock Throw',50,1], ['Rock Tomb',35,15], ['Smack Down',50,25], ['Rock Slide',75,35], ['Power Gem',80,45], ['Stone Edge',100,65], ['Rock Wrecker',150,80], ['Head Smash',150,100], ['Diamond Storm',100,110], ['Continental Crush',200,120]],
+    ghost: [['Astonish',30,1], ['Lick',30,15], ['Shadow Punch',60,25], ['Hex',65,35], ['Shadow Ball',80,45], ['Phantom Force',90,65], ['Poltergeist',100,80], ['Shadow Force',120,100], ['Moongeist Beam',100,110], ['Menacing Moonraze',200,120]],
+    dragon: [['Dragon Rage',60,1], ['Dragon Breath',60,15], ['Dragon Tail',90,25], ['Dragon Claw',80,35], ['Dragon Pulse',85,45], ['Dragon Rush',60,65], ['Outrage',120,80], ['Roar of Time',150,100], ['Draco Meteor',130,110], ['Clangorous Soulblaze',200,120]],
+    dark: [['Bite',60,1], ['Pursuit',40,15], ['Assurance',60,25], ['Crunch',80,35], ['Night Slash',75,45], ['Dark Pulse',80,65], ['Foul Play',95,80], ['Knock Off',100,100], ['Fiery Wrath',90,110], ['Black Hole Eclipse',200,120]],
+    steel: [['Metal Claw',50,1], ['Bullet Punch',40,15], ['Steel Wing',70,25], ['Iron Head',80,35], ['Flash Cannon',80,45], ['Iron Tail',100,65], ['Meteor Mash',90,80], ['Doom Desire',140,100], ['Steel Beam',140,110], ['Photon Geyser',180,120]],
+    fairy: [['Fairy Wind',40,1], ['Disarming Voice',40,15], ['Draining Kiss',50,25], ['Play Rough',90,35], ['Dazzling Gleam',80,45], ['Moonblast',95,65], ['Fleur Cannon',130,80], ['Light of Ruin',140,100], ['Nature\'s Madness',120,110], ['Let\'s Snuggle Forever',200,120]]
+};
+
+function genMoves(m) {
+    let stabPool = [];
+    let coveragePool = [];
+    
+    // 1. Get all STAB (Same Type) moves available at this Pokémon's current level
+    m.types.forEach(t => {
+        if(TM[t]) TM[t].forEach(mv => { 
+            if(m.lvl >= mv[2]) stabPool.push({n: mv[0], t: t, p: mv[1]}); 
+        });
+    });
+    
+    // 2. Get universal coverage moves so Mono-types always have 4 moves
+    ['normal', 'dark', 'fighting'].forEach(t => {
+        if (!m.types.includes(t)) {
+            TM[t].forEach(mv => {
+                if(m.lvl >= mv[2]) coveragePool.push({n: mv[0], t: t, p: mv[1]});
+            });
+        }
+    });
+
+    // 3. Sort both pools strictly by Power (Strongest moves at the top)
+    stabPool.sort((a, b) => b.p - a.p);
+    coveragePool.sort((a, b) => b.p - a.p);
+
+    // 4. Build final moveset (Prioritize STAB, no duplicate names, max 4)
+    let finalMoves = [];
+    let combined = [...stabPool, ...coveragePool]; 
+    
+    combined.forEach(mv => {
+        if(finalMoves.length < 4 && !finalMoves.some(x => x.n === mv.n)) {
+            finalMoves.push(mv);
+        }
+    });
+    
+    return finalMoves;
+}
 const EFF={fire:{grass:2,ice:2,bug:2,steel:2,fire:.5,water:.5,rock:.5,dragon:.5},water:{fire:2,ground:2,rock:2,water:.5,grass:.5,dragon:.5},grass:{water:2,ground:2,rock:2,fire:.5,grass:.5,poison:.5,flying:.5,bug:.5,dragon:.5,steel:.5},electric:{water:2,flying:2,electric:.5,grass:.5,dragon:.5,ground:0},ice:{grass:2,ground:2,flying:2,dragon:2,fire:.5,water:.5,ice:.5,steel:.5},fighting:{normal:2,ice:2,rock:2,dark:2,steel:2,poison:.5,flying:.5,psychic:.5,bug:.5,fairy:.5,ghost:0},poison:{grass:2,fairy:2,poison:.5,ground:.5,rock:.5,ghost:.5,steel:0},ground:{fire:2,electric:2,poison:2,rock:2,steel:2,grass:.5,bug:.5,flying:0},flying:{grass:2,fighting:2,bug:2,electric:.5,rock:.5,steel:.5},psychic:{fighting:2,poison:2,psychic:.5,steel:.5,dark:0},bug:{grass:2,psychic:2,dark:2,fire:.5,fighting:.5,poison:.5,flying:.5,ghost:.5,steel:.5,fairy:.5},rock:{fire:2,ice:2,flying:2,bug:2,fighting:.5,ground:.5,steel:.5},ghost:{psychic:2,ghost:2,dark:.5,normal:0},dragon:{dragon:2,steel:.5,fairy:0},dark:{psychic:2,ghost:2,fighting:.5,dark:.5,fairy:.5},steel:{ice:2,rock:2,fairy:2,fire:.5,water:.5,electric:.5,steel:.5},fairy:{fighting:2,dragon:2,dark:2,fire:.5,poison:.5,steel:.5},normal:{rock:.5,steel:.5,ghost:0}};
 
 const EVO={1:[16,2],2:[32,3],4:[16,5],5:[36,6],7:[16,8],8:[36,9],10:[7,11],11:[10,12],13:[7,14],14:[10,15],16:[18,17],17:[36,18],25:[50,26],147:[30,148],148:[55,149],371:[30,372],372:[50,373],443:[24,444],444:[48,445]};
@@ -1644,7 +1700,6 @@ async function getPoke(id){
  }
 }
 function calc(m){m.maxhp=Math.floor(m.base.hp*2*m.lvl/100)+m.lvl+10;m.atk=Math.floor(m.base.atk*2*m.lvl/100)+5;m.def=Math.floor(m.base.def*2*m.lvl/100)+5}
-function genMoves(m){const mv=[{n:'Tackle',t:'normal',p:40}];m.types.forEach(t=>{const a=TM[t]||TM.normal;mv.push({n:a[0][0],t,p:a[0][1]});if(m.lvl>=20)mv.push({n:a[1][0],t,p:a[1][1]})});return mv.slice(0,4)}
 
 async function makeMon(id,lvl,shiny=false, isBot=false){
   const p=await getPoke(id);
