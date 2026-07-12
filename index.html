@@ -1046,7 +1046,6 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     </div>
     
     <div class="hud-actions">
-        <button class="gbtn" id="btnMute" style="padding: 6px 10px !important;" onclick="AudioSys.toggle()" title="Toggle Sound">🔊</button>
         <button class="sbtn" onclick="claimLoot()">🎁 Daily Reward</button> 
         <button class="gbtn" onclick="logout()">Logout</button>
     </div>
@@ -1668,10 +1667,6 @@ function preloadSprites(){
  mons.forEach(m => {
   new Image().src = SPR(m.id, m.shiny);
   new Image().src = SPRB(m.id, m.shiny);
-  
-  // NEW: Instantly preloads the cries of your owned Pokemon!
-  AudioSys.preload(`https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${m.id}.ogg`);
-  
   if(EVO[m.id]) {
      new Image().src = SPR(EVO[m.id][1], m.shiny);
      new Image().src = SPRB(EVO[m.id][1], m.shiny);
@@ -1683,10 +1678,6 @@ function preloadSprites(){
  const p2 = RESTRICTED[(weekNum + 5) % RESTRICTED.length];
  new Image().src = SPR(p1, false); new Image().src = SPRB(p1, false);
  new Image().src = SPR(p2, true);  new Image().src = SPRB(p2, true);
- 
- // NEW: Preloads the cries for the upcoming Event Bosses!
- AudioSys.preload(`https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${p1}.ogg`);
- AudioSys.preload(`https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${p2}.ogg`);
  
  // PRELOAD AUTHENTIC ITEM ICONS
  ['poke-ball', 'master-ball', 'potion', 'shiny-charm', 'dawn-stone'].forEach(item => {
@@ -1767,8 +1758,6 @@ function startGame(){
  if(S.stones === undefined) S.stones = {rebirth: 0};
  if(S.events === undefined) S.events = {};
  refreshHud();applyDynamicTheme();preloadSprites();nav(0);
- // NEW: Start the background music!
- AudioSys.playBGM('menu');
 }
 
 function refreshHud(){
@@ -2482,10 +2471,6 @@ function startBattle(cfg){
     document.getElementById('battle').classList.remove('hidden');
     bmsg(cfg.wild ? `A wild <b style="color:#38bdf8">${B.enemy.name}</b> (Lv ${B.enemy.lvl}) appeared!` : `${cfg.trainer[0]} sent out <b style="color:#f87171">${B.enemy.name}</b> (Lv ${B.enemy.lvl})!`);
     drawB();
-    
-    // NEW: Switch to Battle Music and play the wild Pokemon's cry!
-    AudioSys.playBGM(cfg.botRank === 'Master' || cfg.isPvP ? 'boss' : 'battle');
-    AudioSys.playCry(B.enemy.id);
 }
 function bmsg(m){bLog.innerHTML=m}
 function drawB(){const p=S.team[B.pi],e=B.enemy;
@@ -2530,9 +2515,6 @@ function useMove(i){
     const p = S.team[B.pi], e = B.enemy, mv = p.moves[i];
     const r = dmg(p,e,mv);
     let sashMsg = '';
-    
-    // NEW: Play attack sound effect
-    AudioSys.playSFX('hit');
     
     if(e.item === 'focus_sash' && e.hp === e.maxhp && r.v >= e.hp) {
         r.v = e.hp - 1; e.item = null; sashMsg = ` <br><b style="color:#facc15">Enemy ${e.name} hung on using its Focus Sash!</b>`;
@@ -2685,10 +2667,6 @@ function endB(win,m,caught){
  healTeam(); 
  if(m) log2(m + (win ? ' (Team Auto-Healed)' : ''));
  persist(); renderAll();
- 
- // NEW: Return to peaceful menu music
- AudioSys.playBGM('menu');
- 
  const cb=win===false?B.onLose:B.onWin; B=null; if(win&&cb)cb();else if(win===false&&cb)cb()
 }
 
@@ -2802,81 +2780,6 @@ function renderLoginNotices() {
 renderLoginNotices();
 // Auto-refresh every minute so the timer stays accurate if they idle on the page
 setInterval(renderLoginNotices, 60000);
-/* ============ MASTER AUDIO SYSTEM (HIGH-SPEED PRELOADER) ============ */
-const AudioSys = {
-    bgm: new Audio(),
-    muted: false,
-    tracks: {
-        menu: 'https://play.pokemonshowdown.com/audio/hgss-route-42.mp3',
-        battle: 'https://play.pokemonshowdown.com/audio/hgss-johto-b.mp3',
-        boss: 'https://play.pokemonshowdown.com/audio/b2w2-gym-leader.mp3'
-    },
-    sfx: {
-        click: 'https://play.pokemonshowdown.com/audio/cries/pikachu.mp3',
-        hit: 'https://play.pokemonshowdown.com/audio/sfx/tackle.mp3',
-        faint: 'https://play.pokemonshowdown.com/audio/sfx/faint.mp3',
-        catch: 'https://play.pokemonshowdown.com/audio/sfx/level-up.mp3'
-    },
-    cache: {}, // Stores the preloaded audio files in memory
-    
-    init: function() {
-        this.bgm.loop = true;
-        this.bgm.volume = 0.25;
-        // Silently preload all BGM and SFX in the background instantly
-        Object.values(this.tracks).forEach(url => this.preload(url));
-        Object.values(this.sfx).forEach(url => this.preload(url));
-    },
-    
-    preload: function(url) {
-        if(!this.cache[url]) {
-            const a = new Audio();
-            a.preload = 'auto'; // Forces the browser to download it immediately
-            a.src = url;
-            this.cache[url] = a;
-        }
-    },
-    
-    playBGM: function(trackName) {
-        if(this.muted) return;
-        const src = this.tracks[trackName];
-        if(this.bgm.src !== src) {
-            this.bgm.src = src;
-            this.bgm.play().catch(e => console.log("Waiting for user interaction."));
-        } else if (this.bgm.paused) {
-            this.bgm.play().catch(e => {});
-        }
-    },
-    
-    playSFX: function(soundName) {
-        if(this.muted) return;
-        const url = this.sfx[soundName];
-        // Instantly clones the preloaded memory file (allows rapid overlapping sounds)
-        let s = this.cache[url] ? this.cache[url].cloneNode() : new Audio(url);
-        s.volume = 0.5;
-        s.play().catch(e => {});
-    },
-    
-    playCry: function(id) {
-        if(this.muted) return;
-        const url = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`;
-        let c = this.cache[url] ? this.cache[url].cloneNode() : new Audio(url);
-        c.volume = 0.4;
-        c.play().catch(e => {});
-    },
-    
-    toggle: function() {
-        this.muted = !this.muted;
-        const btn = document.getElementById('btnMute');
-        if(this.muted) {
-            this.bgm.pause();
-            if(btn) btn.innerText = '🔇';
-        } else {
-            this.bgm.play().catch(e=>{});
-            if(btn) btn.innerText = '🔊';
-        }
-    }
-};
-AudioSys.init();
 </script>
 </body>
 </html>
