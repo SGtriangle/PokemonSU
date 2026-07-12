@@ -815,6 +815,36 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     .notice-card b { font-size: 0.8rem !important; }
     .notice-card div > div { font-size: 0.7rem !important; }
 }
+/* ===== INTERNAL SCROLLING GRIDS (APP-LIKE BEHAVIOR) ===== */
+.grid, .shop-grid, #lbContent {
+    max-height: calc(100vh - 280px); /* Locks height, leaving room for HUD and Nav */
+    overflow-y: auto; /* Enables internal vertical scrolling */
+    padding-right: 8px; /* Adds breathing room for the scrollbar */
+    align-content: start; /* Keeps items pushed to the top */
+}
+
+/* Custom Sleek Scrollbar tailored for the Grids */
+.grid::-webkit-scrollbar, .shop-grid::-webkit-scrollbar, #lbContent::-webkit-scrollbar { 
+    width: 6px; 
+}
+.grid::-webkit-scrollbar-track, .shop-grid::-webkit-scrollbar-track, #lbContent::-webkit-scrollbar-track { 
+    background: rgba(0, 0, 0, 0.2); 
+    border-radius: 4px; 
+}
+.grid::-webkit-scrollbar-thumb, .shop-grid::-webkit-scrollbar-thumb, #lbContent::-webkit-scrollbar-thumb { 
+    background: rgba(56, 189, 248, 0.3); 
+    border-radius: 4px; 
+}
+.grid::-webkit-scrollbar-thumb:hover, .shop-grid::-webkit-scrollbar-thumb:hover, #lbContent::-webkit-scrollbar-thumb:hover { 
+    background: rgba(56, 189, 248, 0.6); 
+}
+
+/* Mobile Adjustment to ensure the grids don't overlap the bottom Navigation Bar */
+@media (max-width: 768px) {
+    .grid, .shop-grid, #lbContent {
+        max-height: calc(100svh - 300px); 
+    }
+}
 </style>
 </head>
 <body>
