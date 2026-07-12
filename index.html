@@ -845,6 +845,13 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
         max-height: calc(100svh - 300px); 
     }
 }
+/* ===== REMOVE SCROLLING FROM TEAM PAGE (RESTORE FULL VIEW) ===== */
+#scr2 .grid {
+    max-height: none !important; /* Removes the height limit */
+    overflow-y: visible !important; /* Removes the scrollbar */
+    padding-right: 0 !important; /* Removes the scrollbar padding */
+    align-content: stretch !important;
+}
 </style>
 </head>
 <body>
