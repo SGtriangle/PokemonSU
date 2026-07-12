@@ -374,86 +374,201 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 .event-card::before { content: 'LIMITED TIME'; position: absolute; top: 15px; left: -30px; background: #ef4444; color: #fff; font-size: 0.7rem; font-weight: 800; padding: 4px 30px; transform: rotate(-45deg); z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 .event-timer { font-family: 'VT323', monospace; font-size: 1.8rem; color: #facc15; text-shadow: 0 0 10px rgba(250, 204, 21, 0.5); margin-bottom: 16px; }
 
-/* ===== BULLETPROOF PROGRESS & HEALTH BARS ===== */
+/* GPU Accelerated Smooth Health Bar - 100% Repaint Free using ScaleX */
 .hpbar { 
-    width: 100%; height: 8px; background: rgba(0,0,0,0.8); 
-    border-radius: 4px; margin: 6px 0 4px 0; 
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.9); 
-    position: relative; overflow: hidden; 
-    border: 1px solid rgba(255,255,255,0.1);
+    width: 100%; 
+    height: 6px; 
+    background: rgba(0,0,0,0.6); 
+    border-radius: 6px; 
+    margin: 6px 0; 
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.8); 
+    position: relative; /* Anchor for absolute inner bar */
+    transform: translateZ(0); 
 }
 .hpbar i { 
-    position: absolute; top: 0; left: 0; bottom: 0; display: block; 
-    border-radius: 3px; 
-    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease; 
-    will-change: width;
-    background-color: #4ade80; /* Default Green */
-    box-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+    position: absolute; 
+    top: 0; left: 0; bottom: 0;
+    display: block;
+    width: 100%; /* Force 100% initial width, then squash it with scaleX */
+    transform-origin: left center; /* Scale mathematically from left to right */
+    background: linear-gradient(90deg, #4ade80, #22c55e); 
+    border-radius: 6px; 
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); /* Animate transform, NOT width */
+    will-change: transform; 
+    backface-visibility: hidden;
 }
-.hpbar i.mid { background-color: #facc15; box-shadow: 0 0 8px rgba(250, 204, 21, 0.5); }
-.hpbar i.low { background-color: #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.5); animation: dangerPulse 1s infinite; }
+.hpbar i.mid { background: linear-gradient(90deg, #facc15, #eab308); }
 
-@keyframes dangerPulse { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.5); } }
-@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
+/* Danger Pulse Animation for Low HP */
+@keyframes dangerPulse { 
+    0%, 100% { filter: brightness(1) drop-shadow(0 0 2px rgba(248, 113, 113, 0.5)); } 
+    50% { filter: brightness(1.5) drop-shadow(0 0 8px rgba(248, 113, 113, 1)); } 
+}
+.hpbar i.low { 
+    background: linear-gradient(90deg, #ef4444, #f87171); 
+    animation: dangerPulse 1s ease-in-out infinite; 
+}
 
-/* ===== TACTICAL MMO BATTLE ARENA ===== */
+/* RARE ENCOUNTER ALERT ANIMATIONS */
+@keyframes rarePop {
+    0% { opacity: 0; transform: scale(0.5) translateY(50px); filter: brightness(2); }
+    70% { transform: scale(1.1); filter: brightness(1); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes rareGlow {
+    0% { filter: drop-shadow(0 0 10px currentColor); }
+    100% { filter: drop-shadow(0 0 35px currentColor) brightness(1.3); transform: scale(1.05); }
+}
+@keyframes pulseGlow {
+    0% { transform: scale(0.9); opacity: 0.1; }
+    100% { transform: scale(1.1); opacity: 0.4; }
+}
+@keyframes btnPulse {
+    0% { transform: scale3d(0.98, 0.98, 1); }
+    100% { transform: scale3d(1.03, 1.03, 1); }
+}
+
+
+/* ===== BATTLE ARENA (1-SCREEN FIT, AUTO-RESOLVE GRID, NO SCROLLING) ===== */
 #battle { 
-    position: fixed; inset: 0; background: rgba(5, 8, 16, 0.98); 
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    z-index: 50; padding: 12px; display: flex; align-items: center; justify-content: center; overscroll-behavior: none; 
+    position: fixed; inset: 0; 
+    background: rgba(11, 16, 32, 0.98); 
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 50; 
+    padding: 12px; 
+    display: flex; align-items: center; justify-content: center; 
+    overscroll-behavior: none; /* Stops background body scrolling completely */
 }
-.bwrap { width: 100%; max-width: 750px; height: calc(100svh - 24px); max-height: 800px; display: flex; flex-direction: column; gap: 12px; }
-
-/* Dark Stadium Background */
+.bwrap { 
+    width: 100%; max-width: 700px; 
+    height: calc(100svh - 24px); /* Perfectly aligns to any mobile or PC browser height */
+    max-height: 800px; 
+    display: flex; flex-direction: column; gap: 10px; 
+}
 .bfield { 
-    background: radial-gradient(ellipse at top, #1e293b 0%, #020617 100%);
-    border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; 
-    box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 10px 30px rgba(0,0,0,0.6); 
-    padding: 20px; position: relative; flex: 1 1 0; min-height: 0; margin-bottom: 0; overflow: hidden; 
-    display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px;
+    /* Authentic Sky-to-Grass Horizon Battle Background */
+    background: linear-gradient(to bottom, #0369a1 0%, #0ea5e9 50%, #166534 50.1%, #064e3b 100%);
+    border: 2px solid rgba(255,255,255,0.1); 
+    border-radius: 20px; 
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 15px 30px rgba(0,0,0,0.5); 
+    padding: 16px; 
+    position: relative; 
+    flex: 1 1 0; /* Dynamic height scaling */
+    min-height: 0; 
+    margin-bottom: 0;
+    overflow: hidden; /* Keeps bases inside */
+
+    /* BULLETPROOF GRID SYSTEM */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 8px;
     animation: popIn 0.3s ease-out forwards;
 }
 
-/* Subtle Stadium Ring */
-.bfield::before {
-    content: ''; position: absolute; left: 5%; right: 5%; bottom: 10%; height: 50%;
-    border: 2px solid rgba(255,255,255,0.03); border-radius: 50%;
-    transform: perspective(500px) rotateX(65deg); pointer-events: none;
-}
-
+/* Removes wrapper div to let Grid take over completely */
 .bside { display: contents; }
+
+/* Forces elements into their specific quadrants to PREVENT overlap forever */
 .bside:nth-child(1) .binfo { grid-column: 1; grid-row: 1; justify-self: start; align-self: start; margin: 10px 0 0 10px; } 
 .bside:nth-child(1) .bmon  { grid-column: 2; grid-row: 1; justify-self: center; align-self: start; } 
+
 .bside:nth-child(2) .bmon  { grid-column: 1; grid-row: 2; justify-self: center; align-self: end; margin-bottom: 10px; } 
 .bside:nth-child(2) .binfo { grid-column: 2; grid-row: 2; justify-self: end; align-self: end; margin: 0 10px 10px 0; } 
 
-/* Sleek Dark HUD Plates */
 .binfo { 
-    width: 100%; max-width: 260px; min-width: 180px; z-index: 5; padding: 10px 14px; 
-    background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px);
-    border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    width: 100%; 
+    max-width: 240px; 
+    min-width: 140px; /* Safe minimum */
+    z-index: 5; padding: 10px 14px; background: rgba(15, 23, 42, 0.85); 
+    border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    transform: translate3d(0,0,0);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
-.binfo-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2px; }
-.binfo b { color: #f8fafc; font-size: 1.1rem; font-weight: 800; letter-spacing: 0.5px; }
-.binfo small { color: #94a3b8; font-size: 0.8rem; font-weight: 600; }
 
-/* Minimalist Shadow Bases */
-.bmon { width: 100%; max-width: 160px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
-.bmon img { width: auto; height: auto; max-width: 150px; max-height: 22vh; animation: float 3s ease-in-out infinite; position: relative; z-index: 3; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.6)); }
+/* AUTHENTIC 3D GRASS BASES & GPU SHADOWS */
+.bmon { 
+    width: 100%;
+    max-width: 160px;
+    position: relative; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+}
+.bmon img { 
+    width: auto; height: auto; 
+    max-width: 140px; max-height: 20vh; /* Responsive image shrinking */
+    animation: float 2.5s ease-in-out infinite; /* Smoother animation curve */
+    position: relative;
+    z-index: 3;
+    will-change: transform;
+}
+
+/* The 3D Grass Platform */
+.bmon::before {
+    content: ''; position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+    width: 110%; max-width: 150px; height: 35px; 
+    background: radial-gradient(ellipse at center, #4ade80 10%, #166534 70%, #064e3b 100%);
+    border-radius: 50%; border: 2px solid rgba(255,255,255,0.15);
+    z-index: 1; box-shadow: 0 10px 15px rgba(0,0,0,0.6);
+}
+
+/* Hardware Accelerated Floating Shadow */
 .bmon::after {
-    content: ''; position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); width: 70%; max-width: 90px; height: 12px; 
-    background: radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, transparent 70%); border-radius: 50%; z-index: 2; 
-    animation: shadowScale 3s ease-in-out infinite; 
+    content: ''; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+    width: 60%; max-width: 80px; height: 12px; 
+    background: rgba(0,0,0,0.5); border-radius: 50%; z-index: 2;
+    animation: shadowScale 2.5s ease-in-out infinite;
+    will-change: transform, opacity; /* Forces GPU usage completely bypassing CPU */
 }
-@keyframes shadowScale { 0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; } 50% { transform: translateX(-50%) scale(0.7); opacity: 0.4; } }
 
-/* Clean Action Panel */
-.bacts { display: flex; flex-direction: column; gap: 8px; flex: 0 0 auto; }
-.bacts button { border: none; cursor: pointer; transition: transform 0.1s ease, filter 0.1s ease, background 0.2s; }
-.bacts button:active { transform: scale(0.98); }
-.bacts button:hover { filter: brightness(1.2); }
-.item-amt { background: rgba(0,0,0,0.6); padding: 2px 8px; border-radius: 6px; font-family: monospace; color: #ffd54a; font-weight: 800; font-size: 0.9rem; border: 1px solid rgba(255,213,74,0.3); }
+/* Shadow logic to perfectly match float logic */
+@keyframes shadowScale {
+    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
+    50% { transform: translateX(-50%) scale(0.85); opacity: 0.3; }
+}
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+.binfo b { color: #fff; font-size: 1.05rem; }
+.binfo small { color:#cbd5e1; font-size: 0.8rem; }
+
+/* Fixed constraints for Battle Log and Action Buttons so they never overflow */
+.blog { 
+    font-size:0.95rem; 
+    color:#e2e8f0; 
+    min-height: 54px; max-height: 70px; /* Rigid limits */
+    overflow-y: auto; /* Internal scrolling if necessary */
+    padding: 12px;
+    background: rgba(30, 41, 59, 0.8);
+    border-radius: 12px;
+    margin: 0;
+    border: 1px solid rgba(255,255,255,0.05);
+    flex: 0 0 auto; 
+    animation: popIn 0.4s ease-out forwards;
+}
+/* Styling the battle log scrollbar slightly */
+.blog::-webkit-scrollbar { width: 4px; }
+.blog::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 4px; }
+
+.bacts { 
+    display:grid; grid-template-columns:1fr 1fr; gap:10px; 
+    flex: 0 0 auto; 
+    animation: popIn 0.5s ease-out forwards;
+}
+.bacts button { padding: 10px; display: flex; flex-direction: row; align-items: center; justify-content: center; font-size:0.95rem; gap:6px; margin:0; border: 1px solid transparent; transition: all 0.2s;}
+.bacts button.mv { flex-direction: column; gap:0; background: rgba(255, 213, 74, 0.05); border-color: rgba(255, 213, 74, 0.2); color: #fff; }
+.bacts button.mv:hover { background: rgba(255, 213, 74, 0.15); border-color: rgba(255, 213, 74, 0.4); }
+
+/* SUPER EFFECTIVE & NOT EFFECTIVE MOVE HIGHLIGHTS */
+.bacts button.mv.eff-sup { border-color: #4ade80; box-shadow: inset 0 0 10px rgba(74, 222, 128, 0.15); background: rgba(74, 222, 128, 0.1); }
+.bacts button.mv.eff-not { border-color: #f87171; background: rgba(248, 113, 113, 0.05); opacity: 0.8; }
 
 /* ===== DIALOGUE & MODALS ===== */
 /* ELEVATED Z-INDEX FOR SYSTEM MODALS SO THEY SHOW ABOVE EVERYTHING */
@@ -2580,103 +2695,38 @@ function startBattle(cfg){
     drawB();
 }
 function bmsg(m){bLog.innerHTML=m}
-
-/* Color mapping for every Pokemon Type */
-const TYPE_COLORS = {
-    normal: '#9ca3af', fire: '#ef4444', water: '#3b82f6', grass: '#22c55e', electric: '#eab308',
-    ice: '#38bdf8', fighting: '#b91c1c', poison: '#a855f7', ground: '#b45309', flying: '#818cf8',
-    psychic: '#ec4899', bug: '#84cc16', rock: '#78350f', ghost: '#6366f1', dragon: '#4f46e5',
-    dark: '#334155', steel: '#64748b', fairy: '#f472b6'
-};
-
-function drawB(){
-    const p=S.team[B.pi],e=B.enemy;
-    
-    // Enemy Render
-    eImg.src=SPR(e.id,e.shiny);
-    let eRba = e.rebirth ? 'rebirth-aura' : '';
-    if(e.isRift) eRba += ' rift-sprite';
-    eImg.className = eRba;
-    
-    let eTypeColor = TYPE_COLORS[e.types[0]] || '#94a3b8';
-    let eNameHtml = (e.rebirth?'<span class="rebirth-star">🌟</span> ':'') + e.name;
-    
-    // Sleek Enemy HUD using Flexbox
-    document.querySelector('.bside:nth-child(1) .binfo').innerHTML = `
-        <div class="binfo-top"><b>${eNameHtml}</b> <small>Lv ${e.lvl}</small></div>
-        <small style="color:${eTypeColor}; font-size:0.7rem; font-weight:800; text-transform:uppercase;">${e.types.join(' / ')}</small>
-        <div class="hpbar"><i id="eHp" class="${hpCls(e)}"></i></div>
-    `;
-    // Pure Width Animation
-    setTimeout(() => { document.getElementById('eHp').style.width = (Math.max(0, e.hp / e.maxhp) * 100) + '%'; }, 10);
-    
-    // Player Render
-    pImg.src=SPRB(p.id,p.shiny);pImg.onerror=()=>{pImg.onerror=null;pImg.src=SPR(p.id,p.shiny)};
-    let pRba = p.rebirth ? 'rebirth-aura' : '';
-    if(p.isRift) pRba += ' rift-sprite';
-    pImg.className = pRba;
-    
-    let pTypeColor = TYPE_COLORS[p.types[0]] || '#94a3b8';
-    let pNameHtml = (p.rebirth?'<span class="rebirth-star">🌟</span> ':'') + p.name;
-    
-    // Sleek Player HUD using Flexbox
-    document.querySelector('.bside:nth-child(2) .binfo').innerHTML = `
-        <div class="binfo-top"><b>${pNameHtml}</b> <small>Lv ${p.lvl}</small></div>
-        <small style="color:${pTypeColor}; font-size:0.7rem; font-weight:800; text-transform:uppercase;">${p.types.join(' / ')}</small>
-        <div class="hpbar"><i id="pHp" class="${hpCls(p)}"></i></div>
-        <small style="display:block; text-align:right; font-family:monospace; font-size:0.85rem; color:#cbd5e1;">${p.hp} / ${p.maxhp}</small>
-    `;
-    // Pure Width Animation
-    setTimeout(() => { document.getElementById('pHp').style.width = (Math.max(0, p.hp / p.maxhp) * 100) + '%'; }, 10);
-    
-    // Tactical MMO Move Buttons (Dark bg, colored edges)
-    const movesHtml = p.moves.map((m,i)=>{
-        let eff=1; e.types.forEach(t=>{const c=EFF[m.t];if(c&&c[t]!=null)eff*=c[t]});
-        let bgCol = TYPE_COLORS[m.t] || '#9ca3af'; 
-        
-        let titleTxt = `Power: ${m.p} | Type: ${m.t.toUpperCase()}`;
-        if(eff>1) titleTxt += ` | Super Effective!`;
-        if(eff<1) titleTxt += ` | Not very effective...`;
-        
-        return `<button class="mv" ${B.lock?'disabled':''} onclick="useMove(${i})" title="${titleTxt}"
-            style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255,255,255,0.05); border-left: 4px solid ${bgCol}; border-radius: 6px; color: #fff; padding: 10px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); display: flex; flex-direction: column; align-items: flex-start; justify-content: center;">
-            <span style="font-size:1.05rem; font-weight:700; text-shadow: 1px 1px 1px rgba(0,0,0,0.5);">${m.n}</span>
-            <small style="font-size:0.7rem; font-weight:800; color:${bgCol}; text-shadow: 1px 1px 1px rgba(0,0,0,0.5); margin-top: 2px;">${m.t.toUpperCase()} &nbsp;·&nbsp; ${m.p} PWR</small>
-            </button>`;
-    }).join('');
-
-    // Refined Item Buttons
-    const actionsHtml = `
-     <button class="gbtn" ${B.lock||!B.wild?'disabled':''} onclick="throwBall('poke')" style="background: rgba(15, 23, 42, 0.9); justify-content: space-between; padding: 8px 12px; border-radius:6px; border: 1px solid rgba(255,255,255,0.05);">
-        <span style="display:flex; align-items:center;">${ICN('poke-ball')} Poké Ball</span><span class="item-amt">x${S.balls.poke}</span>
-     </button>
-     
-     <button class="gbtn" ${B.lock||!B.wild?'disabled':''} onclick="throwBall('master')" style="background: rgba(15, 23, 42, 0.9); justify-content: space-between; padding: 8px 12px; border-radius:6px; border: 1px solid rgba(255,255,255,0.05);">
-        <span style="display:flex; align-items:center;">${ICN('master-ball')} Master Ball</span><span class="item-amt">x${S.balls.master}</span>
-     </button>
-     
-     <button class="gbtn" ${B.lock?'disabled':''} onclick="usePot()" style="background: rgba(15, 23, 42, 0.9); justify-content: space-between; padding: 8px 12px; border-radius:6px; border: 1px solid rgba(255,255,255,0.05);">
-        <span style="display:flex; align-items:center;">${ICN('potion')} Heal Potion</span><span class="item-amt">x${S.pots.p}</span>
-     </button>
-     
-     <button class="gbtn" ${B.lock?'disabled':''} onclick="switchMon()" style="background: rgba(15, 23, 42, 0.9); border-radius:6px; border: 1px solid rgba(255,255,255,0.05);">
-        🔄 Swap Pkmn
-     </button>
-    `;
-
-    bActs.innerHTML = `
-        <div style="display:flex; gap: 12px; flex-wrap: wrap;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: 2; min-width: 250px;">${movesHtml}</div>
-            <div style="display: grid; grid-template-columns: 1fr; gap: 6px; flex: 1; min-width: 180px;">
-                ${actionsHtml}
-                <button class="gbtn" ${B.lock||(!B.wild && !B.isPvP)?'disabled':''} onclick="endB(null,B.isPvP?'You forfeited the match!':'You got away safely!')" 
-                    style="border: 1px solid rgba(248,113,113,0.3); color: #f87171; background: rgba(248, 113, 113, 0.05); border-radius:6px;">
-                    🏃 Run Away
-                </button>
-            </div>
-        </div>
-    `;
-}
+function drawB(){const p=S.team[B.pi],e=B.enemy;
+ eImg.src=SPR(e.id,e.shiny);
+ 
+ let eRba = e.rebirth ? 'rebirth-aura' : '';
+ if(e.isRift) eRba += ' rift-sprite';
+ eImg.className = eRba;
+ 
+ eName.innerHTML=(e.rebirth?'<span class="rebirth-star">🌟</span> ':'')+e.name;
+ eLvl.textContent='Lv '+e.lvl;eTypes.textContent=e.types.join(' / ');
+ const eb=document.getElementById('eHp');eb.style.transform='scaleX('+Math.max(0,e.hp/e.maxhp)+')';eb.className=hpCls(e);
+ 
+ pImg.src=SPRB(p.id,p.shiny);pImg.onerror=()=>{pImg.onerror=null;pImg.src=SPR(p.id,p.shiny)};
+ 
+ let pRba = p.rebirth ? 'rebirth-aura' : '';
+ if(p.isRift) pRba += ' rift-sprite';
+ pImg.className = pRba;
+ 
+ pName.innerHTML=(p.rebirth?'<span class="rebirth-star">🌟</span> ':'')+p.name;
+ pLvl.textContent='Lv '+p.lvl;pHpTxt.textContent=p.hp+' / '+p.maxhp+' HP';
+ const pb=document.getElementById('pHp');pb.style.transform='scaleX('+Math.max(0,p.hp/p.maxhp)+')';pb.className=hpCls(p);
+ 
+ bActs.innerHTML=p.moves.map((m,i)=>{
+    let eff=1; e.types.forEach(t=>{const c=EFF[m.t];if(c&&c[t]!=null)eff*=c[t]});
+    let ec=eff>1?'eff-sup':eff<1?'eff-not':'';
+    let col=eff>1?'#4ade80':eff<1?'#f87171':'#94a3b8';
+    return `<button class="mv ${ec}" ${B.lock?'disabled':''} onclick="useMove(${i})">${m.n}<br><small style="color:${col};font-size:0.8rem;font-weight:400;margin-top:2px;">${m.t.toUpperCase()} · PWR ${m.p}</small></button>`;
+ }).join('')+
+ `<button ${B.lock||!B.wild?'disabled':''} onclick="throwBall('poke')">${ICN('poke-ball')} Poké Ball ×${S.balls.poke}</button>
+  <button ${B.lock||!B.wild?'disabled':''} onclick="throwBall('master')">${ICN('master-ball')} Master Ball ×${S.balls.master}</button>
+  <button ${B.lock?'disabled':''} onclick="usePot()">${ICN('potion')} Potion (${S.pots.p}/${S.pots.s})</button>
+  <button ${B.lock?'disabled':''} onclick="switchMon()">🔄 Switch</button>
+  <button ${B.lock||(!B.wild && !B.isPvP)?'disabled':''} onclick="endB(null,B.isPvP?'You forfeited the match!':'You got away safely!')">🏃 Run</button>`}
 
 function dmg(a,d,mv){let e=1;d.types.forEach(t=>{const c=EFF[mv.t];if(c&&c[t]!=null)e*=c[t]});const stab=a.types.includes(mv.t)?1.5:1;
  return{v:Math.max(1,Math.floor(((2*a.lvl/5+2)*mv.p*a.atk/d.def/50+2)*stab*e*(0.85+Math.random()*0.15))),e}}
