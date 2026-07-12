@@ -445,86 +445,68 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     display: flex; flex-direction: column; gap: 10px; 
 }
 
-/* MMO DYNAMIC ARENA BACKGROUNDS */
+/* ===== AUTHENTIC POKEMON ARENA STYLE ===== */
 .bfield { 
-    border: 2px solid rgba(255,255,255,0.1); 
-    border-radius: 20px; 
-    box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 15px 30px rgba(0,0,0,0.5); 
+    border: 2px solid rgba(255,255,255,0.2); 
+    border-radius: 12px; 
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
     padding: 16px; position: relative; flex: 1 1 0; min-height: 0; margin-bottom: 0; overflow: hidden; 
     display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px;
     animation: popIn 0.3s ease-out forwards;
     transition: background 1s ease-in-out; 
 }
 
-/* Time of Day Sky Gradients */
-.bfield.day { background: linear-gradient(to bottom, #0ea5e9 0%, #38bdf8 50%, #166534 50.1%, #064e3b 100%); }
-.bfield.evening { background: linear-gradient(to bottom, #ea580c 0%, #ec4899 50%, #166534 50.1%, #064e3b 100%); }
-.bfield.night { background: linear-gradient(to bottom, #020617 0%, #1e1b4b 50%, #064e3b 50.1%, #022c22 100%); }
+/* Authentic Horizon Gradients (Sharp split at 45%) */
+.bfield.day { background: linear-gradient(to bottom, #7dd3fc 0%, #38bdf8 45%, #4ade80 45.1%, #16a34a 100%); }
+.bfield.evening { background: linear-gradient(to bottom, #fdba74 0%, #f97316 45%, #4ade80 45.1%, #16a34a 100%); }
+.bfield.night { background: linear-gradient(to bottom, #1e293b 0%, #0f172a 45%, #14532d 45.1%, #064e3b 100%); }
 
-/* Cyber-Grid Overlay */
-.bfield::after {
-    content: ''; position: absolute; inset: 0; pointer-events: none;
-    background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-    background-size: 40px 40px; background-position: center bottom;
-}
-
+/* Grid cleanup */
 .bside { display: contents; }
 .bside:nth-child(1) .binfo { grid-column: 1; grid-row: 1; justify-self: start; align-self: start; margin: 10px 0 0 10px; } 
 .bside:nth-child(1) .bmon  { grid-column: 2; grid-row: 1; justify-self: center; align-self: start; } 
 .bside:nth-child(2) .bmon  { grid-column: 1; grid-row: 2; justify-self: center; align-self: end; margin-bottom: 10px; } 
 .bside:nth-child(2) .binfo { grid-column: 2; grid-row: 2; justify-self: end; align-self: end; margin: 0 10px 10px 0; } 
 
-/* Sleek Angled MMO Plates */
+/* Classic White HP Boxes */
 .binfo { 
-    width: 100%; max-width: 240px; min-width: 150px; z-index: 5; padding: 10px 20px 10px 12px; 
-    background: linear-gradient(90deg, rgba(15,23,42,0.95), rgba(30,41,59,0.85)); border-left: 4px solid #38bdf8; 
-    border-radius: 4px 12px 12px 4px; clip-path: polygon(0 0, 100% 0, 96% 100%, 0 100%); box-shadow: 0 6px 15px rgba(0,0,0,0.6);
+    width: 100%; max-width: 240px; min-width: 150px; z-index: 5; padding: 10px 14px; 
+    background: rgba(248, 250, 252, 0.95);
+    border: 2px solid #475569; 
+    border-radius: 8px 20px 8px 20px; /* Classic Pokemon curved corners */
+    box-shadow: 2px 4px 10px rgba(0,0,0,0.4);
     transform: translate3d(0,0,0);
 }
-.binfo b { color: #fff; font-size: 1.1rem; }
-.binfo small { color:#cbd5e1; font-size: 0.8rem; }
+.binfo b { color: #1e293b; font-size: 1.1rem; text-shadow: none; font-weight: 800; }
+.binfo small { color: #64748b; font-size: 0.85rem; font-weight: 600; text-shadow: none; }
+.hpbar { height: 8px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); border: 1px solid #94a3b8; background: #cbd5e1; border-radius: 4px; }
 
-/* Holographic Energy Rings */
+/* 3D Grass Bases */
 .bmon { width: 100%; max-width: 160px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
 .bmon img { width: auto; height: auto; max-width: 140px; max-height: 20vh; animation: float 2.5s ease-in-out infinite; position: relative; z-index: 3; will-change: transform; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.6)); }
 
 .bmon::before {
     content: ''; position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
-    width: 110%; max-width: 150px; height: 25px; 
-    background: radial-gradient(ellipse at center, rgba(56,189,248,0.3) 0%, rgba(14,165,233,0.1) 60%, transparent 100%);
-    border: 1px solid rgba(56,189,248,0.5); border-radius: 50%;
-    z-index: 1; box-shadow: 0 0 20px rgba(56,189,248,0.4), inset 0 0 10px rgba(56,189,248,0.4);
+    width: 110%; max-width: 150px; height: 35px; 
+    background: radial-gradient(ellipse at center, #86efac 10%, #22c55e 60%, #15803d 100%);
+    border: 2px solid rgba(255,255,255,0.2); border-radius: 50%;
+    z-index: 1; box-shadow: 0 8px 15px rgba(0,0,0,0.4);
 }
 
 .bmon::after {
     content: ''; position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
     width: 50%; max-width: 70px; height: 10px; 
-    background: rgba(0,0,0,0.6); border-radius: 50%; z-index: 2;
+    background: rgba(0,0,0,0.4); border-radius: 50%; z-index: 2;
     animation: shadowScale 2.5s ease-in-out infinite; will-change: transform, opacity; 
 }
 
 @keyframes shadowScale { 0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; } 50% { transform: translateX(-50%) scale(0.7); opacity: 0.4; } }
 @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
 
-/* MMO ACTION PANEL & TOOLTIP BAR */
+/* Clean Action Panel */
 .bacts { display: flex; flex-direction: column; gap: 8px; flex: 0 0 auto; animation: popIn 0.5s ease-out forwards; }
-.bacts-top { display: flex; gap: 10px; flex-wrap: wrap; }
-.bmoves { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; flex: 2; min-width: 280px; }
-.bitems { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; flex: 1; min-width: 220px; }
-
-.bdesc { 
-    background: linear-gradient(90deg, rgba(11, 16, 32, 0.9), rgba(30, 41, 59, 0.9)); 
-    border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px; padding: 10px; 
-    color: #cbd5e1; font-size: 0.85rem; min-height: 40px; 
-    display: flex; align-items: center; justify-content: center; text-align: center; font-style: italic; 
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.8); transition: all 0.2s ease;
-}
-
 .bacts button { padding: 10px; display: flex; align-items: center; justify-content: center; font-size:0.95rem; gap:6px; margin:0; border: 1px solid transparent; transition: all 0.2s; border-radius: 8px; cursor: pointer; }
-.bitems button { justify-content: space-between; padding: 8px 12px; }
 .item-amt { background: rgba(0,0,0,0.6); padding: 2px 8px; border-radius: 6px; font-family: monospace; color: #ffd54a; font-weight: 800; font-size: 0.9rem; border: 1px solid rgba(255,213,74,0.3); }
-.bacts button.mv { flex-direction: column; gap:0; background: rgba(255, 213, 74, 0.05); border-color: rgba(255, 213, 74, 0.2); color: #fff; }
-.bacts button.mv:hover { background: rgba(255, 213, 74, 0.15); border-color: rgba(255, 213, 74, 0.4); transform: translateY(-2px); }
 
 /* SUPER EFFECTIVE & NOT EFFECTIVE MOVE HIGHLIGHTS */
 .bacts button.mv.eff-sup { border-color: #4ade80; box-shadow: inset 0 0 10px rgba(74, 222, 128, 0.15); background: rgba(74, 222, 128, 0.1); }
@@ -2664,16 +2646,24 @@ const TYPE_COLORS = {
     dark: '#334155', steel: '#64748b', fairy: '#f472b6'
 };
 
+/* Color mapping for every Pokemon Type */
+const TYPE_COLORS = {
+    normal: '#9ca3af', fire: '#ef4444', water: '#3b82f6', grass: '#22c55e', electric: '#eab308',
+    ice: '#38bdf8', fighting: '#b91c1c', poison: '#a855f7', ground: '#b45309', flying: '#818cf8',
+    psychic: '#ec4899', bug: '#84cc16', rock: '#78350f', ghost: '#6366f1', dragon: '#4f46e5',
+    dark: '#334155', steel: '#64748b', fairy: '#f472b6'
+};
+
 function drawB(){
     const p=S.team[B.pi],e=B.enemy;
     
-    // --- LIVE DAY/NIGHT SYSTEM ---
+    // Day/Night System
     const hr = new Date().getHours();
     const bfield = document.querySelector('.bfield');
     bfield.classList.remove('day', 'evening', 'night');
-    if(hr >= 6 && hr < 17) bfield.classList.add('day'); // 6 AM to 5 PM
-    else if(hr >= 17 && hr < 20) bfield.classList.add('evening'); // 5 PM to 8 PM
-    else bfield.classList.add('night'); // 8 PM to 6 AM
+    if(hr >= 6 && hr < 17) bfield.classList.add('day');
+    else if(hr >= 17 && hr < 20) bfield.classList.add('evening');
+    else bfield.classList.add('night');
     
     // Enemy Render
     eImg.src=SPR(e.id,e.shiny);
@@ -2682,7 +2672,6 @@ function drawB(){
     eImg.className = eRba;
     eName.innerHTML=(e.rebirth?'<span class="rebirth-star">🌟</span> ':'')+e.name;
     eLvl.textContent='Lv '+e.lvl;
-    eTypes.innerHTML=e.types.map(t=>`<span style="color:${TYPE_COLORS[t]}; font-weight:900; text-transform:uppercase; font-size:0.7rem;">${t}</span>`).join(' / ');
     const eb=document.getElementById('eHp'); eb.style.width = (Math.max(0, e.hp / e.maxhp) * 100) + '%'; eb.className=hpCls(e);
     
     // Player Render
@@ -2692,67 +2681,55 @@ function drawB(){
     pImg.className = pRba;
     pName.innerHTML=(p.rebirth?'<span class="rebirth-star">🌟</span> ':'')+p.name;
     pLvl.textContent='Lv '+p.lvl;
-    pHpTxt.textContent=p.hp+' / '+p.maxhp+' HP';
+    pHpTxt.textContent=p.hp+' / '+p.maxhp;
     const pb=document.getElementById('pHp'); pb.style.width = (Math.max(0, p.hp / p.maxhp) * 100) + '%'; pb.className=hpCls(p);
     
-    // --- MMO DYNAMIC TOOLTIPS & MOVES ---
+    // Classic Colored Move Buttons
     const movesHtml = p.moves.map((m,i)=>{
         let eff=1; e.types.forEach(t=>{const c=EFF[m.t];if(c&&c[t]!=null)eff*=c[t]});
-        let ec=eff>1?'eff-sup':eff<1?'eff-not':'';
-        let col=eff>1?'#4ade80':eff<1?'#f87171':'#e2e8f0'; 
         let bgCol = TYPE_COLORS[m.t] || '#9ca3af'; 
         
-        // Tooltip Text Generator
-        let detailText = `<b>${m.n}</b>: Deals <span style='color:${bgCol}'>${m.t.toUpperCase()}</span> damage. Base Power: ${m.p}. <br>${eff>1?'<span style="color:#4ade80">Highly Effective!</span>':eff<1?'<span style="color:#f87171">Target is Resistant...</span>':'Standard effectiveness.'}`;
+        let titleTxt = `Power: ${m.p} | Type: ${m.t.toUpperCase()}`;
+        if(eff>1) titleTxt += ` | Super Effective!`;
+        if(eff<1) titleTxt += ` | Not very effective...`;
         
-        return `<button class="mv ${ec}" ${B.lock?'disabled':''} onclick="useMove(${i})" 
-            onmouseenter="document.getElementById('mDesc').innerHTML='${detailText}'"
-            onmouseleave="document.getElementById('mDesc').innerHTML='Hover over a tactical action to view Intel.'"
-            style="background: linear-gradient(135deg, rgba(0,0,0,0.8), ${bgCol}44); border-left: 4px solid ${bgCol}; color: #fff; justify-content: flex-start; padding-left: 12px; text-align: left;">
-            <span style="font-size:1.05rem; font-weight:800; letter-spacing: 0.5px;">${m.n}</span><br>
-            <small style="color:${col}; font-size:0.75rem; font-weight:600; text-shadow: 1px 1px 2px #000; margin-top:2px;">${m.t.toUpperCase()} · PWR ${m.p}</small>
+        return `<button class="mv" ${B.lock?'disabled':''} onclick="useMove(${i})" title="${titleTxt}"
+            style="background: ${bgCol}; border: 2px solid rgba(255,255,255,0.4); border-radius: 10px; color: #fff; padding: 10px; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.2), 0 2px 6px rgba(0,0,0,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <span style="font-size:1.1rem; font-weight:800; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">${m.n}</span>
+            <small style="font-size:0.75rem; font-weight:700; opacity: 0.9; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); margin-top: 4px;">${m.t.toUpperCase()} &nbsp;·&nbsp; ${m.p} PWR</small>
             </button>`;
     }).join('');
 
-    // --- SIDE-BY-SIDE ITEMS & ACTIONS ---
+    // Clean Sidebar Items
     const actionsHtml = `
-     <button class="gbtn" ${B.lock||!B.wild?'disabled':''} onclick="throwBall('poke')"
-        onmouseenter="document.getElementById('mDesc').innerHTML='<b>Poké Ball</b>: Standard capture device. Effectiveness: Normal.'"
-        onmouseleave="document.getElementById('mDesc').innerHTML='Hover over a tactical action to view Intel.'">
+     <button class="gbtn" ${B.lock||!B.wild?'disabled':''} onclick="throwBall('poke')" style="background: rgba(15, 23, 42, 0.9); justify-content: space-between; padding: 8px 12px;">
         <span style="display:flex; align-items:center;">${ICN('poke-ball')} Catch</span><span class="item-amt">x${S.balls.poke}</span>
      </button>
      
-     <button class="gbtn" ${B.lock||!B.wild?'disabled':''} onclick="throwBall('master')"
-        onmouseenter="document.getElementById('mDesc').innerHTML='<b>Master Ball</b>: Ultimate prototype. Effectiveness: <span style=\\'color:#a855f7\\'>100% Guaranteed</span>.'"
-        onmouseleave="document.getElementById('mDesc').innerHTML='Hover over a tactical action to view Intel.'">
+     <button class="gbtn" ${B.lock||!B.wild?'disabled':''} onclick="throwBall('master')" style="background: rgba(15, 23, 42, 0.9); justify-content: space-between; padding: 8px 12px;">
         <span style="display:flex; align-items:center;">${ICN('master-ball')} Master</span><span class="item-amt">x${S.balls.master}</span>
      </button>
      
-     <button class="gbtn" ${B.lock?'disabled':''} onclick="usePot()"
-        onmouseenter="document.getElementById('mDesc').innerHTML='<b>Potion</b>: Medical spray. Instantly restores <span style=\\'color:#4ade80\\'>50 HP</span> to the active Pokémon.'"
-        onmouseleave="document.getElementById('mDesc').innerHTML='Hover over a tactical action to view Intel.'">
+     <button class="gbtn" ${B.lock?'disabled':''} onclick="usePot()" style="background: rgba(15, 23, 42, 0.9); justify-content: space-between; padding: 8px 12px;">
         <span style="display:flex; align-items:center;">${ICN('potion')} Heal</span><span class="item-amt">x${S.pots.p}</span>
      </button>
      
-     <button class="gbtn" ${B.lock?'disabled':''} onclick="switchMon()"
-        onmouseenter="document.getElementById('mDesc').innerHTML='<b>Swap Roster</b>: Recall current Pokémon and send out a backup.'">
-        🔄 Swap
-     </button>
-     
-     <button class="gbtn" ${B.lock||(!B.wild && !B.isPvP)?'disabled':''} onclick="endB(null,B.isPvP?'You forfeited the match!':'You got away safely!')" 
-        onmouseenter="document.getElementById('mDesc').innerHTML='<b>Flee</b>: Escape from the current encounter. Cannot be used in Boss battles.'"
-        style="grid-column: span 2; border-color: rgba(248,113,113,0.3); color: #f87171;">
-        🏃 Run Away
+     <button class="gbtn" ${B.lock?'disabled':''} onclick="switchMon()" style="background: rgba(15, 23, 42, 0.9);">
+        🔄 Swap Pkmn
      </button>
     `;
 
-    // --- FINAL MMO LAYOUT INJECTION ---
     bActs.innerHTML = `
-        <div class="bacts-top">
-            <div class="bmoves">${movesHtml}</div>
-            <div class="bitems">${actionsHtml}</div>
+        <div style="display:flex; gap: 12px; flex-wrap: wrap;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: 2; min-width: 250px;">${movesHtml}</div>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 8px; flex: 1; min-width: 150px;">
+                ${actionsHtml}
+                <button class="gbtn" ${B.lock||(!B.wild && !B.isPvP)?'disabled':''} onclick="endB(null,B.isPvP?'You forfeited the match!':'You got away safely!')" 
+                    style="border-color: rgba(248,113,113,0.5); color: #f87171; background: rgba(248, 113, 113, 0.1);">
+                    🏃 Run Away
+                </button>
+            </div>
         </div>
-        <div class="bdesc" id="mDesc">Hover over a tactical action to view Intel.</div>
     `;
 }
 
