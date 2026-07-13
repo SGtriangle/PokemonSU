@@ -563,17 +563,12 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     animation: popIn 0.5s ease-out forwards;
 }
 .bacts button { padding: 10px; display: flex; flex-direction: row; align-items: center; justify-content: center; font-size:0.95rem; gap:6px; margin:0; border: 1px solid transparent; transition: all 0.2s;}
-/* Sleek & Subtle Move Buttons - Translucent Glass Match */
-.bacts button.mv { 
-    background: rgba(255, 255, 255, 0.03); 
-    border: 1px solid rgba(255, 255, 255, 0.08); 
-    display: flex; flex-direction: column; align-items: flex-start; justify-content: center; 
-    padding: 8px 12px; transition: all 0.2s; 
-}
-.bacts button.mv:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-2px); }
-/* Border changes removed completely to prevent colored glow conflicts */
-.bacts button.mv.eff-sup { }
-.bacts button.mv.eff-not { opacity: 0.75; }
+.bacts button.mv { flex-direction: column; gap:0; background: rgba(255, 213, 74, 0.05); border-color: rgba(255, 213, 74, 0.2); color: #fff; }
+.bacts button.mv:hover { background: rgba(255, 213, 74, 0.15); border-color: rgba(255, 213, 74, 0.4); }
+
+/* SUPER EFFECTIVE & NOT EFFECTIVE MOVE HIGHLIGHTS */
+.bacts button.mv.eff-sup { border-color: #4ade80; box-shadow: inset 0 0 10px rgba(74, 222, 128, 0.15); background: rgba(74, 222, 128, 0.1); }
+.bacts button.mv.eff-not { border-color: #f87171; background: rgba(248, 113, 113, 0.05); opacity: 0.8; }
 
 /* ===== DIALOGUE & MODALS ===== */
 /* ELEVATED Z-INDEX FOR SYSTEM MODALS SO THEY SHOW ABOVE EVERYTHING */
@@ -2740,70 +2735,38 @@ function startBattle(cfg){
     drawB();
 }
 function bmsg(m){bLog.innerHTML=m}
-function drawB(){
-    const p=S.team[B.pi],e=B.enemy;
-    
-    // CRITICAL: Enemy Sprite & Aura Rendering Engine
-    eImg.src=SPR(e.id,e.shiny);
-    let eRba = e.rebirth ? 'rebirth-aura' : '';
-    if(e.isRift) eRba += ' rift-sprite';
-    eImg.className = eRba;
-    
-    eName.innerHTML=(e.rebirth?'<span class="rebirth-star">🌟</span> ':'')+e.name;
-    eLvl.textContent='Lv '+e.lvl;
-    eTypes.textContent=e.types.join(' / ');
-    const eb=document.getElementById('eHp');
-    eb.style.transform='scaleX('+Math.max(0,e.hp/e.maxhp)+')';
-    eb.className=hpCls(e);
-    
-    // CRITICAL: Player Sprite, Fallback Traps & Aura Rendering Engine
-    pImg.src=SPRB(p.id,p.shiny);
-    pImg.onerror=()=>{pImg.onerror=null;pImg.src=SPR(p.id,p.shiny)};
-    let pRba = p.rebirth ? 'rebirth-aura' : '';
-    if(p.isRift) pRba += ' rift-sprite';
-    pImg.className = pRba;
-    
-    pName.innerHTML=(p.rebirth?'<span class="rebirth-star">🌟</span> ':'')+p.name;
-    pLvl.textContent='Lv '+p.lvl;
-    
-    // Player Plate Layout Assignments
-    if(document.getElementById('pTypes')) pTypes.textContent=p.types.join(' / ');
-    pHpTxt.textContent=p.hp+' / '+p.maxhp+' HP';
-    const pb=document.getElementById('pHp');
-    pb.style.transform='scaleX('+Math.max(0,p.hp/p.maxhp)+')';
-    pb.className=hpCls(p);
-    
-    // Local Type Color Map for Buttons
-    const TYPE_COLORS = { 
-        normal: '#9ca3af', fire: '#ef4444', water: '#3b82f6', grass: '#22c55e', electric: '#eab308', 
-        ice: '#38bdf8', fighting: '#b91c1c', poison: '#a855f7', ground: '#b45309', flying: '#818cf8', 
-        psychic: '#ec4899', bug: '#84cc16', rock: '#78350f', ghost: '#6366f1', dragon: '#4f46e5', 
-        dark: '#334155', steel: '#64748b', fairy: '#f472b6' 
-    };
-
-    // Battle Action & Grid Control Panel
-    bActs.innerHTML=p.moves.map((m,i)=>{
-        let eff=1; e.types.forEach(t=>{const c=EFF[m.t];if(c&&c[t]!=null)eff*=c[t]});
-        let ec=eff>1?'eff-sup':eff<1?'eff-not':'';
-        let bgCol = TYPE_COLORS[m.t] || '#9ca3af'; 
-        
-        // Arrow indicators for effectiveness
-        let effInd = '';
-        if (eff > 1) effInd = ' <span style="color:#4ade80; font-size:0.75rem;">▲</span>';
-        else if (eff < 1 && eff > 0) effInd = ' <span style="color:#f87171; font-size:0.75rem;">▼</span>';
-        else if (eff === 0) effInd = ' <span style="color:#64748b; font-size:0.75rem;">—</span>';
-
-        return `<button class="mv ${ec}" ${B.lock?'disabled':''} onclick="useMove(${i})" style="border-left: 3px solid ${bgCol};">
-            <span style="color:#f8fafc; font-size:0.95rem; font-weight:700; letter-spacing:0.5px;">${m.n}</span>
-            <span style="color:#64748b; font-size:0.75rem; font-weight:600; margin-top:2px;">${m.t.toUpperCase()} · PWR ${m.p}${effInd}</span>
-        </button>`;
-    }).join('')+
-    `<button ${B.lock||!B.wild?'disabled':''} onclick="throwBall('poke')">${ICN('poke-ball')} Poké Ball ×${S.balls.poke}</button>
-     <button ${B.lock||!B.wild?'disabled':''} onclick="throwBall('master')">${ICN('master-ball')} Master Ball ×${S.balls.master}</button>
-     <button ${B.lock?'disabled':''} onclick="usePot()">${ICN('potion')} Potion (${S.pots.p}/${S.pots.s})</button>
-     <button ${B.lock?'disabled':''} onclick="switchMon()">🔄 Switch</button>
-     <button ${B.lock||(!B.wild && !B.isPvP)?'disabled':''} onclick="endB(null,B.isPvP?'You forfeited the match!':'You got away safely!')" style="grid-column: span 2; border-color: rgba(248,113,113,0.3); color: #f87171;">🏃 Run Away</button>`
-}
+function drawB(){const p=S.team[B.pi],e=B.enemy;
+ eImg.src=SPR(e.id,e.shiny);
+ 
+ let eRba = e.rebirth ? 'rebirth-aura' : '';
+ if(e.isRift) eRba += ' rift-sprite';
+ eImg.className = eRba;
+ 
+ eName.innerHTML=(e.rebirth?'<span class="rebirth-star">🌟</span> ':'')+e.name;
+ eLvl.textContent='Lv '+e.lvl;eTypes.textContent=e.types.join(' / ');
+ const eb=document.getElementById('eHp');eb.style.transform='scaleX('+Math.max(0,e.hp/e.maxhp)+')';eb.className=hpCls(e);
+ 
+ pImg.src=SPRB(p.id,p.shiny);pImg.onerror=()=>{pImg.onerror=null;pImg.src=SPR(p.id,p.shiny)};
+ 
+ let pRba = p.rebirth ? 'rebirth-aura' : '';
+ if(p.isRift) pRba += ' rift-sprite';
+ pImg.className = pRba;
+ 
+ pName.innerHTML=(p.rebirth?'<span class="rebirth-star">🌟</span> ':'')+p.name;
+ pLvl.textContent='Lv '+p.lvl; pTypes.textContent=p.types.join(' / '); pHpTxt.textContent=p.hp+' / '+p.maxhp+' HP';
+ const pb=document.getElementById('pHp');pb.style.transform='scaleX('+Math.max(0,p.hp/p.maxhp)+')';pb.className=hpCls(p);
+ 
+ bActs.innerHTML=p.moves.map((m,i)=>{
+    let eff=1; e.types.forEach(t=>{const c=EFF[m.t];if(c&&c[t]!=null)eff*=c[t]});
+    let ec=eff>1?'eff-sup':eff<1?'eff-not':'';
+    let col=eff>1?'#4ade80':eff<1?'#f87171':'#94a3b8';
+    return `<button class="mv ${ec}" ${B.lock?'disabled':''} onclick="useMove(${i})">${m.n}<br><small style="color:${col};font-size:0.8rem;font-weight:400;margin-top:2px;">${m.t.toUpperCase()} · PWR ${m.p}</small></button>`;
+ }).join('')+
+ `<button ${B.lock||!B.wild?'disabled':''} onclick="throwBall('poke')">${ICN('poke-ball')} Poké Ball ×${S.balls.poke}</button>
+  <button ${B.lock||!B.wild?'disabled':''} onclick="throwBall('master')">${ICN('master-ball')} Master Ball ×${S.balls.master}</button>
+  <button ${B.lock?'disabled':''} onclick="usePot()">${ICN('potion')} Potion (${S.pots.p}/${S.pots.s})</button>
+  <button ${B.lock?'disabled':''} onclick="switchMon()">🔄 Switch</button>
+  <button ${B.lock||(!B.wild && !B.isPvP)?'disabled':''} onclick="endB(null,B.isPvP?'You forfeited the match!':'You got away safely!')" style="grid-column: span 2;">🏃 Run</button>`}
 
 function dmg(a,d,mv){let e=1;d.types.forEach(t=>{const c=EFF[mv.t];if(c&&c[t]!=null)e*=c[t]});const stab=a.types.includes(mv.t)?1.5:1;
  return{v:Math.max(1,Math.floor(((2*a.lvl/5+2)*mv.p*a.atk/d.def/50+2)*stab*e*(0.85+Math.random()*0.15))),e}}
