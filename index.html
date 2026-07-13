@@ -1097,6 +1097,7 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 </div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.7.2/dist/socket.io.min.js"></script>
+<script src="moves.js"></script>
 
 <script>
 /* ============ CUSTOM ALERTS ============ */
@@ -1563,91 +1564,42 @@ const TM = {
 };
 
 function genMoves(m) {
-    let stabPool = [];
-    let coveragePool = [];
-    let possibleTypes = new Set(['normal']); // Everyone gets Normal by default
+    let pool = [];
+    
+    // Instantly load the Pokémon's canonical moves from your local moves.js file
+    let canonicalMoves = typeof POKE_MOVES !== 'undefined' ? (POKE_MOVES[m.id] || []) : [];
 
-    // 1. Thematic Coverage Map (Mimics real game movepools perfectly)
-    const THEMATIC = {
-        normal: ['water', 'fire', 'electric', 'ice', 'fighting', 'psychic', 'dark'],
-        fire: ['ground', 'fighting', 'rock', 'dragon', 'dark'],
-        water: ['ice', 'ground', 'psychic', 'flying', 'poison'],
-        grass: ['poison', 'fairy', 'bug', 'ground', 'dark'], // Bellossom gets Fairy here!
-        electric: ['steel', 'normal', 'flying', 'bug'],
-        ice: ['water', 'psychic', 'ground', 'dark'],
-        fighting: ['rock', 'ground', 'dark', 'poison', 'fire'],
-        poison: ['dark', 'bug', 'grass', 'ground'],
-        ground: ['rock', 'steel', 'fighting', 'fire'],
-        flying: ['normal', 'steel', 'dragon', 'fighting'],
-        psychic: ['fairy', 'ghost', 'electric', 'grass', 'fighting'],
-        bug: ['poison', 'grass', 'electric', 'dark'],
-        rock: ['ground', 'fighting', 'steel', 'dark'],
-        ghost: ['dark', 'psychic', 'poison', 'fairy'],
-        dragon: ['fire', 'water', 'electric', 'flying', 'ground'],
-        dark: ['ghost', 'poison', 'ice', 'psychic'],
-        steel: ['rock', 'ground', 'electric', 'fighting'],
-        fairy: ['psychic', 'grass', 'fire', 'water']
-    };
+    Object.keys(TM).forEach(type => {
+        TM[type].forEach(mv => {
+            let name = mv[0];
+            let power = mv[1];
+            let reqLvl = mv[2] || 1;
+            let sigIds = mv[3];
+            let apiName = name.toLowerCase().replace(/ /g, '-');
 
-    // 2. Build STAB and Coverage pools based on the Pokemon's true types
-    m.types.forEach(t => {
-        if(THEMATIC[t]) THEMATIC[t].forEach(ct => possibleTypes.add(ct));
-        
-        if(TM[t]) TM[t].forEach(mv => { 
-            if(m.lvl >= mv[2]) {
-                if (!mv[3] || mv[3].includes(m.id)) {
-                    stabPool.push({n: mv[0], t: t, p: mv[1]}); 
+            // Is the Pokemon high enough level?
+            if (m.lvl >= reqLvl) {
+                // Is this a true canonical move (from moves.js) OR a signature move override?
+                if (canonicalMoves.includes(apiName) || (sigIds && sigIds.includes(m.id))) {
+                    pool.push({ n: name, t: type, p: power });
                 }
             }
         });
     });
-    
-    // Process the mapped coverage types
-    possibleTypes.forEach(t => {
-        if (!m.types.includes(t) && TM[t]) {
-            TM[t].forEach(mv => {
-                // +5 level penalty on coverage moves so STAB is prioritized in the early game
-                if(m.lvl >= mv[2] + 5) { 
-                    if (!mv[3] || mv[3].includes(m.id)) {
-                        coveragePool.push({n: mv[0], t: t, p: mv[1]});
-                    }
-                }
-            });
+
+    // Sort by power so they equip their strongest canonical attacks first
+    pool.sort((a, b) => b.p - a.p);
+
+    // Keep the top 4 unique moves
+    let finalMoves = [];
+    pool.forEach(mv => {
+        if (finalMoves.length < 4 && !finalMoves.some(x => x.n === mv.n)) {
+            finalMoves.push(mv);
         }
     });
 
-    // 3. Sort both pools strictly by Power (Strongest moves at the top)
-    stabPool.sort((a, b) => b.p - a.p);
-    coveragePool.sort((a, b) => b.p - a.p);
-
-    let finalMoves = [];
-    
-    // 4. Force Move Diversity: Take Top 2 STAB moves maximum
-    for(let i=0; i<stabPool.length; i++) {
-        if(finalMoves.length < 2 && !finalMoves.some(x => x.n === stabPool[i].n)) {
-            finalMoves.push(stabPool[i]);
-        }
-    }
-    
-    // 5. Fill remaining 2 slots with Unique Coverage Types
-    for(let i=0; i<coveragePool.length; i++) {
-        // Prevent duplicate move names AND duplicate coverage TYPES to ensure wide tactical coverage
-        if(finalMoves.length < 4 && !finalMoves.some(x => x.n === coveragePool[i].n) && !finalMoves.some(x => x.t === coveragePool[i].t)) {
-            finalMoves.push(coveragePool[i]);
-        }
-    }
-    
-    // 6. Absolute Fallback: If we STILL don't have 4 moves, relax the type rules and pull the next strongest available
-    if (finalMoves.length < 4) {
-        let combined = [...stabPool, ...coveragePool];
-        for(let i=0; i<combined.length; i++) {
-            if(finalMoves.length < 4 && !finalMoves.some(x => x.n === combined[i].n)) {
-                finalMoves.push(combined[i]);
-            }
-        }
-    }
-    
-    if (finalMoves.length === 0) finalMoves.push({n: 'Tackle', t: 'normal', p: 40});
+    // Absolute Fallback (For Magikarp, Metapod, etc.)
+    if (finalMoves.length === 0) finalMoves.push({ n: 'Tackle', t: 'normal', p: 40 });
 
     return finalMoves;
 }
@@ -2088,21 +2040,36 @@ function renderAll(){
     const reg = c.region || "The Core Rifts";
     const pct = Math.floor((S.ch / CHAPTERS.length) * 100);
     
+    // Dynamically find the boss of the current chapter for the dim background image
+    let bossId = 150; // Default Mewtwo fallback
+    try {
+        if (c.ev && c.ev.mons) {
+            let eMons = c.ev.mons(S.starter);
+            if (eMons && eMons.length > 0) bossId = eMons[eMons.length - 1][0];
+        }
+    } catch(e) {}
+
     storyHtml += `
-    <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(168, 85, 247, 0.1);">
-        <h4 style="color:#a855f7; font-weight: 800; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px;">🌌 Current Sector: ${reg}</h4>
-        <h2 style="color:#fff; font-size: 1.8rem; font-weight: 900; margin-bottom: 20px;">${c.t}</h2>
+    <div style="position: relative; overflow: hidden; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(168, 85, 247, 0.1);">
         
-        <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size: 0.85rem; font-weight: 600;">
-            <span style="color:#cbd5e1;">Campaign Progress</span>
-            <span style="color:#4ade80;">${pct}%</span>
+        <!-- DIM DYNAMIC BOSS WATERMARK -->
+        <img src="${SPR(bossId)}" style="position: absolute; right: 5%; top: 50%; transform: translateY(-50%) scale(3.5); opacity: 0.12; pointer-events: none; image-rendering: pixelated; z-index: 0; filter: grayscale(0.5);">
+
+        <div style="position: relative; z-index: 1;">
+            <h4 style="color:#a855f7; font-weight: 800; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px;">🌌 Current Sector: ${reg}</h4>
+            <h2 style="color:#fff; font-size: 1.8rem; font-weight: 900; margin-bottom: 20px;">${c.t}</h2>
+            
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size: 0.85rem; font-weight: 600;">
+                <span style="color:#cbd5e1;">Campaign Progress</span>
+                <span style="color:#4ade80;">${pct}%</span>
+            </div>
+            <div class="hpbar" style="height:8px; background:rgba(0,0,0,0.8); margin-bottom: 0;">
+                <i style="background: linear-gradient(90deg, #ec4899, #a855f7); transform: scaleX(${pct/100});"></i>
+            </div>
+            <small style="color:#94a3b8; display:block; margin-top:8px;">Chapter ${S.ch + 1} of ${CHAPTERS.length}</small>
         </div>
-        <div class="hpbar" style="height:8px; background:rgba(0,0,0,0.8); margin-bottom: 0;">
-            <i style="background: linear-gradient(90deg, #ec4899, #a855f7); transform: scaleX(${pct/100});"></i>
-        </div>
-        <small style="color:#94a3b8; display:block; margin-top:8px;">Chapter ${S.ch + 1} of ${CHAPTERS.length}</small>
     </div>
-    <button class="btn" style="max-width: 300px; font-size: 1.2rem; padding: 14px; filter: brightness(1.15); box-shadow: 0 0 20px rgba(236,72,153,0.5);" onclick="playStory()">🚀 ENGAGE MISSION</button>
+    <button class="btn" style="max-width: 300px; font-size: 1.2rem; padding: 14px; background: linear-gradient(135deg, #10b981, #059669); border: 1px solid #34d399; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); text-shadow: 0 2px 4px rgba(0,0,0,0.5); color: #fff;" onclick="playStory()">🚀 CONTINUE PROGRESS</button>
     `;
  } else {
     storyHtml += `<h2 style="color:#4ade80; margin: 40px 0; font-size: 2rem;">🌟 Campaign Complete! 🌟</h2><p style="color:#cbd5e1;">You have conquered all sectors. Focus on PvP and completing the Rift Dex!</p>`;
@@ -2124,26 +2091,54 @@ function renderAll(){
     </div>
     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">`;
 
- currentZones.forEach((z, idx) => {
-    let absoluteIndex = (window.expPage * zonesPerPage) + idx;
-    const un = S.ch >= z.ch;
-    const bg = un ? 'linear-gradient(135deg, rgba(15,23,42,0.9), rgba(30,41,59,0.9))' : 'rgba(15,23,42,0.8)';
-    const border = un ? '1px solid rgba(56,189,248,0.4)' : '1px solid rgba(255,255,255,0.05)';
-    const glow = un ? 'box-shadow: 0 8px 20px rgba(0,0,0,0.4), inset 0 0 15px rgba(56,189,248,0.1);' : '';
-    expHtml += `
-    <div style="background: ${bg}; border: ${border}; border-radius: 16px; padding: 16px; display:flex; flex-direction:column; justify-content:space-between; ${glow} transition: transform 0.2s; filter: ${un?'none':'grayscale(1) opacity(0.6)'};"
-         onmouseover="if(${un})this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
-        <div>
-            <div style="font-size:1.1rem; font-weight:800; color:${un?'#fff':'#94a3b8'}; margin-bottom:4px;">${z.n}</div>
-            <div style="font-size:0.8rem; color:#cbd5e1; margin-bottom:8px;">
-                <span style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px;">Gen ${z.g}</span>
-                <span style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; margin-left:4px;">Lv ${z.lv[0]}-${z.lv[1]}</span>
+ // Define a custom Theme & Trainer Silhouette for each Generation
+    const genThemes = [
+        ['#ef4444', 'red'],       // Gen 1: Red Tint + Trainer Red
+        ['#facc15', 'ethan'],     // Gen 2: Gold Tint + Trainer Ethan
+        ['#10b981', 'brendan'],   // Gen 3: Emerald Tint + Trainer Brendan
+        ['#a855f7', 'lucas'],     // Gen 4: Galactic Purple + Trainer Lucas
+        ['#cbd5e1', 'hilbert'],   // Gen 5: Black/White Slate + Trainer Hilbert
+        ['#3b82f6', 'calem'],     // Gen 6: X/Y Blue + Trainer Calem
+        ['#f97316', 'kukui'],     // Gen 7: Sun Orange + Professor Kukui
+        ['#ec4899', 'leon'],      // Gen 8: Galar Pink + Champion Leon
+        ['#14b8a6', 'geeta'],     // Gen 9: Area Zero Teal + Champion Geeta
+        ['#f43f5e', 'cynthia']    // Fallback
+    ];
+
+    currentZones.forEach((z, idx) => {
+        let absoluteIndex = (window.expPage * zonesPerPage) + idx;
+        const un = S.ch >= z.ch;
+        
+        // Grab the generation-specific theme
+        let gIdx = Math.min(z.g - 1, 9);
+        let tCol = genThemes[gIdx][0];
+        let tTrainer = genThemes[gIdx][1];
+
+        // Apply dynamic thematic gradients, borders, and glows based on the Generation
+        const bg = un ? `linear-gradient(135deg, rgba(15,23,42,0.98) 40%, ${tCol}25)` : 'rgba(15,23,42,0.8)';
+        const border = un ? `1px solid ${tCol}50` : '1px solid rgba(255,255,255,0.05)';
+        const glow = un ? `box-shadow: 0 8px 20px rgba(0,0,0,0.4), inset 0 0 15px ${tCol}15;` : '';
+
+        expHtml += `
+        <div style="position: relative; overflow: hidden; background: ${bg}; border: ${border}; border-radius: 16px; padding: 16px; display:flex; flex-direction:column; justify-content:space-between; ${glow} transition: transform 0.2s; filter: ${un?'none':'grayscale(1) opacity(0.6)'};"
+             onmouseover="if(${un})this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+            
+            <!-- DYNAMIC TRAINER WATERMARK -->
+            <img src="https://play.pokemonshowdown.com/sprites/trainers/${tTrainer}.png" style="position: absolute; right: 10px; bottom: 0; transform: scale(2.5) translateY(10%); opacity: 0.15; pointer-events: none; image-rendering: pixelated; z-index: 0; filter: grayscale(0.2) contrast(1.5);">
+
+            <div style="position: relative; z-index: 1;">
+                <div style="font-size:1.1rem; font-weight:800; color:${un?'#fff':'#94a3b8'}; margin-bottom:4px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">${z.n}</div>
+                <div style="font-size:0.8rem; color:#cbd5e1; margin-bottom:8px;">
+                    <span style="background:rgba(0,0,0,0.5); border: 1px solid ${tCol}50; color: ${un?tCol:'#cbd5e1'}; padding:2px 6px; border-radius:4px; font-weight: 600;">Gen ${z.g}</span>
+                    <span style="background:rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; margin-left:4px;">Lv ${z.lv[0]}-${z.lv[1]}</span>
+                </div>
+                ${un ? '' : `<div style="font-size:0.75rem; color:#f87171; margin-bottom:12px; font-weight: 600;">🔒 Beat Ch. ${z.ch}</div>`}
             </div>
-            ${un ? '' : `<div style="font-size:0.75rem; color:#f87171; margin-bottom:12px;">🔒 Beat Ch. ${z.ch}</div>`}
-        </div>
-        <button class="sbtn" style="width:100%; margin-top:auto;" ${un?'':'disabled'} onclick="explore(${absoluteIndex})">${un?'🚀 Explore':'Locked'}</button>
-    </div>`;
- });
+            
+            <!-- THEMED BUTTON -->
+            <button class="sbtn" style="position: relative; z-index: 1; width:100%; margin-top:12px; ${un ? `background: linear-gradient(135deg, ${tCol}90, ${tCol}); box-shadow: 0 4px 15px ${tCol}40; border: none;` : ''}" ${un?'':'disabled'} onclick="explore(${absoluteIndex})">${un?'🚀 Explore Area':'Locked'}</button>
+        </div>`;
+    });
  expHtml += `</div></div>`;
  scr1.innerHTML = expHtml;
 
