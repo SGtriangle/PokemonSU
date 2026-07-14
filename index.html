@@ -11,6 +11,49 @@
 <title>PokemonSU - Free Online Pokemon Game | Login & Play Now</title>
 <link rel="icon" href="/game_icon.ico" type="image/x-icon">
 <style>
+    
+/* 1. LOCK THE BROWSER WINDOW */
+ html, body {
+    overflow: hidden !important; 
+    height: 100vh;
+    margin: 0;
+ }
+
+ /* 2. KILL OUTER SCROLLBARS */
+ div[id^="scr"], .panel {
+    overflow: visible !important;
+    max-height: none !important;
+ }
+
+ /* 3. ADJUSTED PANEL SIZE & INTERNAL SCROLL */
+ .panel {
+    margin-top: 15px;      /* Adds breathing room below the tabs */
+    margin-bottom: 15px;   /* Adds breathing room at the bottom */
+    box-sizing: border-box; /* Ensures padding is included in size */
+ }
+
+ .panel > div:last-child {
+    /* Reduced the height calculation so it never clips edges */
+    max-height: calc(100vh - 260px); 
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 8px;
+ }
+ 
+ /* 4. PREMIUM BLUE SCROLLBAR STYLE */
+ ::-webkit-scrollbar { 
+    width: 6px; 
+ }
+ ::-webkit-scrollbar-track { 
+    background: transparent; 
+ }
+ ::-webkit-scrollbar-thumb { 
+    background: rgba(56, 189, 248, 0.4); 
+    border-radius: 4px; 
+ }
+ ::-webkit-scrollbar-thumb:hover { 
+    background: rgba(56, 189, 248, 0.7); 
+ }
 /* ===== GLOBAL MODERN & COLORFUL AESTHETIC (COMPACT & FAST) ===== */
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', system-ui, sans-serif; }
 
@@ -2083,67 +2126,151 @@ function renderAll(){
  if(window.expPage >= maxPages) window.expPage = maxPages - 1;
  const currentZones = ZONES.slice(window.expPage * zonesPerPage, (window.expPage + 1) * zonesPerPage);
 
- let expHtml = `<div class="panel" style="background:transparent; border:none; box-shadow:none; padding:0;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px; background:rgba(15,23,42,0.8); padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,0.05);">
-        <button class="gbtn" style="min-width:80px;" onclick="window.expPage=Math.max(0, window.expPage-1); renderAll();" ${window.expPage === 0 ? 'disabled' : ''}>◂ Prev</button>
-        <h3 style="color:#38bdf8; text-align:center; font-size:1.4rem; text-shadow: 0 4px 10px rgba(56,189,248,0.3); margin:0;">🗺️ Sector ${window.expPage + 1} / ${maxPages}</h3>
-        <button class="gbtn" style="min-width:80px;" onclick="window.expPage=Math.min(${maxPages-1}, window.expPage+1); renderAll();" ${window.expPage === maxPages - 1 ? 'disabled' : ''}>Next ▸</button>
+ /* explore: SCROLLABLE GRID */
+ let expHtml = `
+ <style>
+    /* Custom sleek scrollbar for the Explore tab */
+    .explore-scroll::-webkit-scrollbar { width: 6px; }
+    .explore-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
+    .explore-scroll::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.4); border-radius: 4px; }
+    .explore-scroll::-webkit-scrollbar-thumb:hover { background: rgba(56, 189, 248, 0.7); }
+ </style>
+ 
+ <div class="panel" style="padding: 16px; margin-bottom: 16px;">
+    <!-- Clean Header replacing the old Prev/Next pagination -->
+    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="color:#38bdf8; margin: 0; font-size: 1.15rem;">🗺️ Explore Sectors</h3>
+        <span style="font-size:0.8rem; color:#94a3b8; font-weight: bold;">${ZONES.length} Regions</span>
     </div>
-    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">`;
+    
+    <!-- Scroll Wrapper: Forces the 2-column grid to scroll vertically -->
+    <div class="explore-scroll" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-height: calc(100vh - 210px); overflow-y: auto; overflow-x: hidden; padding-right: 8px; padding-bottom: 8px;">
+ `;
 
- // Define a custom Theme & Trainer Silhouette for each Generation
-    const genThemes = [
-        ['#ef4444', 'red'],       // Gen 1: Red Tint + Trainer Red
-        ['#facc15', 'ethan'],     // Gen 2: Gold Tint + Trainer Ethan
-        ['#10b981', 'brendan'],   // Gen 3: Emerald Tint + Trainer Brendan
-        ['#a855f7', 'lucas'],     // Gen 4: Galactic Purple + Trainer Lucas
-        ['#cbd5e1', 'hilbert'],   // Gen 5: Black/White Slate + Trainer Hilbert
-        ['#3b82f6', 'calem'],     // Gen 6: X/Y Blue + Trainer Calem
-        ['#f97316', 'kukui'],     // Gen 7: Sun Orange + Professor Kukui
-        ['#ec4899', 'leon'],      // Gen 8: Galar Pink + Champion Leon
-        ['#14b8a6', 'geeta'],     // Gen 9: Area Zero Teal + Champion Geeta
-        ['#f43f5e', 'cynthia']    // Fallback
-    ];
+ // Unchanged Theme Data
+ const genThemes = [
+    ['#ef4444', 'red'],       // Gen 1
+    ['#facc15', 'ethan'],     // Gen 2
+    ['#10b981', 'brendan'],   // Gen 3
+    ['#a855f7', 'lucas'],     // Gen 4
+    ['#cbd5e1', 'hilbert'],   // Gen 5
+    ['#3b82f6', 'calem'],     // Gen 6
+    ['#f97316', 'kukui'],     // Gen 7
+    ['#ec4899', 'leon'],      // Gen 8
+    ['#14b8a6', 'geeta'],     // Gen 9
+    ['#f43f5e', 'cynthia']    // Fallback
+ ];
 
-    currentZones.forEach((z, idx) => {
-        let absoluteIndex = (window.expPage * zonesPerPage) + idx;
-        const un = S.ch >= z.ch;
+ // Iterating over ALL zones now, not just a sliced array
+ ZONES.forEach((z, idx) => {
+    const un = S.ch >= z.ch;
+    
+    let gIdx = Math.min(z.g - 1, 9);
+    let tCol = genThemes[gIdx][0];
+    let tTrainer = genThemes[gIdx][1];
+
+    const bg = un ? `linear-gradient(135deg, rgba(15,23,42,0.98) 40%, ${tCol}25)` : 'rgba(15,23,42,0.8)';
+    const border = un ? `1px solid ${tCol}50` : '1px solid rgba(255,255,255,0.05)';
+    const glow = un ? `box-shadow: 0 8px 20px rgba(0,0,0,0.4), inset 0 0 15px ${tCol}15;` : '';
+
+    // Card UI remains 100% untouched. onclick="explore(idx)" now safely uses the direct loop index.
+    expHtml += `
+    <div style="position: relative; overflow: hidden; background: ${bg}; border: ${border}; border-radius: 16px; padding: 16px; display:flex; flex-direction:column; justify-content:space-between; ${glow} transition: transform 0.2s; filter: ${un?'none':'grayscale(1) opacity(0.6)'};"
+         onmouseover="if(${un})this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
         
-        // Grab the generation-specific theme
-        let gIdx = Math.min(z.g - 1, 9);
-        let tCol = genThemes[gIdx][0];
-        let tTrainer = genThemes[gIdx][1];
+        <img src="https://play.pokemonshowdown.com/sprites/trainers/${tTrainer}.png" style="position: absolute; right: 10px; bottom: 0; transform: scale(2.5) translateY(10%); opacity: 0.15; pointer-events: none; image-rendering: pixelated; z-index: 0; filter: grayscale(0.2) contrast(1.5);">
 
-        // Apply dynamic thematic gradients, borders, and glows based on the Generation
-        const bg = un ? `linear-gradient(135deg, rgba(15,23,42,0.98) 40%, ${tCol}25)` : 'rgba(15,23,42,0.8)';
-        const border = un ? `1px solid ${tCol}50` : '1px solid rgba(255,255,255,0.05)';
-        const glow = un ? `box-shadow: 0 8px 20px rgba(0,0,0,0.4), inset 0 0 15px ${tCol}15;` : '';
-
-        expHtml += `
-        <div style="position: relative; overflow: hidden; background: ${bg}; border: ${border}; border-radius: 16px; padding: 16px; display:flex; flex-direction:column; justify-content:space-between; ${glow} transition: transform 0.2s; filter: ${un?'none':'grayscale(1) opacity(0.6)'};"
-             onmouseover="if(${un})this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
-            
-            <!-- DYNAMIC TRAINER WATERMARK -->
-            <img src="https://play.pokemonshowdown.com/sprites/trainers/${tTrainer}.png" style="position: absolute; right: 10px; bottom: 0; transform: scale(2.5) translateY(10%); opacity: 0.15; pointer-events: none; image-rendering: pixelated; z-index: 0; filter: grayscale(0.2) contrast(1.5);">
-
-            <div style="position: relative; z-index: 1;">
-                <div style="font-size:1.1rem; font-weight:800; color:${un?'#fff':'#94a3b8'}; margin-bottom:4px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">${z.n}</div>
-                <div style="font-size:0.8rem; color:#cbd5e1; margin-bottom:8px;">
-                    <span style="background:rgba(0,0,0,0.5); border: 1px solid ${tCol}50; color: ${un?tCol:'#cbd5e1'}; padding:2px 6px; border-radius:4px; font-weight: 600;">Gen ${z.g}</span>
-                    <span style="background:rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; margin-left:4px;">Lv ${z.lv[0]}-${z.lv[1]}</span>
-                </div>
-                ${un ? '' : `<div style="font-size:0.75rem; color:#f87171; margin-bottom:12px; font-weight: 600;">🔒 Beat Ch. ${z.ch}</div>`}
+        <div style="position: relative; z-index: 1;">
+            <div style="font-size:1.1rem; font-weight:800; color:${un?'#fff':'#94a3b8'}; margin-bottom:4px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">${z.n}</div>
+            <div style="font-size:0.8rem; color:#cbd5e1; margin-bottom:8px;">
+                <span style="background:rgba(0,0,0,0.5); border: 1px solid ${tCol}50; color: ${un?tCol:'#cbd5e1'}; padding:2px 6px; border-radius:4px; font-weight: 600;">Gen ${z.g}</span>
+                <span style="background:rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; margin-left:4px;">Lv ${z.lv[0]}-${z.lv[1]}</span>
             </div>
-            
-            <!-- THEMED BUTTON -->
-            <button class="sbtn" style="position: relative; z-index: 1; width:100%; margin-top:12px; ${un ? `background: linear-gradient(135deg, ${tCol}90, ${tCol}); box-shadow: 0 4px 15px ${tCol}40; border: none;` : ''}" ${un?'':'disabled'} onclick="explore(${absoluteIndex})">${un?'🚀 Explore Area':'Locked'}</button>
-        </div>`;
-    });
- expHtml += `</div></div>`;
+            ${un ? '' : `<div style="font-size:0.75rem; color:#f87171; margin-bottom:12px; font-weight: 600;">🔒 Beat Ch. ${z.ch}</div>`}
+        </div>
+        
+        <button class="sbtn" style="position: relative; z-index: 1; width:100%; margin-top:12px; ${un ? `background: linear-gradient(135deg, ${tCol}90, ${tCol}); box-shadow: 0 4px 15px ${tCol}40; border: none;` : ''}" ${un?'':'disabled'} onclick="explore(${idx})">${un?'🚀 Explore Area':'Locked'}</button>
+    </div>`;
+ });
+
+ expHtml += `</div></div>`; // Close the scroll div and the main panel div
  scr1.innerHTML = expHtml;
 
  /* team */
- scr2.innerHTML=`<div class="panel"><h3>⚔️ Your Team (${S.team.length}/6)</h3><p style="font-size:0.8rem; color:#94a3b8; margin-bottom:12px; text-align:center;">Click a Pokémon to view its stats and moveset.</p><div class="grid">${S.team.map((m,i)=>monCard(m,`<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center">${i>0?`<button class="gbtn" style="font-size:0.8rem;padding:4px 8px" onclick="lead(${i})">★ Lead</button>`:''}${S.team.length>1?`<button class="gbtn" style="font-size:0.8rem;padding:4px 8px" onclick="toBox(${i})">Box</button>`:''}${S.team.length>1?`<button class="gbtn" style="font-size:0.8rem;padding:4px 8px;color:#f87171;border-color:rgba(248,113,113,0.3)" onclick="releaseMon('team',${i})">Release</button>`:''}</div>`, 'team', i)).join('')||'<p>No Pokémon yet — start the Story!</p>'}</div></div>`;
+ window.toggleTeamMenu = function(i) {
+    const menu = document.getElementById('tMenu_' + i);
+    if (menu) {
+        for(let j=0; j<6; j++) {
+            let other = document.getElementById('tMenu_' + j);
+            if(other && j !== i) other.classList.add('hidden');
+        }
+        menu.classList.toggle('hidden');
+    }
+ };
+
+ let teamHtml = `
+ <style>
+    #msg:empty { display: none !important; }
+    .team-scroll::-webkit-scrollbar { width: 4px; }
+    .team-scroll::-webkit-scrollbar-track { background: transparent; }
+    .team-scroll::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.4); border-radius: 4px; }
+ </style>
+ 
+ <div class="panel" style="padding: 12px; margin-bottom: 16px;">
+    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <h3 style="color:#38bdf8; margin: 0; font-size: 1.15rem;">⚔️ Your Team</h3>
+        <span style="font-size:0.75rem; color:#94a3b8;">Tap a Pokémon for menu</span>
+    </div>
+    
+    <div class="team-scroll" style="display: flex; flex-direction: column; gap: 8px; max-height: calc(100vh - 210px); overflow-y: auto; overflow-x: hidden; padding-right: 6px; padding-bottom: 4px;">
+        ${S.team.map((m,i)=> {
+            const rb = m.rebirth ? '<span class="rebirth-star">🌟</span> ' : '';
+            let rba = m.rebirth ? 'rebirth-aura' : '';
+            if(m.isRift) rba += ' rift-sprite';
+            
+            const TYPE_COLS = { normal:'#9ca3af', fire:'#ef4444', water:'#3b82f6', grass:'#22c55e', electric:'#eab308', ice:'#38bdf8', fighting:'#b91c1c', poison:'#a855f7', ground:'#b45309', flying:'#818cf8', psychic:'#ec4899', bug:'#84cc16', rock:'#78350f', ghost:'#6366f1', dragon:'#4f46e5', dark:'#334155', steel:'#64748b', fairy:'#f472b6' };
+            const tCol = TYPE_COLS[m.types[0]] || '#9ca3af';
+
+            return `<div class="mon" style="display: flex; flex-direction: column; padding: 0; background: rgba(15,23,42,0.7); overflow: hidden; margin-bottom: 0; border: 1px solid rgba(255,255,255,0.05); border-left: 3px solid ${tCol}; border-right: 3px solid ${tCol}; border-radius: 12px; transform: translateZ(0); box-shadow: -6px 0 15px ${tCol}15, 6px 0 15px ${tCol}15, 0 4px 8px rgba(0,0,0,0.4);">
+                
+                <div style="display: flex; align-items: center; padding: 4px 10px; cursor: pointer; transition: background 0.2s;" 
+                     onmouseover="this.style.background='rgba(255,255,255,0.05)'" 
+                     onmouseout="this.style.background='transparent'" 
+                     onclick="toggleTeamMenu(${i})">
+                    
+                    <img src="${SPR(m.id,m.shiny)}" class="${rba}" style="width: 65px; height: 65px; object-fit: contain; margin-right: 12px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));" onerror="this.src='${SPR(1)}'">
+                    
+                    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 4px;">
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                            <b style="font-size: 1.05rem; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); line-height: 1; white-space: nowrap;">${rb}${m.name}</b>
+                            
+                            <div class="hpbar" style="flex: 1; width: auto; height: 6px; margin: 0; min-width: 50px; border-radius: 3px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.8); background: rgba(0,0,0,0.9);">
+                                <i class="${hpCls(m)}" style="transform:scaleX(${Math.max(0,m.hp/m.maxhp)})"></i>
+                            </div>
+                            
+                            <span style="font-size: 0.8rem; color: #cbd5e1; font-weight: 700; line-height: 1; white-space: nowrap;">Lv ${m.lvl}</span>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <small style="color: #94a3b8; font-size: 0.7rem; text-transform: uppercase; font-weight: 700; line-height: 1;">${m.types.join(' / ')}</small>
+                            <small style="color: ${m.hp < m.maxhp/4 ? '#f87171' : m.hp < m.maxhp/2 ? '#facc15' : '#4ade80'}; font-size: 0.9rem; font-weight: 800; font-family: 'VT323', monospace; letter-spacing: 1px; line-height: 1;">${m.hp} / ${m.maxhp}</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ADDED 4px OF BOTTOM PADDING HERE (padding: 4px 10px 8px 10px;) TO CLEAR THE BORDER RADIUS -->
+                <div id="tMenu_${i}" class="hidden" style="background: rgba(0,0,0,0.6); border-top: 1px solid rgba(255,255,255,0.05); padding: 4px 10px 8px 10px; display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;">
+                    <button class="sbtn" style="flex: 1; min-width: 60px; margin: 0; padding: 4px; font-size: 0.75rem; background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4);" onclick="showMonInfo('team', ${i})">Info</button>
+                    ${i > 0 ? `<button class="btn" style="flex: 1; min-width: 60px; margin: 0; padding: 4px; font-size: 0.75rem; background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 10px rgba(245, 158, 11, 0.4);" onclick="lead(${i})">Lead</button>` : ''}
+                    ${S.team.length > 1 ? `<button class="gbtn" style="flex: 1; min-width: 60px; margin: 0; padding: 4px; font-size: 0.75rem;" onclick="toBox(${i})">Box</button>` : ''}
+                    ${S.team.length > 1 ? `<button class="gbtn" style="flex: 1; min-width: 60px; margin: 0; padding: 4px; font-size: 0.75rem; color: #f87171; border-color: rgba(248,113,113,0.3);" onclick="releaseMon('team', ${i})">Release</button>` : ''}
+                </div>
+            </div>`;
+        }).join('') || '<p style="color: #94a3b8; text-align: center;">No Pokémon yet — start the Story!</p>'}
+    </div>
+ </div>`;
+ scr2.innerHTML = teamHtml;
  /* box */
  scr4.innerHTML=`<div class="panel"><h3>📦 Box (${S.box.length} / ${S.boxLimit || 30}) · Rift Dex: ${Object.keys(S.dex).length}/1025</h3><p style="font-size:0.8rem; color:#94a3b8; margin-bottom:12px; text-align:center;">Click a Pokémon to view its stats and moveset.</p><div class="grid">${S.box.map((m,i)=>monCard(m,`<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center">${S.team.length<6?`<button class="gbtn" style="font-size:0.8rem;padding:4px 8px" onclick="toTeam(${i})">To Team</button>`:''}<button class="gbtn" style="font-size:0.8rem;padding:4px 8px;color:#f87171;border-color:rgba(248,113,113,0.3)" onclick="releaseMon('box',${i})">Release</button></div>`, 'box', i)).join('')||'<p>Empty — go catch some Pokémon!</p>'}</div></div>`;
  
