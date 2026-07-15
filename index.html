@@ -208,6 +208,15 @@ button:hover::after { animation: glint 0.6s ease-out; }
 .gbtn:hover, .nav button:hover, .bacts button:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.3); color: #fff; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 .nav button.on { background: linear-gradient(135deg, #38bdf8, #818cf8); color: #fff; border: none; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4); }
 
+/* Make Navigation Tabs auto-size, prevent text cut-off, and fill empty space cleanly */
+.nav button {
+    flex: 1 1 auto;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* Disabled State */
 .btn:disabled, .sbtn:disabled, .bacts button:disabled { opacity: 0.5; filter: grayscale(1); transform: none; box-shadow: none; cursor: not-allowed; }
 .btn:disabled::after, .sbtn:disabled::after { display: none; }
@@ -319,15 +328,39 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 }
 #scr0, #scr1, #scr2, #scr3, #scr4, #scr5, #scr6, #scr7 { animation: popIn 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 
-.nav { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; }
+.nav { 
+    display:flex; 
+    gap:6px; 
+    margin-bottom:16px; 
+    flex-wrap:wrap; 
+    
+    /* FIXED: Pushed down to 86px to safely clear the bottom edge of the HUD */
+    position: sticky; 
+    top: 86px; 
+    z-index: 39; 
+    background: rgba(15, 23, 42, 0.85); 
+    backdrop-filter: blur(12px); 
+    -webkit-backdrop-filter: blur(12px);
+    padding: 10px; 
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.05);
+}
 .zone small { color:#94a3b8; display:block; font-size: .8rem; margin-top: 4px; }
 .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px; }
-.mon img { width:70px; height:70px; filter: drop-shadow(0 3px 5px rgba(0,0,0,0.4)); margin-bottom: 2px;}
+.mon img:not(.rebirth-icon) { width:70px; height:70px; filter: drop-shadow(0 3px 5px rgba(0,0,0,0.4)); margin-bottom: 2px;}
 .mon .nm { font-weight:700; color: #f8fafc; font-size: 0.95rem; }
 .mon small { color:#94a3b8; font-size:.75rem; display:block; }
 
-/* REBIRTH AURA & STARS */
-.rebirth-star { color: #d946ef; text-shadow: 0 0 8px #d946ef; font-size: 1.1em; vertical-align: middle;}
+.rebirth-icon { 
+    width: 1.0em !important;  /* Shrunk down a tiny bit */
+    height: 1.0em !important; 
+    min-width: 1.0em !important;
+    vertical-align: middle; 
+    margin-right: 4px; 
+    margin-top: -2px; /* Adjusted to keep it perfectly centered at the new size */
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); 
+}
 @keyframes rebirthPulse { 
     0% { filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)) drop-shadow(0 0 8px rgba(168, 85, 247, 0.5)); transform: translateY(0) scale(1); } 
     100% { filter: drop-shadow(0 8px 16px rgba(0,0,0,0.4)) drop-shadow(0 0 25px rgba(217, 70, 239, 1)); transform: translateY(-6px) scale(1.08); } 
@@ -655,7 +688,7 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     .grid { max-height: none !important; overflow: visible !important; padding-right: 0 !important; }
     .grid { grid-template-columns: 1fr 1fr !important; gap: 6px !important; }
     .mon { padding: 8px 6px !important; }
-    .mon img { max-width: 50px !important; max-height: 50px !important; }
+    .mon img:not(.rebirth-icon) { max-width: 50px !important; max-height: 50px !important; }
     .mon .nm { font-size: 0.85rem !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .mon small { font-size: 0.65rem !important; }
     
@@ -878,12 +911,27 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     .notice-card b { font-size: 0.8rem !important; }
     .notice-card div > div { font-size: 0.7rem !important; }
 }
-/* ===== INTERNAL SCROLLING GRIDS (APP-LIKE BEHAVIOR) ===== */
-.grid, .shop-grid, #lbContent {
-    max-height: calc(100vh - 280px); /* Locks height, leaving room for HUD and Nav */
-    overflow-y: auto; /* Enables internal vertical scrolling */
-    padding-right: 8px; /* Adds breathing room for the scrollbar */
-    align-content: start; /* Keeps items pushed to the top */
+/* ===== UNIVERSAL APP-LIKE SCROLLING (DESKTOP) ===== */
+@media (min-width: 769px) {
+    /* 1. Completely disables the main browser scrollbar so the page background NEVER moves */
+    body { overflow-y: hidden !important; } 
+    
+    /* 2. Forces EVERY tab's outer panel to become the perfectly sized scrollable window */
+    #scr0 > .panel, #scr1 > .panel, #scr2 > .panel, #scr3 > .panel, #scr4 > .panel, #scr5 > .panel, #scr6 > .panel, #scr7 > .panel {
+        max-height: var(--dynamic-grid-height, 600px) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+    }
+}
+
+/* ===== APP-STYLE DYNAMIC TABS ===== */
+/* Forces navigation tabs to dynamically stretch and fill all empty space cleanly */
+.nav button {
+    flex: 1 1 auto;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Custom Sleek Scrollbar tailored for the Grids */
@@ -1123,12 +1171,33 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 <div id="battle" class="hidden"><div class="bwrap">
   <div class="bfield">
     <div class="bside">
-      <div class="binfo"><b id="eName"></b> <small id="eLvl" style="float:right"></small><div class="hpbar"><i id="eHp"></i></div><small id="eTypes"></small></div>
+      <div class="binfo">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <div id="eNameWrap" style="flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; display: flex; align-items: center;">
+              <b id="eName" style="display: inline-block; transform-origin: left center; line-height: 1;"></b> 
+          </div>
+          <small id="eLvl" style="flex-shrink: 0; margin-left: 8px; font-weight: bold; line-height: 1;"></small>
+        </div>
+        <div class="hpbar"><i id="eHp"></i></div>
+        <small id="eTypes"></small>
+      </div>
       <div class="bmon"><img id="eImg"></div>
     </div>
     <div class="bside">
       <div class="bmon"><img id="pImg"></div>
-      <div class="binfo"><b id="pName"></b> <small id="pLvl" style="float:right"></small><div class="hpbar"><i id="pHp"></i></div><small id="pTypes" style="float:left;"></small><small id="pHpTxt" style="text-align:right; float:right;"></small><div style="clear:both;"></div></div>
+      <div class="binfo">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <div id="pNameWrap" style="flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; display: flex; align-items: center;">
+              <b id="pName" style="display: inline-block; transform-origin: left center; line-height: 1;"></b> 
+          </div>
+          <small id="pLvl" style="flex-shrink: 0; margin-left: 8px; font-weight: bold; line-height: 1;"></small>
+        </div>
+        <div class="hpbar"><i id="pHp"></i></div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <small id="pTypes"></small>
+          <small id="pHpTxt"></small>
+        </div>
+      </div>
     </div>
   </div>
   <div class="blog" id="bLog"></div>
@@ -1247,7 +1316,7 @@ function showMonInfo(c, i) {
         </div>`;
     }).join('');
     
-    const rb = m.rebirth ? '<span class="rebirth-star">🌟</span> ' : '';
+    const rb = m.rebirth ? '<img src="reb_icon.png" class="rebirth-icon">' : '';
     let rba = m.rebirth ? 'rebirth-aura' : '';
     if(m.isRift) rba += ' rift-sprite';
     
@@ -2179,7 +2248,7 @@ function hpCls(m){const r=m.hp/m.maxhp;return r>.5?'':r>.25?'mid':'low'}
 
 /* INJECTED DYNAMIC TYPE CLASS FOR COLORED BORDERS & CLICKABLE MODAL WRAPPER */
 function monCard(m,extra='', c='', i=''){
-    const rb = m.rebirth ? '<span class="rebirth-star">🌟</span> ' : '';
+    const rb = m.rebirth ? '<img src="reb_icon.png" class="rebirth-icon">' : '';
     let rba = m.rebirth ? 'rebirth-aura' : '';
     if(m.isRift) rba += ' rift-sprite';
     return`<div class="mon type-${m.types[0]}"><div style="cursor:pointer;" onclick="if('${c}')showMonInfo('${c}',${i})"><img src="${SPR(m.id,m.shiny)}" class="${rba}" onerror="this.src='${SPR(1)}'"><div class="nm">${rb}${m.name}</div><small>Lv ${m.lvl} · ${m.types.join('/')}</small><div class="hpbar"><i class="${hpCls(m)}" style="transform:scaleX(${Math.max(0,m.hp/m.maxhp)})"></i></div><small>${m.hp}/${m.maxhp} HP</small></div>${extra}</div>`
@@ -2312,7 +2381,7 @@ function renderAll(){
  /* pvp arena */
  const rank = S.elo >= 1800 ? 'Master' : S.elo >= 1500 ? 'Gold' : S.elo >= 1200 ? 'Silver' : 'Bronze';
  const reward = rank === 'Master' ? 'Weekly Legendary Egg' : rank === 'Gold' ? '3x Master Balls' : rank === 'Silver' ? '5x Potions' : 'Keep pushing!';
- scr5.innerHTML=`<div class="panel" style="text-align:center;padding:30px 16px">
+ scr5.innerHTML=`<div class="panel" style="text-align:center; padding:30px 16px; max-height: var(--dynamic-grid-height); overflow-y: auto; overflow-x: hidden;">
   <h3>🏆 Ranked Multiplayer Arena</h3>
   <p style="color:#94a3b8;margin-bottom:20px;">Queue up to battle other real players based on your Elo rating.</p>
   <div class="rank-badge rank-${rank}">Tier: ${rank}</div>
@@ -2321,9 +2390,11 @@ function renderAll(){
   <button class="btn" style="max-width:300px;margin:0 auto 10px" onclick="startPvP()">Find Match</button>
   
   <div style="margin-top:24px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.05)">
-   <h4 style="color:#ffd54a;margin-bottom:12px;font-size:1.2rem;font-weight:600;">🌍 Global Leaderboard</h4>
-   <div id="lbContent" style="font-size:1rem;color:#cbd5e1">Loading top players...</div>
-   <button class="gbtn" style="margin-top:16px;" onclick="fetchLeaderboard()">Refresh Ranks</button>
+   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+       <h4 style="color:#ffd54a; font-size:1.2rem; font-weight:600; margin:0;">🌍 Global Leaderboard</h4>
+       <button class="gbtn" style="margin:0; padding:4px 12px;" onclick="fetchLeaderboard()">Refresh</button>
+   </div>
+   <div id="lbContent" style="font-size:1rem; color:#cbd5e1; max-height: none; overflow-y: visible; padding-right: 0;">Loading top players...</div>
   </div>
  </div>`;
 
@@ -2391,7 +2462,7 @@ function renderEvents() {
     let idx2 = (cycleIndex + 7) % EVENT_POOL.length;
     if (idx1 === idx2) idx2 = (idx2 + 1) % EVENT_POOL.length;
 
-    let eh = `<div class="panel" style="border-color: rgba(168, 85, 247, 0.4); box-shadow: 0 0 25px rgba(168, 85, 247, 0.1);">
+    let eh = `<div class="panel" style="border-color: rgba(168, 85, 247, 0.4); box-shadow: 0 0 25px rgba(168, 85, 247, 0.1); max-height: var(--dynamic-grid-height); overflow-y: auto; overflow-x: hidden;">
         <div style="text-align:center; margin-bottom: 24px;">
             <h3 style="color:#a855f7; font-size:1.8rem; text-shadow: 0 2px 8px rgba(168,85,247,0.4);">🌀 Temporal Rifts Detected</h3>
             <p style="color:#cbd5e1; font-size:0.95rem;">Survive the Level 100 Gauntlet! Defeat 100 elite Warden teams to capture these dimensional anomalies. Rifts are active for 3 days, followed by a 1-day cooldown.</p>
@@ -2416,22 +2487,22 @@ function renderEvents() {
             let isDone = prog >= 100;
 
             eh += `
-            <div class="event-card" style="border-color: ${e.c};">
-                <div style="height:120px; display:flex; align-items:center; justify-content:center; margin-bottom:12px; cursor:pointer;" onclick="showEventMonInfo('${e.id}', ${e.monId})" title="Click to view Entity Intel">
-                    <img src="${SPR(e.monId)}" class="rift-sprite" style="width:100px; height:100px; animation: float 2.5s ease-in-out infinite;">
+            <div class="event-card" style="border-color: ${e.c}; padding: 16px;">
+                <div style="height:90px; display:flex; align-items:center; justify-content:center; margin-bottom:8px; cursor:pointer;" onclick="showEventMonInfo('${e.id}', ${e.monId})" title="Click to view Entity Intel">
+                    <img src="${SPR(e.monId)}" class="rift-sprite" style="width:85px; height:85px; animation: float 2.5s ease-in-out infinite;">
                 </div>
-                <h4 style="color:${e.c}; font-size:1.4rem; font-weight:800; margin-bottom:4px; text-shadow: 0 0 8px ${e.c};">${e.name}</h4>
-                <p style="font-size:0.85rem; color:#94a3b8; margin-bottom:16px;">${e.desc}</p>
+                <h4 style="color:${e.c}; font-size:1.25rem; font-weight:800; margin-bottom:4px; text-shadow: 0 0 8px ${e.c};">${e.name}</h4>
+                <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:12px; line-height: 1.3;">${e.desc}</p>
                 
-                <div style="background: rgba(0,0,0,0.4); padding: 8px; border-radius: 8px; margin-bottom: 16px;">
-                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;">
+                <div style="background: rgba(0,0,0,0.4); padding: 8px; border-radius: 8px; margin-bottom: 12px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
                         <span style="color:#cbd5e1;">Gauntlet Progress</span>
                         <span style="color:${isDone ? '#4ade80' : '#ffd54a'}; font-weight:bold;">${prog} / 100</span>
                     </div>
                     <div class="hpbar" style="height:6px; margin:0;"><i style="background: ${isDone ? '#4ade80' : e.c}; transform: scaleX(${pct/100});"></i></div>
                 </div>
                 
-                <button class="btn" style="background: ${isDone ? '#475569' : `linear-gradient(135deg, ${e.c}, #1e1b4b)`}; box-shadow: ${isDone ? 'none' : `0 4px 15px rgba(0,0,0,0.5)`};" ${isDone ? 'disabled' : ''} onclick="startEventGauntlet('${e.id}', ${e.monId})">${isDone ? '✅ Entity Secured' : '⚔️ Enter Gauntlet'}</button>
+                <button class="btn" style="padding: 8px 12px; font-size: 0.95rem; margin-top: 0; background: ${isDone ? '#475569' : `linear-gradient(135deg, ${e.c}, #1e1b4b)`}; box-shadow: ${isDone ? 'none' : `0 4px 15px rgba(0,0,0,0.5)`};" ${isDone ? 'disabled' : ''} onclick="startEventGauntlet('${e.id}', ${e.monId})">${isDone ? '✅ Entity Secured' : '⚔️ Enter Gauntlet'}</button>
             </div>`;
         });
         eh += `</div>`;
@@ -2892,7 +2963,7 @@ window.getLearnableMoves = function(mon) {
 
 window.renderMoveLab = function() {
     if(!S) return;
-    let html = `<div class="panel" style="border-color: #facc15; box-shadow: 0 0 20px rgba(250, 204, 21, 0.1); background: linear-gradient(180deg, rgba(30, 41, 59, 0.8) 0%, rgba(250, 204, 21, 0.05) 100%);">
+    let html = `<div class="panel" style="border-color: #facc15; box-shadow: 0 0 20px rgba(250, 204, 21, 0.1); background: linear-gradient(180deg, rgba(30, 41, 59, 0.8) 0%, rgba(250, 204, 21, 0.05) 100%); max-height: var(--dynamic-grid-height); overflow-y: auto; overflow-x: hidden;">
         <div style="text-align:center; margin-bottom: 24px;">
             <h3 style="color:#facc15; font-size:1.8rem; text-shadow: 0 2px 8px rgba(250,204,21,0.4); display:flex; align-items:center; justify-content:center; gap:8px;">
                 <img src="https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/tm-normal.png" style="width:32px; height:32px; image-rendering:pixelated; filter: sepia(1) hue-rotate(280deg) saturate(5) drop-shadow(0 0 6px rgba(250,204,21,0.8));">
@@ -2918,7 +2989,7 @@ window.renderMoveLab = function() {
             html += `
             <div class="mon type-${x.m.types[0]}" style="display:flex; flex-direction:column; align-items:center; text-align:center; background: rgba(0,0,0,0.3); border: 1px solid rgba(250,204,21,0.2);">
                 <img src="${SPR(x.m.id, x.m.shiny)}" class="${rba}" style="width:80px; height:80px; filter:drop-shadow(0 4px 6px rgba(0,0,0,0.4)); margin-bottom:8px;">
-                <div class="nm" style="color:#fff; font-size:1rem; font-weight:800;">${x.m.rebirth ? '<span class="rebirth-star">🌟</span> ' : ''}${x.m.name}</div>
+                <div class="nm" style="color:#fff; font-size:1rem; font-weight:800;">${x.m.rebirth ? '<img src="reb_icon.png" class="rebirth-icon">' : ''}${x.m.name}</div>
                 <small style="color:#94a3b8; margin-bottom:12px; display:block;">Lv ${x.m.lvl} · ${x.m.types.join('/')}</small>
                 <button class="btn" style="width:100%; margin-top:auto; background:linear-gradient(135deg, #facc15, #ca8a04); color:#0f172a; font-weight:900; border:none; text-shadow:none; box-shadow: 0 4px 10px rgba(250,204,21,0.3);" onclick="openMoveTerminal(${x.i})">Configure Moves</button>
             </div>`;
@@ -2948,7 +3019,7 @@ window.openMoveTerminal = function(teamIndex) {
             <!-- Left Col: Mon Info & Current Moves -->
             <div style="flex: 1; min-width: 280px; background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; text-align:center; border: 1px solid rgba(255,255,255,0.05);">
                 <img src="${SPR(mon.id, mon.shiny)}" class="${rba}" style="width:120px; height:120px; filter:drop-shadow(0 8px 16px rgba(0,0,0,0.5)); animation: float 2.5s ease-in-out infinite;">
-                <h3 style="color:#fff; font-size:1.4rem; margin-top:12px;">${mon.rebirth ? '<span class="rebirth-star">🌟</span> ' : ''}${mon.name}</h3>
+                <h3 style="color:#fff; font-size:1.4rem; margin-top:12px;">${mon.rebirth ? '<img src="reb_icon.png" class="rebirth-icon">' : ''}${mon.name}</h3>
                 <div style="margin-bottom: 16px;">${mon.types.map(t => `<span class="badge type-${t}" style="border:1px solid; background:rgba(255,255,255,0.05); color:#fff;">${t}</span>`).join(' ')}</div>
                 
                 <h4 style="color:#cbd5e1; font-size:0.9rem; margin-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:4px;">Current Moveset</h4>
@@ -3156,7 +3227,7 @@ function drawB(){const p=S.team[B.pi],e=B.enemy;
  if(e.isRift) eRba += ' rift-sprite';
  eImg.className = eRba;
  
- eName.innerHTML=(e.rebirth?'<span class="rebirth-star">🌟</span> ':'')+e.name;
+ eName.innerHTML=(e.rebirth?'<img src="reb_icon.png" class="rebirth-icon">':'')+e.name;
  eLvl.textContent='Lv '+e.lvl;eTypes.textContent=e.types.join(' / ');
  const eb=document.getElementById('eHp');eb.style.transform='scaleX('+Math.max(0,e.hp/e.maxhp)+')';eb.className=hpCls(e);
  
@@ -3166,7 +3237,7 @@ function drawB(){const p=S.team[B.pi],e=B.enemy;
  if(p.isRift) pRba += ' rift-sprite';
  pImg.className = pRba;
  
- pName.innerHTML=(p.rebirth?'<span class="rebirth-star">🌟</span> ':'')+p.name;
+ pName.innerHTML=(p.rebirth?'<img src="reb_icon.png" class="rebirth-icon">':'')+p.name;
  pLvl.textContent='Lv '+p.lvl; pTypes.textContent=p.types.join(' / '); pHpTxt.textContent=p.hp+' / '+p.maxhp+' HP';
  const pb=document.getElementById('pHp');pb.style.transform='scaleX('+Math.max(0,p.hp/p.maxhp)+')';pb.className=hpCls(p);
  
@@ -3180,7 +3251,27 @@ function drawB(){const p=S.team[B.pi],e=B.enemy;
   <button ${B.lock||!B.wild?'disabled':''} onclick="throwBall('master')">${ICN('master-ball')} Master Ball ×${S.balls.master}</button>
   <button ${B.lock?'disabled':''} onclick="usePot()">${ICN('potion')} Potion (${S.pots.p}/${S.pots.s})</button>
   <button ${B.lock?'disabled':''} onclick="switchMon()">🔄 Switch</button>
-  <button ${B.lock||(!B.wild && !B.isPvP)?'disabled':''} onclick="endB(null,B.isPvP?'You forfeited the match!':'You got away safely!')" style="grid-column: span 2;">🏃 Run</button>`}
+  <button ${B.lock||(!B.wild && !B.isPvP)?'disabled':''} onclick="endB(null,B.isPvP?'You forfeited the match!':'You got away safely!')" style="grid-column: span 2;">🏃 Run</button>`; // <-- Bracket fixed here!
+
+  // BULLETPROOF SCALING FOR LONG NAMES
+  setTimeout(() => {
+      ['e', 'p'].forEach(prefix => {
+          let nameEl = document.getElementById(prefix + 'Name');
+          let wrapEl = document.getElementById(prefix + 'NameWrap');
+          if(!nameEl || !wrapEl) return;
+          
+          nameEl.style.transform = 'scale(1)'; // Reset scale to measure
+          
+          let availableWidth = wrapEl.clientWidth; 
+          let textWidth = nameEl.scrollWidth;
+          
+          if(textWidth > availableWidth && availableWidth > 0) {
+              let ratio = availableWidth / textWidth;
+              nameEl.style.transform = `scale(${ratio})`; // Visually squish to fit perfectly
+          }
+      });
+  }, 20);
+} // <-- Function now officially closes here!
 
 function dmg(a,d,mv){let e=1;d.types.forEach(t=>{const c=EFF[mv.t];if(c&&c[t]!=null)e*=c[t]});const stab=a.types.includes(mv.t)?1.5:1;
  return{v:Math.max(1,Math.floor(((2*a.lvl/5+2)*mv.p*a.atk/d.def/50+2)*stab*e*(0.85+Math.random()*0.15))),e}}
@@ -3456,6 +3547,35 @@ function renderLoginNotices() {
 renderLoginNotices();
 // Auto-refresh every minute so the timer stays accurate if they idle on the page
 setInterval(renderLoginNotices, 60000);
+/* ============ DYNAMIC STICKY NAV & APP-LIKE GRID SIZING ============ */
+// Automatically calculates the exact heights of the HUD and Nav, locking them 
+// together perfectly, and preventing the page from scrolling by shrinking grids!
+const stickyHud = document.querySelector('.hud');
+const stickyNav = document.querySelector('.nav');
+if (stickyHud && stickyNav) {
+    const resizeApp = new ResizeObserver(() => {
+        let hudH = stickyHud.offsetHeight;
+        let navH = stickyNav.offsetHeight;
+        
+        // 1. Lock Nav bar precisely under the HUD
+        stickyNav.style.top = (hudH - 10) + 'px';
+        
+        // 2. Mathematically restrict panel heights using the EXACT window pixel height
+        // hudH + navH + 85px absolute minimum offset (stretches to the very bottom limit!)
+        let totalOffset = hudH + navH + 85; 
+        let exactMaxHeight = window.innerHeight - totalOffset;
+        
+        // Failsafe: Prevent the grid from ever collapsing to 0 on tiny screens
+        if (exactMaxHeight < 250) exactMaxHeight = 250;
+        
+        document.documentElement.style.setProperty('--dynamic-grid-height', exactMaxHeight + 'px');
+    });
+    
+    // Listen to the HUD, Nav bar, AND the main window body for real-time resizing!
+    resizeApp.observe(stickyHud);
+    resizeApp.observe(stickyNav);
+    resizeApp.observe(document.body);
+}
 </script>
 </body>
 </html>
