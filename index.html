@@ -2500,7 +2500,7 @@ function renderShop(){
  // NEW: Mega Stone Shop Block (Unlocks at Ch 7)
  let megaShopHtml = S.ch >= 10 ? `
      <div class="shop-card" style="border-color: rgba(56, 189, 248, 0.4); background: rgba(30, 41, 59, 0.8);">
-         <div class="icn-wrap" style="background: radial-gradient(circle, rgba(56, 189, 248, 0.2), transparent); border-color: rgba(56, 189, 248, 0.4); cursor:pointer;" onclick="showItemInfo('mega-stone')" title="Click for info">${ICN('shiny-stone')}</div>
+         <div class="icn-wrap" style="background: radial-gradient(circle, rgba(56, 189, 248, 0.2), transparent); border-color: rgba(56, 189, 248, 0.4); cursor:pointer;" onclick="showItemInfo('mega-stone')" title="Click for info"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/key-stone.png" class="item-icn"></div>
          <h4 style="color:#38bdf8; text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);">Mega Stone</h4>
          <div class="owned">Owned: ${S.stones.mega}</div>
          <div class="price">₽50,000</div>
