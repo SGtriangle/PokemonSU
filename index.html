@@ -1223,6 +1223,13 @@ function showMonInfo(c, i) {
         rbBtn = `<div style="text-align:center; color:#d946ef; font-size:0.9rem; font-weight:bold; margin-top:16px; text-shadow: 0 0 10px rgba(217,70,239,0.5);">🌟 Rebirth Awakened 🌟</div>`;
     }
 
+    // --- NEW: MEGA EVOLUTION BUTTON LOGIC ---
+    let megaBtn = '';
+    let hasMegaStone = S.stones && S.stones.mega > 0;
+    if (MEGA[m.id]) {
+        megaBtn = `<button class="btn" style="width:100%; margin-top:8px; background:linear-gradient(135deg, ${hasMegaStone?'#0ea5e9, #3b82f6':'#475569, #334155'}); box-shadow: ${hasMegaStone?'0 4px 15px rgba(14,165,233,0.4)':'none'};" ${hasMegaStone?'':'disabled'} onclick="useMega('${c}',${i})">${hasMegaStone?'🧬 Mega Evolve (Consumes 1 Stone)':'🔒 Need Mega Stone (Shop)'}</button>`;
+    }
+
     document.getElementById('infoContent').innerHTML = `
         <div style="text-align:center; margin-bottom: 16px; position:relative;">
             <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:120px; height:120px; background:radial-gradient(circle, rgba(255,255,255,0.1), transparent 70%); border-radius:50%;"></div>
@@ -1261,6 +1268,7 @@ function showMonInfo(c, i) {
             </div>
         </div>
         ${rbBtn}
+        ${megaBtn}
     `;
     
     document.getElementById('infoModal').classList.remove('hidden');
@@ -1280,23 +1288,58 @@ window.useRebirth = async function(c, i) {
         log2(`✨ ${S[c][i].name} has been Rebirthed! ✨`);
     });
 }
+window.useMega = async function(c, i) {
+    if(!S.stones || S.stones.mega < 1) return;
+    let m = S[c][i];
+    if(!MEGA[m.id]) return;
+    if(!(await sysConfirm(`React to ${m.name}'s Mega Stone? This will permanently unlock its Mega Evolution!`, 'Mega Evolve?'))) return;
+    
+    S.stones.mega--;
+    let oldName = m.name;
+    let newId = MEGA[m.id];
+    
+    // UI Feedback
+    document.getElementById('infoContent').innerHTML = `<div style="text-align:center; padding: 40px; color:#38bdf8; font-weight:bold; font-size:1.2rem; animation: pulseGlow 1.5s infinite alternate;">🧬 Reacting to Keystone...</div>`;
+    
+    // Fetch the new Mega data and apply it permanently
+    const nP = await getPoke(newId);
+    m.id = newId;
+    let cleanName = nP.name.replace('-mega', ' (Mega)');
+    m.name = m.shiny ? '✨ ' + cleanName : cleanName;
+    m.base = nP.base;
+    m.types = nP.types;
+    calc(m);
+    m.moves = genMoves(m); // Automatically rerolls for new typings
+    m.hp = m.maxhp; // Heal to full
+    
+    persist();
+    document.getElementById('infoModal').classList.add('hidden');
+    renderAll();
+    
+    showRareAlert("🧬 MEGA EVOLUTION 🧬", "#38bdf8", m, () => {
+        log2(`✨ ${oldName} Mega Evolved into ${m.name}! ✨`);
+    });
+}
+
 function showItemInfo(item) {
     const items = {
         'poke-ball': { n: 'Poké Ball', d: 'A device for catching wild Pokémon. It is thrown like a ball at a target, comfortably encapsulating it. Essential for building your Rift team.', c: '#38bdf8' },
         'master-ball': { n: 'Master Ball', d: 'The best Poké Ball with the ultimate level of performance. With it, you will catch any wild Pokémon without fail. Save these for the rarest anomalies!', c: '#a855f7' },
         'potion': { n: 'Potion', d: 'A spray-type medicine for treating wounds. It can be used to instantly restore 50 HP to a single Pokémon during battle. Crucial for tough Warden fights.', c: '#4ade80' },
         'dawn-stone': { n: 'Rebirth Stone', d: 'A mystical stone pulsing with Rift energy. Can be used on a Level 100 Pokémon to awaken its hidden potential, allowing it to grow all the way to Level 200!', c: '#d946ef' },
-        'shiny-charm': { n: 'Shiny Charm', d: 'A shining charm said to permanently increase the chance of finding a Shiny Pokémon in the wild. A must-have treasure for dedicated collectors.', c: '#ffd54a' }
+        'shiny-charm': { n: 'Shiny Charm', d: 'A shining charm said to permanently increase the chance of finding a Shiny Pokémon in the wild. A must-have treasure for dedicated collectors.', c: '#ffd54a' },
+        // UPDATED: Now pointing to a custom Mega Stone icon
+        'mega-stone': { n: 'Mega Stone', d: 'A powerful keystone that resonates with certain Pokémon, allowing them to permanently Mega Evolve and unlock devastating power.', c: '#38bdf8', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/key-stone.png' } 
     };
     
     const i = items[item];
     if(!i) return;
 
-    // Inject custom item HTML into the existing modal
+    // Inside the innerHTML below, update the img src line to use the custom image mapping:
     document.getElementById('infoContent').innerHTML = `
         <div style="text-align:center; margin-bottom: 16px; position:relative;">
             <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100px; height:100px; background:radial-gradient(circle, ${i.c}40, transparent 70%); border-radius:50%; animation: pulseGlow 2s infinite alternate;"></div>
-            <img src="https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/${item}.png" style="width: 80px; height: 80px; image-rendering: pixelated; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6)); position:relative; z-index:2; animation: float 2.5s ease-in-out infinite;">
+            <img src="${i.img && i.img.startsWith('http') ? i.img : 'https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/' + (i.img || item) + '.png'}" style="width: 80px; height: 80px; image-rendering: pixelated; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6)); position:relative; z-index:2; animation: float 2.5s ease-in-out infinite;">
             <h3 style="color:${i.c}; font-size:1.6rem; margin-top:8px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-family: 'Segoe UI', system-ui, sans-serif !important;">${i.n}</h3>
         </div>
         
@@ -1606,7 +1649,8 @@ function genMoves(m) {
 const EFF={fire:{grass:2,ice:2,bug:2,steel:2,fire:.5,water:.5,rock:.5,dragon:.5},water:{fire:2,ground:2,rock:2,water:.5,grass:.5,dragon:.5},grass:{water:2,ground:2,rock:2,fire:.5,grass:.5,poison:.5,flying:.5,bug:.5,dragon:.5,steel:.5},electric:{water:2,flying:2,electric:.5,grass:.5,dragon:.5,ground:0},ice:{grass:2,ground:2,flying:2,dragon:2,fire:.5,water:.5,ice:.5,steel:.5},fighting:{normal:2,ice:2,rock:2,dark:2,steel:2,poison:.5,flying:.5,psychic:.5,bug:.5,fairy:.5,ghost:0},poison:{grass:2,fairy:2,poison:.5,ground:.5,rock:.5,ghost:.5,steel:0},ground:{fire:2,electric:2,poison:2,rock:2,steel:2,grass:.5,bug:.5,flying:0},flying:{grass:2,fighting:2,bug:2,electric:.5,rock:.5,steel:.5},psychic:{fighting:2,poison:2,psychic:.5,steel:.5,dark:0},bug:{grass:2,psychic:2,dark:2,fire:.5,fighting:.5,poison:.5,flying:.5,ghost:.5,steel:.5,fairy:.5},rock:{fire:2,ice:2,flying:2,bug:2,fighting:.5,ground:.5,steel:.5},ghost:{psychic:2,ghost:2,dark:.5,normal:0},dragon:{dragon:2,steel:.5,fairy:0},dark:{psychic:2,ghost:2,fighting:.5,dark:.5,fairy:.5},steel:{ice:2,rock:2,fairy:2,fire:.5,water:.5,electric:.5,steel:.5},fairy:{fighting:2,dragon:2,dark:2,fire:.5,poison:.5,steel:.5},normal:{rock:.5,steel:.5,ghost:0}};
 
 const EVO={1:[16,2],2:[32,3],4:[16,5],5:[36,6],7:[16,8],8:[36,9],10:[7,11],11:[10,12],13:[7,14],14:[10,15],16:[18,17],17:[36,18],25:[50,26],147:[30,148],148:[55,149],371:[30,372],372:[50,373],443:[24,444],444:[48,445]};
-
+/* MEGA EVOLUTION DATABASE (Base ID -> Mega ID) */
+const MEGA = { 3:10033, 6:10034, 9:10036, 15:10090, 18:10073, 65:10037, 94:10038, 115:10039, 127:10040, 130:10041, 142:10042, 150:10043, 181:10045, 208:10072, 212:10046, 214:10047, 229:10048, 248:10049, 254:10065, 257:10066, 260:10067, 282:10051, 302:10074, 303:10052, 306:10053, 308:10054, 310:10055, 319:10075, 323:10076, 334:10077, 354:10056, 359:10057, 362:10078, 373:10089, 376:10079, 380:10080, 381:10081, 384:10082, 428:10083, 445:10058, 448:10059, 460:10060, 475:10084, 719:10085 };
 /* AUTOMATED SERVERLESS ROTATION EVENT POOL (24 PREMIUM ENTRIES) */
 const EVENT_POOL = [
     {id: 'garchomp', monId: 445, name: "Ultimate Garchomp", desc: "A terrifying predator corrupted by dark matter. Base Stats: +150, Unique Attacks.", c: "#a855f7"},
@@ -1920,12 +1964,12 @@ window.applyDynamicTheme = function() {
         // Fetch High-Res Official Artwork instead of small pixel sprites
         let hdSprite = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${activeBoss.monId}.png`;
 
-        // Layer 1: The Sky-to-Grass Gradient overlay (set to 85% opacity to dim the image!)
-        // Layer 2: The massive HD Pokemon image
-        bg.style.backgroundImage = `
-            linear-gradient(rgba(3, 105, 161, 0.88), rgba(6, 78, 59, 0.95)), 
-            url('${hdSprite}')
-        `;
+        // Layer 1: Dynamic Theme Color fading into the dark UI background
+                // Layer 2: The massive HD Pokemon image
+                bg.style.backgroundImage = `
+                    linear-gradient(to bottom, ${activeBoss.c}99 0%, #0b1020f2 100%), 
+                    url('${hdSprite}')
+                `;
         
         // Add a subtle glow matching the boss's color for extra flair
         bg.style.boxShadow = `inset 0 0 150px ${activeBoss.c}40`;
@@ -1969,7 +2013,8 @@ function startGame(){
  if(S.nameChanges === undefined) S.nameChanges = 0;      // Tracks how many times they've changed it
  if(S.shinyCharm === undefined) S.shinyCharm = false;
  if(S.balls.master === undefined) { S.balls.master = S.balls.great || 0; delete S.balls.great; }
- if(S.stones === undefined) S.stones = {rebirth: 0};
+ if(S.stones === undefined) S.stones = {rebirth: 0, mega: 0};
+ if(S.stones.mega === undefined) S.stones.mega = 0; // Migrates existing saves
  if(S.events === undefined) S.events = {};
  refreshHud();applyDynamicTheme();preloadSprites();nav(0);
 }
@@ -2445,14 +2490,40 @@ window.startEventGauntlet = async function(eventId, monId) {
     }, 1500);
 };
 
-/* ============ SHOP & QUANTITY WRAP-AROUND LOGIC ============ */
 function renderShop(){
  const maxPk = Math.max(1, Math.floor(S.money / 200));
  const maxMb = Math.max(1, Math.floor(S.money / 2000));
  const maxPt = Math.max(1, Math.floor(S.money / 300));
  const maxRb = Math.max(1, Math.floor(S.money / 100000));
+ const maxMg = Math.max(1, Math.floor(S.money / 50000)); // <-- NEW
+
+ // NEW: Mega Stone Shop Block (Unlocks at Ch 7)
+ let megaShopHtml = S.ch >= 10 ? `
+     <div class="shop-card" style="border-color: rgba(56, 189, 248, 0.4); background: rgba(30, 41, 59, 0.8);">
+         <div class="icn-wrap" style="background: radial-gradient(circle, rgba(56, 189, 248, 0.2), transparent); border-color: rgba(56, 189, 248, 0.4); cursor:pointer;" onclick="showItemInfo('mega-stone')" title="Click for info">${ICN('shiny-stone')}</div>
+         <h4 style="color:#38bdf8; text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);">Mega Stone</h4>
+         <div class="owned">Owned: ${S.stones.mega}</div>
+         <div class="price">₽50,000</div>
+         <div class="actions">
+             <div class="q-wrap">
+                 <button class="q-btn" style="color:#38bdf8;" onclick="let e=document.getElementById('q_mg'); if(Number(e.value)<=1) e.value=${maxMg}; else e.value=Number(e.value)-1">-</button>
+                 <input type="number" id="q_mg" class="q-in" value="1" min="1" max="${maxMg}">
+                 <button class="q-btn" style="color:#38bdf8;" onclick="let e=document.getElementById('q_mg'); if(Number(e.value)>=${maxMg}) e.value=1; else e.value=Number(e.value)+1">+</button>
+             </div>
+             <button class="sbtn" style="flex:1; width:100%; margin-top:8px; background:linear-gradient(135deg, #0ea5e9, #3b82f6); box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4);" onclick="buy('stones','mega',50000,'Mega Stone','q_mg')">Buy</button>
+         </div>
+     </div>
+ ` : `
+     <div class="shop-card" style="opacity:0.5; filter:grayscale(1);">
+         <div class="icn-wrap">🔒</div>
+         <h4 style="color:#94a3b8;">Locked Item</h4>
+         <div class="owned">Clear Chapter 10</div>
+         <div class="price">???</div>
+         <div class="actions"><button class="gbtn" style="width:100%; margin-top:8px;" disabled>Locked</button></div>
+     </div>
+ `;
  
- let rebirthShopHtml = S.ch >= 10 ? `
+ let rebirthShopHtml = S.ch >= 20 ? `
      <div class="shop-card" style="border-color: rgba(168, 85, 247, 0.4); background: rgba(30, 41, 59, 0.8);">
          <div class="icn-wrap" style="background: radial-gradient(circle, rgba(168, 85, 247, 0.2), transparent); border-color: rgba(168, 85, 247, 0.4); cursor:pointer;" onclick="showItemInfo('dawn-stone')" title="Click for info">${ICN('dawn-stone')}</div>
          <h4 style="color:#d946ef; text-shadow: 0 0 10px rgba(217, 70, 239, 0.5);">Rebirth Stone</h4>
@@ -2471,7 +2542,7 @@ function renderShop(){
      <div class="shop-card" style="opacity:0.5; filter:grayscale(1);">
          <div class="icn-wrap">🔒</div>
          <h4 style="color:#94a3b8;">Locked Item</h4>
-         <div class="owned">Defeat Warden 10</div>
+         <div class="owned">Clear Chapter 20</div>
          <div class="price">???</div>
          <div class="actions"><button class="gbtn" style="width:100%; margin-top:8px;" disabled>Locked</button></div>
      </div>
@@ -2528,6 +2599,7 @@ function renderShop(){
              </div>
          </div>
          
+         ${megaShopHtml}
          ${rebirthShopHtml}
 
          <div class="shop-card" style="border-color: #f87171;">
@@ -2674,7 +2746,12 @@ async function startPvP(){
             const rank = S.elo >= 1800 ? 'Master' : S.elo >= 1500 ? 'Gold' : S.elo >= 1200 ? 'Silver' : 'Bronze';
             const botPots = rank === 'Master' ? 2 : 0;
             const maxLvl = Math.max(5, ...S.team.map(m=>m.lvl));
+            
+            // Detect player power spikes
             const playerHasRebirth = S.team.some(m => m.rebirth || m.lvl > 100);
+            const megaIds = Object.values(MEGA);
+            const playerHasMega = S.team.some(m => megaIds.includes(m.id));
+
             const diff = rank === 'Master' ? 3 : rank === 'Gold' ? 2 : rank === 'Silver' ? 1 : 0;
             const botLvlBase = maxLvl + diff;
             const enemyTeam = [];
@@ -2684,9 +2761,18 @@ async function startPvP(){
                 let finalBotLvl = Math.max(5, botLvlBase + (i===2?2:0));
                 if (!playerHasRebirth) finalBotLvl = Math.min(100, finalBotLvl);
                 
-                if (rank === 'Master' && i === 2) eid = RESTRICTED[Math.floor(Math.random() * RESTRICTED.length)];
-                else if (finalBotLvl >= 30) eid = STRONG_BOT_MONS[Math.floor(Math.random() * STRONG_BOT_MONS.length)];
-                else { while(EVO[eid] && finalBotLvl >= EVO[eid][0]) { eid = EVO[eid][1]; } }
+                // NEW: 50/50 Chance for the Bot's Ace to be a Mega OR a Legendary!
+                if (i === 2 && playerHasMega) {
+                    const useMega = Math.random() < 0.5; // 50% coin flip
+                    const pool = useMega ? megaIds : RESTRICTED;
+                    eid = pool[Math.floor(Math.random() * pool.length)];
+                } else if (rank === 'Master' && i === 2) {
+                    eid = RESTRICTED[Math.floor(Math.random() * RESTRICTED.length)];
+                } else if (finalBotLvl >= 30) {
+                    eid = STRONG_BOT_MONS[Math.floor(Math.random() * STRONG_BOT_MONS.length)];
+                } else { 
+                    while(EVO[eid] && finalBotLvl >= EVO[eid][0]) { eid = EVO[eid][1]; } 
+                }
                 
                 let emon = await makeMon(eid, finalBotLvl, false, true); 
                 if(rank === 'Gold') emon.item = 'leftovers';
