@@ -304,6 +304,13 @@ input[type="number"] { -moz-appearance: textfield !important; }
 .err { color:#f87171; font-size:0.85rem; text-align:center; min-height:18px; margin-bottom:8px; }
 footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; border-top:1px solid rgba(255,255,255,0.05); margin-top:20px; }
 
+@keyframes borderPulse {
+    0% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.7); }
+    70% { box-shadow: 0 0 0 6px rgba(250, 204, 21, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0); }
+}
+.pulse-border { animation: borderPulse 1.5s infinite; }
+
 /* ===== IN-GAME UI ===== */
 /* Pop-in animation for dynamic views */
 @keyframes popIn { 
@@ -359,6 +366,18 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     image-rendering: pixelated; 
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); 
 }
+/* RAINBOW REBIRTH STONE ANIMATIONS */
+@keyframes rainbowShift {
+    0% { filter: hue-rotate(0deg) saturate(2.5) drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+    100% { filter: hue-rotate(360deg) saturate(2.5) drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+}
+@keyframes floatRainbow {
+    0% { transform: translateY(0px); filter: hue-rotate(0deg) saturate(2.5) drop-shadow(0 4px 8px rgba(0,0,0,0.6)); }
+    50% { transform: translateY(-8px); filter: hue-rotate(180deg) saturate(2.5) drop-shadow(0 8px 16px rgba(217, 70, 239, 0.5)); }
+    100% { transform: translateY(0px); filter: hue-rotate(360deg) saturate(2.5) drop-shadow(0 4px 8px rgba(0,0,0,0.6)); }
+}
+.rainbow-gem { animation: rainbowShift 3s linear infinite !important; }
+.rainbow-gem-float { animation: floatRainbow 3s linear infinite !important; }
 .shop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-top: 16px; }
 .shop-card { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 20px 16px; text-align: center; display: flex; flex-direction: column; transition: transform 0.2s, border-color 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
 .shop-card:hover { transform: translateY(-4px); border-color: rgba(56, 189, 248, 0.4); background: rgba(30, 41, 59, 0.8); }
@@ -953,6 +972,21 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     <div class="logo">PokemonSU<span class="beta"><img src="https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/poke-ball.png" alt="Pokeball"></span><small>BROWSER ADVENTURE RPG</small></div>
     <div class="tabs"><button id="tabL" class="on" onclick="authTab(0)">Login</button><button id="tabR" onclick="authTab(1)">Register</button></div>
   </div>
+  
+  <!-- ====== EXACTLY HERE: NEW Front Page Support Modal ====== -->
+  <div id="supportModal" class="modal-overlay hidden" style="z-index: 10002;" onclick="if(event.target===this)this.classList.add('hidden')">
+    <div class="card" style="width:100%; max-width: 400px; position: relative; background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(236,72,153,0.4); padding: 24px; box-shadow: 0 0 30px rgba(236,72,153,0.3); animation: popIn 0.3s ease-out forwards; text-align:center;">
+      <button class="gbtn" style="position:absolute; top: 12px; right: 12px; border-radius:50%; width:32px; height:32px; padding:0; display:flex; align-items:center; justify-content:center; color:#f87171; border-color:rgba(248,113,113,0.3); font-weight:bold; z-index: 10;" onclick="document.getElementById('supportModal').classList.add('hidden')">✕</button>
+      <h3 style="color:#ec4899; font-size: 1.6rem; text-shadow: 0 2px 4px rgba(236,72,153,0.3); margin-bottom:12px;">❤️ Support Developer</h3>
+      <p style="font-size:0.95rem; color:#cbd5e1; margin-bottom:24px; line-height: 1.5;">Building and running PokemonSU takes time and servers. If you enjoy the game, consider supporting its development!</p>
+      <img src="pay_QR.png" alt="Donate QR" style="width:160px; height:160px; border-radius:12px; border:3px solid #ec4899; box-shadow: 0 8px 25px rgba(236, 72, 153, 0.3); margin-bottom: 20px;">
+      <p style="font-size:1.1rem; font-weight:800; color:#f8fafc; margin-bottom:8px;">UPI ID:</p>
+      <div style="background: rgba(0,0,0,0.6); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); color:#38bdf8; font-family: 'VT323', monospace; font-size:1.4rem; margin-bottom: 12px;">ghsubhodeep06@okaxis</div>
+      <p style="font-size:0.85rem; color:#94a3b8;"><span>📱</span> Scan via GPay, PhonePe, or Paytm</p>
+    </div>
+  </div>
+  <!-- ======================================================== -->
+
   <div class="login-split">
       <!-- LEFT SIDE: Welcome Text & Feature Cards -->
       <div class="login-left">
@@ -961,6 +995,11 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
             <p>Resume right where you left off with your full roster, progress, and daily events. No downloads required — play instantly in your browser!</p>
             <div class="pills"><span class="pill">Gyms</span><span class="pill">Raids</span><span class="pill">PvP Arena</span></div>
             <button class="btn" style="max-width:260px; font-size:1.1rem; animation: float 2s ease-in-out infinite;" onclick="authTab(0)">Start Adventure</button>
+            
+            <!-- ====== EXACTLY HERE: NEW Support Button ====== -->
+            <br>
+            <button class="gbtn" style="max-width:260px; width:100%; margin-top:12px; color:#ec4899; border-color: rgba(236,72,153,0.3); box-shadow: 0 4px 10px rgba(236,72,153,0.1);" onclick="document.getElementById('supportModal').classList.remove('hidden')">❤️ Support the Developer</button>
+            <!-- ============================================== -->
           </div>
           
           <div class="feats">
@@ -985,7 +1024,7 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
         <h2>⚡ Trainer Login</h2><div class="sub">Continue your Pokémon adventure</div>
         <div class="err" id="loginErr"></div>
         <div class="field"><label>👤 Username</label><input id="liUser" maxlength="16" placeholder="Enter 5+ char username" onkeydown="if(event.key === 'Enter') doLogin()"></div>
-        <div class="field"><label>🔒 Password</label><input id="liPass" type="password" placeholder="Enter 6+ char password" onkeydown="if(event.key === 'Enter') doLogin()"></div>
+        <div class="field"><label>🔒 Password</label><input id="liPass" type="password" placeholder="Enter 5+ char password" onkeydown="if(event.key === 'Enter') doLogin()"></div>
         <button class="btn" onclick="doLogin()">Login to Game</button>
         <div class="links">
             <a onclick="authTab(1)">🎯 Create New Trainer Account</a>
@@ -997,7 +1036,7 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
         <h2>🎯 New Trainer</h2><div class="sub">Begin your Rift adventure</div>
         <div class="err" id="regErr"></div>
         <div class="field"><label>👤 Username</label><input id="rgUser" maxlength="16" placeholder="Choose a 5+ char username" onkeydown="if(event.key === 'Enter') doRegister()"></div>
-        <div class="field"><label>🔒 Password</label><input id="rgPass" type="password" placeholder="Choose a 6+ char password" onkeydown="if(event.key === 'Enter') doRegister()"></div>
+        <div class="field"><label>🔒 Password</label><input id="rgPass" type="password" placeholder="Choose a 5+ char password" onkeydown="if(event.key === 'Enter') doRegister()"></div>
         
         <!-- GENDER SELECTION FOR TRAINER SPRITE -->
         <div class="field"><label>⚧ Trainer Gender</label>
@@ -1058,8 +1097,8 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     <button id="nv3" onclick="nav(3)">🎒 Shop</button>
     <button id="nv4" onclick="nav(4)">📦 Box / Dex</button>
     <button id="nv5" onclick="nav(5)">🏆 PvP Arena</button>
-    <button id="nv6" onclick="nav(6)">❤️ Support</button>
-    <button id="nv7" onclick="nav(7)">🌟 Events</button>
+    <button id="nv6" onclick="nav(6)">🌟 Events</button>
+    <button id="nv7" onclick="nav(7)"><img src="https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/tm-normal.png" style="width:16px; height:16px; vertical-align:text-bottom; image-rendering:pixelated; filter: sepia(1) hue-rotate(280deg) saturate(5) drop-shadow(0 0 3px rgba(250,204,21,0.8)); margin-right:4px;">Move Lab</button>
   </div>
   <div id="msg" style="color:#4ade80;font-size:0.9rem;font-weight:600;min-height:20px;margin-bottom:8px;text-align:center;"></div>
   <div id="scr0"></div><div id="scr1" class="hidden"></div><div id="scr2" class="hidden"></div><div id="scr3" class="hidden"></div><div id="scr4" class="hidden"></div><div id="scr5" class="hidden"></div><div id="scr6" class="hidden"></div><div id="scr7" class="hidden"></div>
@@ -1227,7 +1266,11 @@ function showMonInfo(c, i) {
     let megaBtn = '';
     let hasMegaStone = S.stones && S.stones.mega > 0;
     if (MEGA[m.id]) {
-        megaBtn = `<button class="btn" style="width:100%; margin-top:8px; background:linear-gradient(135deg, ${hasMegaStone?'#0ea5e9, #3b82f6':'#475569, #334155'}); box-shadow: ${hasMegaStone?'0 4px 15px rgba(14,165,233,0.4)':'none'};" ${hasMegaStone?'':'disabled'} onclick="useMega('${c}',${i})">${hasMegaStone?'🧬 Mega Evolve (Consumes 1 Stone)':'🔒 Need Mega Stone (Shop)'}</button>`;
+        if (m.lvl >= 50) {
+            megaBtn = `<button class="btn" style="width:100%; margin-top:8px; background:linear-gradient(135deg, ${hasMegaStone?'#0ea5e9, #3b82f6':'#475569, #334155'}); box-shadow: ${hasMegaStone?'0 4px 15px rgba(14,165,233,0.4)':'none'};" ${hasMegaStone?'':'disabled'} onclick="useMega('${c}',${i})">${hasMegaStone?'🧬 Mega Evolve (Consumes 1 Stone)':'🔒 Need Mega Stone (Shop)'}</button>`;
+        } else {
+            megaBtn = `<div style="text-align:center; color:#64748b; font-size:0.8rem; margin-top:8px;">🔒 Reach Level 50 to Mega Evolve</div>`;
+        }
     }
 
     document.getElementById('infoContent').innerHTML = `
@@ -1292,11 +1335,40 @@ window.useMega = async function(c, i) {
     if(!S.stones || S.stones.mega < 1) return;
     let m = S[c][i];
     if(!MEGA[m.id]) return;
-    if(!(await sysConfirm(`React to ${m.name}'s Mega Stone? This will permanently unlock its Mega Evolution!`, 'Mega Evolve?'))) return;
+    if(m.lvl < 50) return sysAlert("This Pokémon must reach Level 50 before its body can handle Mega Evolution.", "Level Too Low");
+    
+    let newId = MEGA[m.id];
+    
+    // --- NEW: CHARIZARD & MEWTWO X/Y SELECTOR ---
+    if (m.id === 6 || m.id === 150) {
+        let monName = m.id === 6 ? "Charizard" : "Mewtwo";
+        let html = `
+            <p style="margin-bottom:16px; color:#cbd5e1; font-size:0.95rem;">${monName} has two Mega Evolutions! Which path will you choose?</p>
+            <div style="display:flex; gap:10px;">
+                <button class="btn" id="btnMegaX" style="background: linear-gradient(135deg, #1d4ed8, #000); flex:1;">Mega ${monName} X</button>
+                <button class="btn" id="btnMegaY" style="background: linear-gradient(135deg, #b91c1c, #f59e0b); flex:1;">Mega ${monName} Y</button>
+            </div>
+        `;
+        document.getElementById('sysModal').classList.remove('hidden');
+        document.getElementById('sysTitle').textContent = 'Choose Mega Form 🧬';
+        document.getElementById('sysMsg').innerHTML = html;
+        document.getElementById('sysBtns').innerHTML = `<button class="gbtn" id="sysNo" style="width:100%">Cancel</button>`;
+        
+        let chosenId = await new Promise(res => {
+            document.getElementById('btnMegaX').onclick = () => { document.getElementById('sysModal').classList.add('hidden'); res(m.id === 6 ? 10034 : 10043); };
+            document.getElementById('btnMegaY').onclick = () => { document.getElementById('sysModal').classList.add('hidden'); res(m.id === 6 ? 10035 : 10044); };
+            document.getElementById('sysNo').onclick = () => { document.getElementById('sysModal').classList.add('hidden'); res(null); };
+        });
+        
+        if (!chosenId) return; // Stop if the player hits Cancel
+        newId = chosenId;
+    } else {
+        // Standard confirmation for everyone else
+        if(!(await sysConfirm(`React to ${m.name}'s Mega Stone? This will permanently unlock its Mega Evolution!`, 'Mega Evolve?'))) return;
+    }
     
     S.stones.mega--;
     let oldName = m.name;
-    let newId = MEGA[m.id];
     
     // UI Feedback
     document.getElementById('infoContent').innerHTML = `<div style="text-align:center; padding: 40px; color:#38bdf8; font-weight:bold; font-size:1.2rem; animation: pulseGlow 1.5s infinite alternate;">🧬 Reacting to Keystone...</div>`;
@@ -1307,9 +1379,19 @@ window.useMega = async function(c, i) {
     let cleanName = nP.name.replace('-mega', ' (Mega)');
     m.name = m.shiny ? '✨ ' + cleanName : cleanName;
     m.base = nP.base;
+    
+    // Maintain the Event Pokemon 1.2x boost!
+    if (m.isEvent) {
+        m.base = {
+            hp: Math.floor(m.base.hp * 1.2),
+            atk: Math.floor(m.base.atk * 1.2),
+            def: Math.floor(m.base.def * 1.2)
+        };
+    }
+
     m.types = nP.types;
     calc(m);
-    m.moves = genMoves(m); // Automatically rerolls for new typings
+    m.moves = genMoves(m); // Triggers our new base-ID checker to give proper moves!
     m.hp = m.maxhp; // Heal to full
     
     persist();
@@ -1326,8 +1408,8 @@ function showItemInfo(item) {
         'poke-ball': { n: 'Poké Ball', d: 'A device for catching wild Pokémon. It is thrown like a ball at a target, comfortably encapsulating it. Essential for building your Rift team.', c: '#38bdf8' },
         'master-ball': { n: 'Master Ball', d: 'The best Poké Ball with the ultimate level of performance. With it, you will catch any wild Pokémon without fail. Save these for the rarest anomalies!', c: '#a855f7' },
         'potion': { n: 'Potion', d: 'A spray-type medicine for treating wounds. It can be used to instantly restore 50 HP to a single Pokémon during battle. Crucial for tough Warden fights.', c: '#4ade80' },
-        'dawn-stone': { n: 'Rebirth Stone', d: 'A mystical stone pulsing with Rift energy. Can be used on a Level 100 Pokémon to awaken its hidden potential, allowing it to grow all the way to Level 200!', c: '#d946ef' },
-        'shiny-charm': { n: 'Shiny Charm', d: 'A shining charm said to permanently increase the chance of finding a Shiny Pokémon in the wild. A must-have treasure for dedicated collectors.', c: '#ffd54a' },
+        'dawn-stone': { n: 'Rebirth Stone', d: 'A mystical stone pulsing with Rift energy. Can be used on a Level 100 Pokémon to awaken its hidden potential, allowing it to grow all the way to Level 200!', c: '#d946ef', img: 'https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/max-revive.png', css: 'rainbow-gem-float' },
+        'shiny-charm': { n: 'Shiny Booster', d: 'A shining booster said to permanently increase the chance of finding a Shiny Pokémon in the wild. A must-have treasure for dedicated collectors.', c: '#ffd54a' },
         // UPDATED: Now pointing to a custom Mega Stone icon
         'mega-stone': { n: 'Mega Stone', d: 'A powerful keystone that resonates with certain Pokémon, allowing them to permanently Mega Evolve and unlock devastating power.', c: '#38bdf8', img: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/key-stone.png' } 
     };
@@ -1339,7 +1421,8 @@ function showItemInfo(item) {
     document.getElementById('infoContent').innerHTML = `
         <div style="text-align:center; margin-bottom: 16px; position:relative;">
             <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100px; height:100px; background:radial-gradient(circle, ${i.c}40, transparent 70%); border-radius:50%; animation: pulseGlow 2s infinite alternate;"></div>
-            <img src="${i.img && i.img.startsWith('http') ? i.img : 'https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/' + (i.img || item) + '.png'}" style="width: 80px; height: 80px; image-rendering: pixelated; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6)); position:relative; z-index:2; animation: float 2.5s ease-in-out infinite;">
+            <!-- Replace your current <img> tag inside the infoContent with this smart one -->
+<img src="${i.img && i.img.startsWith('http') ? i.img : 'https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/' + (i.img || item) + '.png'}" class="${i.css || ''}" style="width: 80px; height: 80px; image-rendering: pixelated; position:relative; z-index:2; ${i.css ? '' : 'filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6)); animation: float 2.5s ease-in-out infinite;'}">
             <h3 style="color:${i.c}; font-size:1.6rem; margin-top:8px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-family: 'Segoe UI', system-ui, sans-serif !important;">${i.n}</h3>
         </div>
         
@@ -1609,8 +1692,19 @@ const TM = {
 function genMoves(m) {
     let pool = [];
     
-    // Instantly load the Pokémon's canonical moves from your local moves.js file
-    let canonicalMoves = typeof POKE_MOVES !== 'undefined' ? (POKE_MOVES[m.id] || []) : [];
+    // Reverse lookup for alternate forms to find their base moves
+    let baseId = m.id;
+    if (baseId === 10116) baseId = 658; // Ash-Greninja
+    if (baseId === 10127) baseId = 746; // Wishiwashi School
+    if (baseId === 10035) baseId = 6;   // Mega Charizard Y
+    if (baseId === 10044) baseId = 150; // Mega Mewtwo Y
+    
+    for (let b in MEGA) {
+        if (MEGA[b] === baseId) { baseId = parseInt(b); break; }
+    }
+    
+    let canonicalMoves = typeof POKE_MOVES !== 'undefined' ? (POKE_MOVES[baseId] || []) : [];
+    let hasDex = canonicalMoves.length > 0;
 
     Object.keys(TM).forEach(type => {
         TM[type].forEach(mv => {
@@ -1620,20 +1714,21 @@ function genMoves(m) {
             let sigIds = mv[3];
             let apiName = name.toLowerCase().replace(/ /g, '-');
 
-            // Is the Pokemon high enough level?
             if (m.lvl >= reqLvl) {
-                // Is this a true canonical move (from moves.js) OR a signature move override?
-                if (canonicalMoves.includes(apiName) || (sigIds && sigIds.includes(m.id))) {
+                let isSig = !!sigIds;
+                let matchesSig = isSig && sigIds.includes(baseId);
+                
+                // SAFE FALLBACK: If the game doesn't know its exact moveset, 
+                // it will automatically learn the strongest moves matching its Type!
+                if (matchesSig || (!isSig && (hasDex ? canonicalMoves.includes(apiName) : (m.types.includes(type) || type === 'normal')))) {
                     pool.push({ n: name, t: type, p: power });
                 }
             }
         });
     });
 
-    // Sort by power so they equip their strongest canonical attacks first
     pool.sort((a, b) => b.p - a.p);
 
-    // Keep the top 4 unique moves
     let finalMoves = [];
     pool.forEach(mv => {
         if (finalMoves.length < 4 && !finalMoves.some(x => x.n === mv.n)) {
@@ -1641,7 +1736,6 @@ function genMoves(m) {
         }
     });
 
-    // Absolute Fallback (For Magikarp, Metapod, etc.)
     if (finalMoves.length === 0) finalMoves.push({ n: 'Tackle', t: 'normal', p: 40 });
 
     return finalMoves;
@@ -1837,7 +1931,7 @@ function doRegister(){
  const u=rgUser.value.trim(),p=rgPass.value;const e=document.getElementById('regErr');
  const g=document.querySelector('input[name="rgGen"]:checked').value;
  if(u.length<5)return e.textContent='Username must be 5+ characters.';
- if(p.length<6)return e.textContent='Password must be 6+ characters.';
+ if(p.length<5)return e.textContent='Password must be 5+ characters.';
  
  if(socket && socket.connected) {
      socket.emit('register', {user: u, pass: p, gender: g}, (res) => {
@@ -1859,12 +1953,15 @@ function doLogin(){
         e.style.color = '#4ade80';
         e.textContent = 'Connecting to cloud...';
         socket.emit('login', {user: u, pass: p}, (res) => {
-            if(res.error) return e.textContent = res.error;
-            
-            // Set up the local environment with server data
-            S = res.save || newSave(u, 'M');
-            if(!S.gender) S.gender = 'M';
-            if(S.events === undefined) S.events = {};
+                if(res.error) return e.textContent = res.error;
+                
+                // Grab the gender from the server response OR the local registration cache
+                let activeGender = res.gender || (ACC[u] ? ACC[u].gender : 'M');
+                
+                // Set up the local environment with server data
+                S = res.save || newSave(u, activeGender);
+                if(!S.gender) S.gender = activeGender;
+                if(S.events === undefined) S.events = {};
             
             // Successfully logged in
             e.textContent = 'Login successful!';
@@ -1965,11 +2062,18 @@ window.applyDynamicTheme = function() {
         let hdSprite = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${activeBoss.monId}.png`;
 
         // Layer 1: Dynamic Theme Color fading into the dark UI background
-                // Layer 2: The massive HD Pokemon image
+                // Layer 2: A dark dimming lens to push the Pokemon further into the background
+                // Layer 3: The massive HD Pokemon image
                 bg.style.backgroundImage = `
                     linear-gradient(to bottom, ${activeBoss.c}99 0%, #0b1020f2 100%), 
+                    linear-gradient(rgba(11, 16, 32, 0.75), rgba(11, 16, 32, 0.75)),
                     url('${hdSprite}')
                 `;
+                
+                // Ensure all 3 layers scale correctly without breaking
+                bg.style.backgroundSize = 'cover, cover, auto 110vh';
+                bg.style.backgroundPosition = 'center, center, center';
+                bg.style.backgroundRepeat = 'no-repeat, no-repeat, no-repeat';
         
         // Add a subtle glow matching the boss's color for extra flair
         bg.style.boxShadow = `inset 0 0 150px ${activeBoss.c}40`;
@@ -2009,13 +2113,26 @@ function startGame(){
  document.getElementById('pgLogin').classList.add('hidden');
  document.getElementById('pgGame').classList.remove('hidden');
  if(S.boxLimit === undefined) S.boxLimit = 30;
- if(S.displayName === undefined) S.displayName = S.user; // Defaults to their username at first
- if(S.nameChanges === undefined) S.nameChanges = 0;      // Tracks how many times they've changed it
+ if(S.displayName === undefined) S.displayName = S.user;
+ if(S.nameChanges === undefined) S.nameChanges = 0;
  if(S.shinyCharm === undefined) S.shinyCharm = false;
  if(S.balls.master === undefined) { S.balls.master = S.balls.great || 0; delete S.balls.great; }
  if(S.stones === undefined) S.stones = {rebirth: 0, mega: 0};
- if(S.stones.mega === undefined) S.stones.mega = 0; // Migrates existing saves
+ if(S.stones.mega === undefined) S.stones.mega = 0;
  if(S.events === undefined) S.events = {};
+ 
+ // --- AUTO-REPAIR BROKEN MOVESETS ---
+ // This instantly recovers the moves of any high-level Pokemon stuck with only Tackle
+ const repairMoves = (mon) => {
+     if (mon.lvl > 10 && mon.moves.length === 1 && mon.moves[0].n === 'Tackle') {
+         mon.moves = genMoves(mon);
+     }
+ };
+ if (S.team) S.team.forEach(repairMoves);
+ if (S.box) S.box.forEach(repairMoves);
+ persist();
+ // -----------------------------------
+
  refreshHud();applyDynamicTheme();preloadSprites();nav(0);
 }
 
@@ -2027,7 +2144,7 @@ function refreshHud(){
  hudBadges.innerHTML=S.badges.map(b=>`<span class="badge" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(14, 165, 233, 0.2)); border: 1px solid rgba(56, 189, 248, 0.3); color: #38bdf8; text-shadow: none;">🏅 ${b}</span>`).join('')||'<small style="color:#64748b">None</small>';
  
  // Dynamic Trainer Avatar Update (Zoomed Face)
- const trnIcon = (S.gender === 'F') ? 'leaf' : 'red';
+ const trnIcon = (S.gender === 'F') ? 'leaf-gen3' : 'red';
  const hudIcon = document.getElementById('hudTrnIcon');
  if(hudIcon) hudIcon.src = TRN(trnIcon);
 
@@ -2047,8 +2164,8 @@ function claimLoot(){
 }
 
 function nav(i){
- renderAll(); // PREVENT OVERWRITES: Render base components first
- for(let k=0;k<8;k++){
+ renderAll(); 
+ for(let k=0;k<8;k++){ 
   const btn = document.getElementById('nv'+k);
   const scr = document.getElementById('scr'+k);
   if(btn) btn.classList.toggle('on',k===i);
@@ -2188,7 +2305,7 @@ function renderAll(){
  scr1.innerHTML = expHtml;
 
  /* team */
- scr2.innerHTML=`<div class="panel"><h3>⚔️ Your Team (${S.team.length}/6)</h3><p style="font-size:0.8rem; color:#94a3b8; margin-bottom:12px; text-align:center;">Click a Pokémon to view its stats and moveset.</p><div class="grid">${S.team.map((m,i)=>monCard(m,`<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center">${i>0?`<button class="gbtn" style="font-size:0.8rem;padding:4px 8px" onclick="lead(${i})">★ Lead</button>`:''}${S.team.length>1?`<button class="gbtn" style="font-size:0.8rem;padding:4px 8px" onclick="toBox(${i})">Box</button>`:''}${S.team.length>1?`<button class="gbtn" style="font-size:0.8rem;padding:4px 8px;color:#f87171;border-color:rgba(248,113,113,0.3)" onclick="releaseMon('team',${i})">Release</button>`:''}</div>`, 'team', i)).join('')||'<p>No Pokémon yet — start the Story!</p>'}</div></div>`;
+ scr2.innerHTML=`<div class="panel"><h3>⚔️ Your Team (${S.team.length}/6)</h3><p style="font-size:0.8rem; color:#94a3b8; margin-bottom:12px; text-align:center;">Click a Pokémon to view its stats and moveset.</p><div class="grid">${S.team.map((m,i)=>monCard(m,`<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center">${i>0?`<button class="gbtn" style="font-size:0.8rem;padding:4px 8px" onclick="lead(${i})">★ Lead</button>`:''}${S.team.length>1?`<button class="gbtn" style="font-size:0.8rem;padding:4px 8px" onclick="toBox(${i})">Box</button>`:''}</div>`, 'team', i)).join('')||'<p>No Pokémon yet — start the Story!</p>'}</div></div>`;
  /* box */
  scr4.innerHTML=`<div class="panel"><h3>📦 Box (${S.box.length} / ${S.boxLimit || 30}) · Rift Dex: ${Object.keys(S.dex).length}/1025</h3><p style="font-size:0.8rem; color:#94a3b8; margin-bottom:12px; text-align:center;">Click a Pokémon to view its stats and moveset.</p><div class="grid">${S.box.map((m,i)=>monCard(m,`<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center">${S.team.length<6?`<button class="gbtn" style="font-size:0.8rem;padding:4px 8px" onclick="toTeam(${i})">To Team</button>`:''}<button class="gbtn" style="font-size:0.8rem;padding:4px 8px;color:#f87171;border-color:rgba(248,113,113,0.3)" onclick="releaseMon('box',${i})">Release</button></div>`, 'box', i)).join('')||'<p>Empty — go catch some Pokémon!</p>'}</div></div>`;
  
@@ -2212,7 +2329,7 @@ function renderAll(){
 
  renderShop();
  renderEvents();
- renderSupport();
+ renderMoveLab(); // <--- NEW ADDITION
 }
 
 /* ============ GLOBAL LEADERBOARD FETCH LOGIC ============ */
@@ -2322,8 +2439,8 @@ function renderEvents() {
 
     eh += `</div>`;
     
-    const scr7 = document.getElementById('scr7');
-    if (scr7) scr7.innerHTML = eh;
+    const scr6 = document.getElementById('scr6');
+    if (scr6) scr6.innerHTML = eh;
     
     // Real clock countdown implementation matching real-time dates
     if(!window.evInt) {
@@ -2525,7 +2642,7 @@ function renderShop(){
  
  let rebirthShopHtml = S.ch >= 20 ? `
      <div class="shop-card" style="border-color: rgba(168, 85, 247, 0.4); background: rgba(30, 41, 59, 0.8);">
-         <div class="icn-wrap" style="background: radial-gradient(circle, rgba(168, 85, 247, 0.2), transparent); border-color: rgba(168, 85, 247, 0.4); cursor:pointer;" onclick="showItemInfo('dawn-stone')" title="Click for info">${ICN('dawn-stone')}</div>
+         <div class="icn-wrap" style="background: radial-gradient(circle, rgba(168, 85, 247, 0.2), transparent); border-color: rgba(168, 85, 247, 0.4); cursor:pointer;" onclick="showItemInfo('dawn-stone')" title="Click for info"><img src="https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/max-revive.png" class="item-icn rainbow-gem"></div>
          <h4 style="color:#d946ef; text-shadow: 0 0 10px rgba(217, 70, 239, 0.5);">Rebirth Stone</h4>
          <div class="owned">Owned: ${S.stones.rebirth}</div>
          <div class="price">₽100,000</div>
@@ -2614,7 +2731,7 @@ function renderShop(){
          
          <div class="shop-card" style="${S.shinyCharm ? 'opacity:0.7; filter:grayscale(0.8)' : ''}">
              <div class="icn-wrap" style="background: radial-gradient(circle, rgba(255, 213, 74, 0.15), transparent); border-color: rgba(255, 213, 74, 0.2); cursor:pointer;" onclick="showItemInfo('shiny-charm')" title="Click for info">${ICN('shiny-charm')}</div>
-             <h4 style="color:#ffd54a">Shiny Charm</h4>
+             <h4 style="color:#ffd54a">Shiny Booster</h4>
              <div class="owned">Permanent Upgrade</div>
              <div class="price">₽400000</div>
              <div class="actions">
@@ -2678,7 +2795,7 @@ function buy(c,k,p,n,id){
  renderAll();
 }
 
-function buyCharm(){if(S.money<400000)return sysAlert('Not enough money! You need ₽400000.', 'Shop Error');if(S.shinyCharm)return log2('Already owned!');S.money-=400000;S.shinyCharm=true;log2(`Bought Shiny Charm! Shiny rate increased!`);persist();renderAll()}
+function buyCharm(){if(S.money<400000)return sysAlert('Not enough money! You need ₽400000.', 'Shop Error');if(S.shinyCharm)return log2('Already owned!');S.money-=400000;S.shinyCharm=true;log2(`Bought Shiny Booster! Shiny rate increased!`);persist();renderAll()}
 
 window.buyStorage = function() {
     if (S.boxLimit >= 1200) return sysAlert("You have reached the maximum storage capacity of 1200!", "Shop Error");
@@ -2729,6 +2846,222 @@ async function pickStarter(id){
  persist();
  showDlg([[P_ALDER,'A fine choice! Here — take 10 Poké Balls and some potions. Now, one last lesson: a wild Pokémon has wandered out of the Rift onto Route 1. Weaken it, then throw a ball to catch it!']],
  async()=>{const w=await makeMon(16,3);startBattle({wild:true,queue:[w],onWin:()=>{S.ch++;persist();preloadSprites();renderAll();nav(0);log2('Chapter 1 complete! The Story tab has your next chapter.')},onLose:()=>{healTeam();S.ch++;renderAll();log2('It got away — but you learned the basics! Chapter 1 complete.')}})})}
+
+/* ============ ADVANCED MOVE LAB ============ */
+window.getLearnableMoves = function(mon) {
+    let baseId = mon.id;
+    if (baseId === 10116) baseId = 658; 
+    if (baseId === 10127) baseId = 746; 
+    if (baseId === 10035) baseId = 6;   
+    if (baseId === 10044) baseId = 150; 
+    for (let b in MEGA) { if (MEGA[b] === baseId) { baseId = parseInt(b); break; } }
+    
+    let possible = [];
+    mon.types.forEach(t => {
+        if (TM[t]) {
+            TM[t].forEach(mv => {
+                let isSig = !!mv[3];
+                let matchesSig = isSig && mv[3].includes(baseId);
+                
+                if (matchesSig || !isSig) {
+                    if (!mon.moves.some(m => m.n === mv[0])) {
+                        possible.push({ n: mv[0], p: mv[1], t: t, isOld: false });
+                    }
+                }
+            });
+        }
+    });
+
+    // --- NEW: RE-INJECT FORGOTTEN MOVES ---
+    if (mon.forgotten) {
+        mon.forgotten.forEach(fm => {
+            if (!mon.moves.some(m => m.n === fm.n)) {
+                let existing = possible.find(p => p.n === fm.n);
+                if (existing) {
+                    existing.isOld = true; // Tag it if it was naturally in the pool
+                } else {
+                    possible.push({ n: fm.n, p: fm.p, t: fm.t, isOld: true }); // Force it in if it lost the typing
+                }
+            }
+        });
+    }
+
+    // Remove duplicates and sort by highest power
+    return possible.filter((v,i,a)=>a.findIndex(t=>(t.n === v.n))===i).sort((a,b)=>b.p - a.p);
+};
+
+window.renderMoveLab = function() {
+    if(!S) return;
+    let html = `<div class="panel" style="border-color: #facc15; box-shadow: 0 0 20px rgba(250, 204, 21, 0.1); background: linear-gradient(180deg, rgba(30, 41, 59, 0.8) 0%, rgba(250, 204, 21, 0.05) 100%);">
+        <div style="text-align:center; margin-bottom: 24px;">
+            <h3 style="color:#facc15; font-size:1.8rem; text-shadow: 0 2px 8px rgba(250,204,21,0.4); display:flex; align-items:center; justify-content:center; gap:8px;">
+                <img src="https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/tm-normal.png" style="width:32px; height:32px; image-rendering:pixelated; filter: sepia(1) hue-rotate(280deg) saturate(5) drop-shadow(0 0 6px rgba(250,204,21,0.8));">
+                Advanced Move Lab
+            </h3>
+            <p style="color:#cbd5e1; font-size:0.95rem;">Train your Level 100+ Party Pokémon with new elemental attacks. Each modification costs <b style="color:#4ade80">₽5,000</b>.</p>
+        </div>`;
+    
+    // Only Party Pokémon, Only Level 100+
+    let eligible = S.team.map((m, i) => ({m, i})).filter(x => x.m.lvl >= 100);
+    
+    if (eligible.length === 0) {
+        html += `<div style="text-align:center; padding: 30px; background:rgba(0,0,0,0.4); border-radius:12px; border:1px solid rgba(255,255,255,0.05);">
+            <div style="font-size:3rem; margin-bottom:12px; filter:grayscale(1);">🎓</div>
+            <h4 style="color:#94a3b8;">No Eligible Pokémon in Party</h4>
+            <p style="color:#64748b; font-size:0.85rem; max-width:400px; margin:0 auto;">Only active Party Pokémon that have reached Level 100 or above can use the Move Lab.</p>
+        </div>`;
+    } else {
+        html += `<div class="grid" style="gap: 16px;">`;
+        eligible.forEach(x => {
+            let rba = x.m.rebirth ? 'rebirth-aura' : '';
+            if(x.m.isRift) rba += ' rift-sprite';
+            html += `
+            <div class="mon type-${x.m.types[0]}" style="display:flex; flex-direction:column; align-items:center; text-align:center; background: rgba(0,0,0,0.3); border: 1px solid rgba(250,204,21,0.2);">
+                <img src="${SPR(x.m.id, x.m.shiny)}" class="${rba}" style="width:80px; height:80px; filter:drop-shadow(0 4px 6px rgba(0,0,0,0.4)); margin-bottom:8px;">
+                <div class="nm" style="color:#fff; font-size:1rem; font-weight:800;">${x.m.rebirth ? '<span class="rebirth-star">🌟</span> ' : ''}${x.m.name}</div>
+                <small style="color:#94a3b8; margin-bottom:12px; display:block;">Lv ${x.m.lvl} · ${x.m.types.join('/')}</small>
+                <button class="btn" style="width:100%; margin-top:auto; background:linear-gradient(135deg, #facc15, #ca8a04); color:#0f172a; font-weight:900; border:none; text-shadow:none; box-shadow: 0 4px 10px rgba(250,204,21,0.3);" onclick="openMoveTerminal(${x.i})">Configure Moves</button>
+            </div>`;
+        });
+        html += `</div>`;
+    }
+    html += `</div>`;
+    
+    const scr7 = document.getElementById('scr7');
+    if(scr7) scr7.innerHTML = html;
+};
+
+window.pendingMoveLearn = null;
+window.openMoveTerminal = function(teamIndex) {
+    window.pendingMoveLearn = null;
+    let mon = S.team[teamIndex];
+    let availableMoves = getLearnableMoves(mon);
+    
+    let rba = mon.rebirth ? 'rebirth-aura' : '';
+    if(mon.isRift) rba += ' rift-sprite';
+    
+    let html = `
+    <div class="panel" style="border-color: #facc15; box-shadow: 0 0 20px rgba(250, 204, 21, 0.1);">
+        <button class="gbtn" style="margin-bottom:16px; border-color:rgba(250,204,21,0.3); color:#facc15;" onclick="renderMoveLab()">◂ Back to Roster</button>
+        <div style="display:flex; gap:20px; flex-wrap:wrap;">
+            
+            <!-- Left Col: Mon Info & Current Moves -->
+            <div style="flex: 1; min-width: 280px; background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; text-align:center; border: 1px solid rgba(255,255,255,0.05);">
+                <img src="${SPR(mon.id, mon.shiny)}" class="${rba}" style="width:120px; height:120px; filter:drop-shadow(0 8px 16px rgba(0,0,0,0.5)); animation: float 2.5s ease-in-out infinite;">
+                <h3 style="color:#fff; font-size:1.4rem; margin-top:12px;">${mon.rebirth ? '<span class="rebirth-star">🌟</span> ' : ''}${mon.name}</h3>
+                <div style="margin-bottom: 16px;">${mon.types.map(t => `<span class="badge type-${t}" style="border:1px solid; background:rgba(255,255,255,0.05); color:#fff;">${t}</span>`).join(' ')}</div>
+                
+                <h4 style="color:#cbd5e1; font-size:0.9rem; margin-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:4px;">Current Moveset</h4>
+                <div style="display:flex; flex-direction:column; gap:8px;" id="currentMovesBlock">
+                    ${mon.moves.map((m, idx) => `
+                        <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); display:flex; justify-content:space-between; align-items:center;">
+                            <div style="text-align:left;">
+                                <b style="color:#fff; font-size:0.95rem;">${m.n}</b><br>
+                                <small style="color:#94a3b8; font-size:0.75rem;">${m.t.toUpperCase()} · PWR ${m.p}</small>
+                            </div>
+                            <button class="gbtn hidden replace-btn" style="color:#0f172a; background:#facc15; border:none; font-weight:800; padding:6px 12px;" onclick="confirmMoveLearn(${teamIndex}, ${idx})">Replace</button>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            
+            <!-- Right Col: Available Moves -->
+            <div style="flex: 2; min-width: 300px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+                    <h4 style="color:#facc15; font-size:1.2rem; margin:0;">Compatible Database</h4>
+                    <span style="color:#4ade80; font-weight:bold; background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); padding:6px 12px; border-radius:8px; font-family:monospace; font-size:1.1rem;">Balance: ₽${S.money.toLocaleString()}</span>
+                </div>
+                <p style="color:#94a3b8; font-size:0.85rem; margin-bottom:16px;">Select an unlearned move from the database below, then choose which current move to replace.</p>
+                
+                <div style="max-height: 400px; overflow-y:auto; padding-right:8px; display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:10px;" class="grid">
+                    ${availableMoves.map((m, mvIdx) => {
+                        let typeColors = { normal:'#9ca3af', fire:'#ef4444', water:'#3b82f6', grass:'#22c55e', electric:'#eab308', ice:'#38bdf8', fighting:'#b91c1c', poison:'#a855f7', ground:'#b45309', flying:'#818cf8', psychic:'#ec4899', bug:'#84cc16', rock:'#78350f', ghost:'#6366f1', dragon:'#4f46e5', dark:'#334155', steel:'#64748b', fairy:'#f472b6' };
+                        let tCol = typeColors[m.t] || '#fff';
+                        
+                        // --- NEW: DYNAMIC ICON SELECTION ---
+                        let iconSrc = m.isOld ? 'mvlabold.png' : 'mvlab.png';
+                        
+                        return `
+                        <div class="db-move-card" style="background:rgba(0,0,0,0.6); border: 1px solid ${tCol}50; border-radius:12px; padding:12px; display:flex; flex-direction:column; justify-content:space-between; cursor:pointer; transition:all 0.2s;" onclick="selectMoveToLearn(this, '${m.n}', '${m.t}', ${m.p})">
+                            <div>
+                                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                    <div style="display:flex; align-items:center; gap:6px;">
+                                        <img src="${iconSrc}" style="width:20px; height:20px; object-fit:contain; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));">
+                                        <b style="color:#fff; font-size:1.05rem;">${m.n}</b>
+                                    </div>
+                                </div>
+                                <div style="margin-top:4px; font-size:0.75rem; color:${tCol}; font-weight:800; text-transform:uppercase;">${m.t} ${m.isOld ? '<span style="color:#ec4899; margin-left:6px;">(Re-learnable)</span>' : ''}</div>
+                            </div>
+                            <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
+                                <span style="color:#e2e8f0; font-size:0.85rem;">PWR: ${m.p}</span>
+                                <span style="color:#facc15; font-size:0.85rem; font-weight:bold;">₽5k</span>
+                            </div>
+                        </div>
+                        `;
+                    }).join('') || '<div style="color:#94a3b8; padding:20px; grid-column:1/-1; text-align:center;">No further compatible moves found for this Pokémon.</div>'}
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+    
+    document.getElementById('scr7').innerHTML = html;
+};
+
+window.selectMoveToLearn = function(el, n, t, p) {
+    if (S.money < 5000) return sysAlert("Insufficient Poké Dollars! Each move costs ₽5,000.", "Move Lab Error");
+    
+    // Visual selection highlighting
+    document.querySelectorAll('.db-move-card').forEach(c => {
+        c.style.background = 'rgba(0,0,0,0.6)';
+        c.style.boxShadow = 'none';
+    });
+    el.style.background = 'rgba(250,204,21,0.15)';
+    el.style.boxShadow = '0 0 15px rgba(250,204,21,0.3)';
+    
+    window.pendingMoveLearn = { n, t, p };
+    
+    // Reveal and animate the replacement buttons on the left
+    document.querySelectorAll('.replace-btn').forEach(btn => {
+        btn.classList.remove('hidden');
+        btn.classList.add('pulse-border');
+    });
+    
+    log2(`Selected ${n}! Now click 'Replace' next to the move you want to forget.`);
+};
+
+window.confirmMoveLearn = async function(teamIndex, moveIndex) {
+    if (!window.pendingMoveLearn) return;
+    if (S.money < 5000) return sysAlert("Insufficient Poké Dollars!", "Error");
+    
+    let mon = S.team[teamIndex];
+    let oldMove = mon.moves[moveIndex];
+    let newMove = window.pendingMoveLearn;
+    
+    if(await sysConfirm(`Pay <b style="color:#4ade80">₽5,000</b> to replace <b style="color:#f87171">${oldMove.n}</b> with <b style="color:#facc15">${newMove.n}</b>?`, "Confirm Modification")) {
+        S.money -= 5000;
+        
+        // --- NEW: MEMORY STORAGE SYSTEM ---
+        if (!mon.forgotten) mon.forgotten = [];
+        
+        // Save the old move if it isn't already in the forgotten array
+        if (!mon.forgotten.some(m => m.n === oldMove.n)) {
+            mon.forgotten.push({ n: oldMove.n, p: oldMove.p, t: oldMove.t });
+        }
+        
+        // If the new move being learned was in the forgotten array, remove it from forgotten
+        mon.forgotten = mon.forgotten.filter(m => m.n !== newMove.n);
+        
+        // Apply clean new move
+        mon.moves[moveIndex] = { n: newMove.n, p: newMove.p, t: newMove.t };
+        window.pendingMoveLearn = null;
+        
+        log2(`Successfully taught ${newMove.n} to ${mon.name}!`);
+        persist();
+        refreshHud();
+        openMoveTerminal(teamIndex); // Refresh terminal UI to instantly reflect the new tag
+    }
+};
 
 /* ============ PvP MATCHMAKING ============ */
 async function startPvP(){
@@ -2910,7 +3243,7 @@ function enemyFaint(prev){const p=S.team[B.pi],e=B.enemy;
     let cap = p.rebirth ? 200 : 100;
     if(p.lvl >= cap) { p.xp = 0; break; }
     p.xp-=p.lvl*20;
-    p.lvl++;calc(p);p.hp=Math.min(p.maxhp,p.hp+8);p.moves=genMoves(p);
+    p.lvl++;calc(p);p.hp=Math.min(p.maxhp,p.hp+8); if(p.lvl <= 100) p.moves=genMoves(p);
     m+=`<br>🎉 <b style="color:#38bdf8">${p.name}</b> grew to Lv ${p.lvl}!`;
  }
  let finCap = p.rebirth ? 200 : 100;
@@ -2921,7 +3254,7 @@ function enemyFaint(prev){const p=S.team[B.pi],e=B.enemy;
   setTimeout(async()=>{
    const old=p.name; p.id=nid; S.dex[nid]=1; const nP=await getPoke(nid);
    let cleanName = nP.name.replace('-alola', ' (Alolan)').replace('-galar', ' (Galarian)').replace('-mega', ' (Mega)');
-   p.name=p.shiny?'✨ '+cleanName:cleanName; p.base=nP.base; p.types=nP.types; calc(p); p.moves=genMoves(p);
+   p.name=p.shiny?'✨ '+cleanName:cleanName; p.base=nP.base; p.types=nP.types; calc(p); if(p.lvl <= 100) p.moves=genMoves(p);
    m+=`<br>🌟 <b>${old}</b> evolved into <b style="color:#38bdf8">${p.name}</b>!`; drawB(); continueFaint(m);
   },1500);
  } else { continueFaint(m); }
@@ -3039,13 +3372,13 @@ async function explore(i){
          }
  const lv=z.lv[0]+Math.floor(Math.random()*(z.lv[1]-z.lv[0]+1));
  
- // Standard Pokémon: 0.1% base, 0.25% with Shiny Charm
+ // Standard Pokémon: 0.1% base, 0.25% with Shiny Booster
      let shinyRate = S.shinyCharm ? 0.0025 : 0.001; 
      
- // Legendaries & Ultra Beasts: 0.01% base, 0.05% with Shiny Charm
+ // Legendaries & Ultra Beasts: 0.01% base, 0.05% with Shiny Booster
      if (isLegendary || isUltraBeast) shinyRate = S.shinyCharm ? 0.0005 : 0.0001; 
      
- // Anomalies / Rift Forms: 0.05% base, 0.1% with Shiny Charm
+ // Anomalies / Rift Forms: 0.05% base, 0.1% with Shiny Booster
      else if (isAnomaly) shinyRate = S.shinyCharm ? 0.001 : 0.0005;
  const isShiny = Math.random() < shinyRate;
  const w=await makeMon(id,lv,isShiny);
