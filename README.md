@@ -217,7 +217,6 @@ http://localhost:8000
 
 Contributions, ideas, bug reports, and feature requests are always welcome.
 
-Feel free to open an Issue or submit a Pull Request.
 
 ---
 
