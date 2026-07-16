@@ -82,6 +82,32 @@ io.on('connection', (socket) => {
         }
     });
 
+    // ==========================================
+    // GLOBAL LEADERBOARD SYNC
+    // ==========================================
+    socket.on('getLeaderboard', async () => {
+        try {
+            // Fetch all players from MongoDB
+            const allPlayers = await Player.find({});
+            let leaderboard = [];
+            
+            // Loop through and extract the ones with save data and an Elo rating
+            for(let p of allPlayers) {
+                if(p.saveData && p.saveData.elo) {
+                    leaderboard.push({ user: p.username, elo: p.saveData.elo });
+                }
+            }
+            
+            // Sort by highest Elo first
+            leaderboard.sort((a, b) => b.elo - a.elo);
+            
+            // Send the top 50 players back to the specific client who asked
+            socket.emit('leaderboardData', leaderboard.slice(0, 50));
+        } catch (err) {
+            console.error('Failed to fetch leaderboard from DB:', err);
+        }
+    });
+
     // PvP Arena Matchmaking
     socket.on('joinQueue', (playerData) => {
         const player = { 
