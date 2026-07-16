@@ -96,7 +96,14 @@ body {
 }
 
 .hud .logo { font-family: 'Press Start 2P', system-ui; font-size:1.1rem; font-weight:400; background: linear-gradient(180deg, #ffcb05 30%, #e6a800 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(2px 2px 0px #2a75bb); margin-right: auto; }
-.hud .logo img { width: 16px; height: 16px; margin-left: 4px; vertical-align: baseline; }
+.hud .logo img { 
+    width: 26px; 
+    height: 26px; 
+    margin-left: -10px; /* Pulls the icon left, overcoming the wide font spacing */
+    margin-top: -3px; 
+    vertical-align: middle; 
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); 
+}
 
 .hud-info { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; flex: 1; justify-content: flex-end; }
 
@@ -143,8 +150,6 @@ body {
 
 .hud-actions { display: flex; gap: 6px; align-items: center; margin-left: 8px; }
 .hud-actions button { margin: 0; border-radius: 6px; font-size: 0.8rem; padding: 6px 12px; }
-.hud-actions .sbtn { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4); border: 1px solid #34d399; }
-.hud-actions .sbtn:hover { filter: brightness(1.2); }
 
 /* HEADINGS - Restored to Deep Yellow with Glow */
 .panel h3, .card h2 { color: #ffd54a; margin-bottom: 8px; font-weight: 800; font-size: 1.2rem; letter-spacing: 0.5px; text-shadow: 0 2px 6px rgba(255, 213, 74, 0.3);}
@@ -162,51 +167,40 @@ button::after {
 button:hover::after { animation: glint 0.6s ease-out; }
 @keyframes glint { 0% { left: -100%; } 100% { left: 200%; } }
 
-/* Primary CTA Button */
+/* ===== UNIFIED BLUE BUTTON THEME ===== */
 .btn {
-    background: linear-gradient(135deg, #ec4899, #8b5cf6);
-    border: none;
-    border-radius: 10px;
-    color: #fff;
-    font-size: 1rem;
-    padding: 10px 16px; /* Compacted */
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); /* Sped up */
-    box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
-    width: 100%;
-    margin-top: 6px;
+    background: linear-gradient(135deg, #0ea5e9, #2563eb);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    border-radius: 10px; color: #fff; font-size: 1rem; padding: 10px 16px; 
+    cursor: pointer; text-transform: uppercase; transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3); width: 100%; margin-top: 6px;
 }
-.btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5); }
-.btn:active { transform: translateY(1px); box-shadow: 0 2px 8px rgba(236, 72, 153, 0.4); }
+.btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 6px 20px rgba(14, 165, 233, 0.5); filter: brightness(1.1); }
+.btn:active { transform: translateY(1px); box-shadow: 0 2px 8px rgba(14, 165, 233, 0.4); }
 
-/* Secondary Action Button */
 .sbtn {
-    background: linear-gradient(135deg, #0ea5e9, #3b82f6);
-    border: none;
-    border-radius: 8px;
-    color: #fff;
-    font-size: 0.9rem;
-    padding: 6px 14px;
-    cursor: pointer;
-    transition: all 0.15s ease; /* Sped up */
-    box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3);
+    background: linear-gradient(135deg, #0284c7, #1d4ed8);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 8px; color: #fff; font-size: 0.9rem; padding: 6px 14px; 
+    cursor: pointer; transition: all 0.15s ease;
+    box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
 }
-.sbtn:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(14, 165, 233, 0.5); filter: brightness(1.1); }
+.sbtn:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(2, 132, 199, 0.5); filter: brightness(1.1); }
 
-/* Ghost / Nav Button */
 .gbtn, .nav button, .bacts button {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    color: #cbd5e1;
-    font-size: 0.85rem;
-    padding: 6px 12px;
-    cursor: pointer;
-    transition: all 0.15s ease; /* Sped up */
+    background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px; color: #cbd5e1; font-size: 0.85rem; padding: 6px 12px; 
+    cursor: pointer; transition: all 0.15s ease;
 }
-.gbtn:hover, .nav button:hover, .bacts button:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.3); color: #fff; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-.nav button.on { background: linear-gradient(135deg, #38bdf8, #818cf8); color: #fff; border: none; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4); }
+.gbtn:hover, .nav button:hover, .bacts button:hover { 
+    background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.4); 
+    color: #fff; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
+}
+/* The Active Navigation Tab */
+.nav button.on { 
+    background: linear-gradient(135deg, #0ea5e9, #2563eb); color: #fff; 
+    border: 1px solid rgba(56, 189, 248, 0.4); box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4); 
+}
 
 /* Make Navigation Tabs auto-size, prevent text cut-off, and fill empty space cleanly */
 .nav button {
@@ -281,10 +275,15 @@ input[type="number"] { -moz-appearance: textfield !important; }
 .hero h1 span { background: linear-gradient(to right, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .hero p { color:#94a3b8; margin-top:6px; max-width:600px; margin-left:auto; margin-right:auto; font-size: 1rem; }
 .pills { display:flex; gap:8px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
-.pill { background:rgba(56, 189, 248, 0.1); border:1px solid rgba(56, 189, 248, 0.3); padding:4px 14px; border-radius:20px; font-size:.8rem; color:#38bdf8; font-weight:600; animation: gentleFloat 4s ease-in-out infinite alternate; }
-.pill:nth-child(2) { animation-delay: 0.5s; }
-.pill:nth-child(3) { animation-delay: 1s; }
-@keyframes gentleFloat { 0% { transform: translateY(0); } 100% { transform: translateY(-4px); } }
+.pill { 
+    background:rgba(56, 189, 248, 0.1); 
+    border:1px solid rgba(56, 189, 248, 0.3); 
+    padding:4px 14px; 
+    border-radius:20px; 
+    font-size:.8rem; 
+    color:#38bdf8; 
+    font-weight:600; 
+}
 
 .feats { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin:24px 0; }
 .feat { background:rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.05); border-radius:14px; padding:16px; transition: transform 0.2s; }
@@ -1042,7 +1041,7 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
             <h1>Return to the <span>Rift.</span></h1>
             <p>Resume right where you left off with your full roster, progress, and daily events. No downloads required — play instantly in your browser!</p>
             <div class="pills"><span class="pill">Gyms</span><span class="pill">Raids</span><span class="pill">PvP Arena</span></div>
-            <button class="btn" style="max-width:260px; font-size:1.1rem; animation: float 2s ease-in-out infinite;" onclick="authTab(0)">Start Adventure</button>
+            <button class="btn" style="max-width:260px; font-size:1.1rem;" onclick="authTab(0)">Start Adventure</button>
             
             <!-- ====== EXACTLY HERE: NEW Support Button ====== -->
             <br>
@@ -2300,7 +2299,7 @@ function renderAll(){
             <small style="color:#94a3b8; display:block; margin-top:8px;">Chapter ${S.ch + 1} of ${CHAPTERS.length}</small>
         </div>
     </div>
-    <button class="btn" style="max-width: 300px; font-size: 1.2rem; padding: 14px; background: linear-gradient(135deg, #10b981, #059669); border: 1px solid #34d399; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); text-shadow: 0 2px 4px rgba(0,0,0,0.5); color: #fff;" onclick="playStory()">🚀 CONTINUE PROGRESS</button>
+    <button class="btn" style="max-width: 300px; font-size: 1.2rem; padding: 14px;" onclick="playStory()">🚀 CONTINUE PROGRESS</button>
     `;
  } else {
     storyHtml += `<h2 style="color:#4ade80; margin: 40px 0; font-size: 2rem;">🌟 Campaign Complete! 🌟</h2><p style="color:#cbd5e1;">You have conquered all sectors. Focus on PvP and completing the Rift Dex!</p>`;
