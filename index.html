@@ -587,6 +587,18 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     50% { transform: translateY(-8px); }
 }
 
+/* === DARK ARENA OVERRIDES === */
+.bfield.dark-arena {
+    background: linear-gradient(to bottom, #1f0404 0%, #3f0000 50%, #1a0000 50.1%, #050000 100%);
+    border-color: rgba(239, 68, 68, 0.4);
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.9), 0 15px 30px rgba(220, 38, 38, 0.2);
+}
+.bfield.dark-arena .bmon::before {
+    background: radial-gradient(ellipse at center, #991b1b 10%, #450a0a 70%, #0a0000 100%);
+    border-color: rgba(239, 68, 68, 0.4);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.9), 0 0 20px rgba(220,38,38,0.3);
+}
+
 .binfo b { color: #fff; font-size: 1.05rem; }
 .binfo small { color:#cbd5e1; font-size: 0.8rem; }
 
@@ -1330,6 +1342,32 @@ function showMonInfo(c, i) {
         rbBtn = `<div style="text-align:center; color:#d946ef; font-size:0.9rem; font-weight:bold; margin-top:16px; text-shadow: 0 0 10px rgba(217,70,239,0.5);">🌟 Rebirth Awakened 🌟</div>`;
     }
 
+    // --- NEW: Z-A MEGA AUTO-DISCOVERY SYSTEM ---
+    if (!window.CHECKED_MEGAS) window.CHECKED_MEGAS = {};
+    
+    // If the Pokemon is Lv 50+, doesn't have a known Mega, and we haven't checked it yet...
+    if (!MEGA[m.id] && m.lvl >= 50 && !window.CHECKED_MEGAS[m.id]) {
+        window.CHECKED_MEGAS[m.id] = true; // Mark as checked so we don't spam the API
+        
+        // Silently scan the PokeAPI Species database in the background
+        fetch(`https://pokeapi.co/api/v2/pokemon-species/${m.id}`)
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (data && data.varieties) {
+                    // Look for any officially added "-mega" variations
+                    let megaForm = data.varieties.find(v => v.pokemon.name.endsWith('-mega'));
+                    if (megaForm) {
+                        // Extract the brand new ID and add it to our dictionary!
+                        let urlParts = megaForm.pokemon.url.split('/');
+                        MEGA[m.id] = parseInt(urlParts[urlParts.length - 2]);
+                        
+                        // Instantly refresh the UI to reveal the newly discovered button
+                        showMonInfo(c, i); 
+                    }
+                }
+            }).catch(() => {}); // If it fails or isn't released yet, fail silently
+    }
+
     // --- NEW: MEGA EVOLUTION BUTTON LOGIC ---
     let megaBtn = '';
     let hasMegaStone = S.stones && S.stones.mega > 0;
@@ -1958,6 +1996,49 @@ NEW_REGIONS.forEach((r, i) => {
     ZONES.push({n: `${r.name} Apex`, g: 9, lv: r.levels, ch: r.offset+10});
 });
 
+// ==========================================================
+// DYNAMICALLY GENERATE 50 EXTREMELY HARD "DARK" CHAPTERS
+// ==========================================================
+const DARK_REGIONS = [
+    {name: "Abyssal Kanto", offset: 50, boss: "Dark Red", badge: "Abyss", levels: [120, 130]},
+    {name: "Abyssal Johto", offset: 60, boss: "Dark Ethan", badge: "Void", levels: [130, 140]},
+    {name: "Abyssal Hoenn", offset: 70, boss: "Dark Brendan", badge: "Null", levels: [140, 150]},
+    {name: "Abyssal Sinnoh", offset: 80, boss: "Dark Lucas", badge: "Despair", levels: [150, 160]},
+    {name: "Distortion Core", offset: 90, boss: "Noctis Prime", badge: "Eclipse", levels: [160, 180]}
+];
+DARK_REGIONS.forEach((r, i) => {
+    for(let j=1; j<=10; j++) {
+        let chNum = r.offset + j;
+        let isBoss = j === 10;
+        CHAPTERS.push({
+            t: `Ch. ${chNum} — ${isBoss ? 'Finale' : 'Stage '+j}`,
+            region: r.name,
+            isDark: true, // Tag used to dynamically change the UI later!
+            d: [
+                [NARR, isBoss ? `The abyssal core of ${r.name} screams...` : `The shadows deepen in ${r.name}...`],
+                [isBoss ? [r.boss, 'cyrus'] : ['Abyssal Cultist', 'galacticgrunt'], isBoss ? `I am the shadow of ${r.name}. Perish!` : `The light ends here!`]
+            ],
+            ev: {
+                type: 'battle',
+                who: isBoss ? [r.boss, 'cyrus'] : [`Cultist ${j}`, 'galacticgrunt'],
+                badge: isBoss ? r.badge : null,
+                mons: () => {
+                    let eLv = r.levels[0] + j*2;
+                    return [
+                        [Math.floor(Math.random()*800)+1, eLv],
+                        [Math.floor(Math.random()*800)+1, eLv+1],
+                        isBoss ? [RESTRICTED[Math.floor(Math.random()*RESTRICTED.length)], eLv+5] : null
+                    ].filter(Boolean);
+                },
+                reward: isBoss ? 30000 : 5000,
+                after: [
+                    [isBoss ? [r.boss, 'cyrus'] : ['Abyssal Cultist', 'galacticgrunt'], isBoss ? `The darkness... shatters!` : `Gah! Impossible!`]
+                ]
+            }
+        });
+    }
+});
+
 /* ============ ACCOUNTS / SAVE ============ */
 let ACC={},S=null,storageOK=true;
 try{ACC=JSON.parse(localStorage.getItem('psu_acc')||'{}')}catch(e){storageOK=false}
@@ -2255,17 +2336,24 @@ function renderAll(){
  refreshHud();
  
  /* story: NO SCROLL DASHBOARD */
+ let isDarkArc = S.ch >= 50;
+ let arcName = isDarkArc ? "🩸 The Abyssal Chronicles" : "📖 The Rift Chronicles";
+ let arcDesc = isDarkArc ? "Survive the brutally hard Dark Rifts to awaken Shadow Lugia." : "Progress through the main campaign to unlock new regions and rare encounters.";
+ let titleColor = isDarkArc ? "#ef4444" : "#ffd54a";
+
  let storyHtml = `<div class="panel" style="text-align:center; padding: 30px 16px;">
-    <h3 style="color:#ffd54a; font-size: 1.8rem; margin-bottom: 8px;">📖 The Rift Chronicles</h3>
-    <p style="color:#94a3b8; font-size: 0.9rem; margin-bottom: 24px;">Progress through the main campaign to unlock new regions and rare encounters.</p>`;
+    <h3 style="color:${titleColor}; font-size: 1.8rem; margin-bottom: 8px; text-shadow: 0 2px 8px ${isDarkArc ? 'rgba(239, 68, 68, 0.5)' : 'rgba(255, 213, 74, 0.4)'};">${arcName}</h3>
+    <p style="color:#94a3b8; font-size: 0.9rem; margin-bottom: 24px;">${arcDesc}</p>`;
 
  if (S.ch < CHAPTERS.length) {
     const c = CHAPTERS[S.ch];
     const reg = c.region || "The Core Rifts";
-    const pct = Math.floor((S.ch / CHAPTERS.length) * 100);
     
-    // Dynamically find the boss of the current chapter for the dim background image
-    let bossId = 150; // Default Mewtwo fallback
+    // Calculates percentage based on the CURRENT 50-chapter arc so the Dark chapters remain a total secret
+    let currentChInArc = isDarkArc ? (S.ch - 50) : S.ch;
+    const pct = Math.floor((currentChInArc / 50) * 100);
+    
+    let bossId = 150; 
     try {
         if (c.ev && c.ev.mons) {
             let eMons = c.ev.mons(S.starter);
@@ -2273,30 +2361,35 @@ function renderAll(){
         }
     } catch(e) {}
 
-    storyHtml += `
-    <div style="position: relative; overflow: hidden; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(168, 85, 247, 0.1);">
-        
-        <!-- DIM DYNAMIC BOSS WATERMARK -->
-        <img src="${SPR(bossId)}" style="position: absolute; right: 5%; top: 50%; transform: translateY(-50%) scale(3.5); opacity: 0.12; pointer-events: none; image-rendering: pixelated; z-index: 0; filter: grayscale(0.5);">
+    // Dynamic UI Variables based on whether the player has entered the Dark Chapters
+    let panelBg = isDarkArc ? "rgba(5, 0, 0, 0.95)" : "rgba(15, 23, 42, 0.8)";
+    let borderColor = isDarkArc ? "#991b1b" : "rgba(168, 85, 247, 0.4)";
+    let shadowColor = isDarkArc ? "rgba(220, 38, 38, 0.4)" : "rgba(168, 85, 247, 0.1)";
+    let barGlow = isDarkArc ? "#ef4444" : "transparent";
+    let barGrad = isDarkArc ? "linear-gradient(90deg, #450a0a, #dc2626)" : "linear-gradient(90deg, #ec4899, #a855f7)";
+    let spriteFilter = isDarkArc ? "grayscale(1) brightness(0.5) drop-shadow(0 0 10px #ef4444)" : "grayscale(0.5)";
+    let headerColor = isDarkArc ? "#ef4444" : "#a855f7";
 
-        <div style="position: relative; z-index: 1;">
-            <h4 style="color:#a855f7; font-weight: 800; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px;">🌌 Current Sector: ${reg}</h4>
-            <h2 style="color:#fff; font-size: 1.8rem; font-weight: 900; margin-bottom: 20px;">${c.t}</h2>
-            
-            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size: 0.85rem; font-weight: 600;">
-                <span style="color:#cbd5e1;">Campaign Progress</span>
-                <span style="color:#4ade80;">${pct}%</span>
+    storyHtml += `
+        <div style="position: relative; overflow: hidden; background: ${panelBg}; border: 1px solid ${borderColor}; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px ${shadowColor};">
+            <img src="${SPR(bossId)}" style="position: absolute; right: 5%; top: 50%; transform: translateY(-50%) scale(3.5); opacity: ${isDarkArc ? '0.15' : '0.12'}; pointer-events: none; image-rendering: pixelated; z-index: 0; filter: ${spriteFilter};">
+            <div style="position: relative; z-index: 1;">
+                <h4 style="color:${headerColor}; font-weight: 800; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; text-shadow: ${isDarkArc ? '0 0 8px rgba(239,68,68,0.4)' : 'none'};">🌌 Current Sector: ${reg}</h4>
+                <h2 style="color:#fff; font-size: 1.8rem; font-weight: 900; margin-bottom: 20px; text-shadow: ${isDarkArc ? '0 2px 4px rgba(220, 38, 38, 0.5)' : 'none'};">${c.t}</h2>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size: 0.85rem; font-weight: 600;">
+                    <span style="color:#cbd5e1;">Arc Progress</span>
+                    <span style="color:#4ade80;">${pct}%</span>
+                </div>
+                <div class="hpbar" style="height:8px; background:rgba(0,0,0,0.8); margin-bottom: 0; border: ${isDarkArc ? '1px solid rgba(239,68,68,0.2)' : 'none'};">
+                    <i style="background: ${barGrad}; box-shadow: 0 0 10px ${barGlow}; transform: scaleX(${pct/100});"></i>
+                </div>
+                <small style="color:#94a3b8; display:block; margin-top:8px;">Chapter ${S.ch + 1} of ${isDarkArc ? 100 : 50}</small>
             </div>
-            <div class="hpbar" style="height:8px; background:rgba(0,0,0,0.8); margin-bottom: 0;">
-                <i style="background: linear-gradient(90deg, #ec4899, #a855f7); transform: scaleX(${pct/100});"></i>
-            </div>
-            <small style="color:#94a3b8; display:block; margin-top:8px;">Chapter ${S.ch + 1} of ${CHAPTERS.length}</small>
         </div>
-    </div>
-    <button class="btn" style="max-width: 300px; font-size: 1.2rem; padding: 14px;" onclick="playStory()">🚀 CONTINUE PROGRESS</button>
+        <button class="btn" style="max-width: 300px; font-size: 1.2rem; padding: 14px; ${isDarkArc ? 'background: linear-gradient(135deg, #7f1d1d, #450a0a); border-color:#ef4444;' : ''}" onclick="playStory()">🚀 ${isDarkArc ? 'ENTER THE ABYSS' : 'CONTINUE PROGRESS'}</button>
     `;
  } else {
-    storyHtml += `<h2 style="color:#4ade80; margin: 40px 0; font-size: 2rem;">🌟 Campaign Complete! 🌟</h2><p style="color:#cbd5e1;">You have conquered all sectors. Focus on PvP and completing the Rift Dex!</p>`;
+    storyHtml += `<h2 style="color:#a855f7; margin: 40px 0; font-size: 2rem; text-shadow: 0 0 15px rgba(168,85,247,0.5);">🌌 Abyssal Campaign Complete! 🌌</h2><p style="color:#cbd5e1;">You have conquered all sectors, including the impossible Dark Rifts!</p>`;
  }
  storyHtml += `</div>`;
  scr0.innerHTML = storyHtml;
@@ -2899,11 +2992,42 @@ async function runEvent(c){const ev=c.ev;
   dExtra.innerHTML=`<div class="starterRow">${ids.map((id,i)=>`<div class="mon type-normal" onclick="pickStarter(${id})"><img src="${SPR(id)}"><div class="nm">${names[i]}</div><small>Lv 5</small></div>`).join('')}</div>`;
   return}
  if(ev.type==='battle'){
-  const mons=[];for(const[id,lv]of ev.mons(S.starter))mons.push(await makeMon(id,lv));
-  startBattle({wild:false,trainer:ev.who,queue:mons,onWin:()=>{S.money+=ev.reward;if(ev.badge)S.badges.push(ev.badge);
-   const fin=()=>{S.ch++;persist();renderAll();nav(0);log2(`Chapter complete! +₽${ev.reward}${ev.badge?' · Earned the '+ev.badge+' Badge!':''}`)};
+  const mons=[];
+  // PASS isBot=true (the 4th parameter) so high level enemies get their Rebirth auras and stats!
+  for(let [id,lv] of ev.mons(S.starter)) {
+      // Force enemy Pokemon to naturally evolve based on their level!
+      while(EVO[id] && lv >= EVO[id][0]) { id = EVO[id][1]; }
+      mons.push(await makeMon(id,lv, false, true)); 
+  }
+  
+  startBattle({wild:false,trainer:ev.who,queue:mons, isDark: c.isDark, onWin:async ()=>{
+   S.money+=ev.reward;if(ev.badge)S.badges.push(ev.badge);
+   
+   const fin = async () => {
+       S.ch++;
+       
+       // ⭐ MILESTONE REWARD 1: Chapter 50 (Shiny Dragonite)
+       if(S.ch === 50) {
+           let dnite = await makeMon(149, 100, true, false); 
+           S.box.push(dnite);
+           await sysAlert('You received a ✨ <b style="color:#ffd54a">Shiny Dragonite (Lv 100)</b> for completing the main campaign!<br><br><span style="color:#ef4444; font-weight:bold;">WARNING: The dimensional anchors have shattered. The Abyssal Dark Rifts have opened...</span>', 'Campaign Complete!');
+       }
+       
+       // ⭐ MILESTONE REWARD 2: Chapter 100 (Shadow Lugia)
+       if(S.ch === 100) {
+           let lugia = await makeMon(249, 150, true, false); 
+           lugia.isRift = true; // Gives it the purple rift aura to symbolize Shadow Lugia
+           S.box.push(lugia);
+           await sysAlert('You received a 🌌 <b style="color:#a855f7">Shadow Lugia (Lv 150)</b> for vanquishing the ultimate darkness!', 'Abyssal Campaign Complete!');
+       }
+       
+       persist(); renderAll(); nav(0); 
+       log2(`Chapter complete! +₽${ev.reward}${ev.badge?' · Earned the '+ev.badge+' Badge!':''}`);
+   };
+   
    ev.after?showDlg(ev.after,fin):fin()},
-  onLose:()=>{healTeam();sysAlert('You blacked out... your team was healed. Try the chapter again!', 'Battle Lost')}})}}
+  onLose:()=>{healTeam();sysAlert('You blacked out... your team was healed. Try the chapter again!', 'Battle Lost')}})}
+}
 async function pickStarter(id){
  S.starter=id; S.dex[id]=1; 
  let isShinyStarter = Math.random() < 0.01; // 1% chance for a Shiny Starter
@@ -3210,6 +3334,12 @@ function startBattle(cfg){
     if(!S.team.some(m=>m.hp>0)) return log2('Your whole team has fainted! Visit the Rift Center first.');
     while(S.team[B.pi].hp<=0) B.pi++;
     document.getElementById('battle').classList.remove('hidden');
+    
+    // --- NEW: DYNAMIC ARENA THEME ---
+    const bfield = document.querySelector('.bfield');
+    if (bfield) bfield.classList.toggle('dark-arena', !!B.isDark);
+    // --------------------------------
+    
     bmsg(cfg.wild ? `A wild <b style="color:#38bdf8">${B.enemy.name}</b> (Lv ${B.enemy.lvl}) appeared!` : `${cfg.trainer[0]} sent out <b style="color:#f87171">${B.enemy.name}</b> (Lv ${B.enemy.lvl})!`);
     drawB();
 }
@@ -3323,7 +3453,13 @@ function enemyTurn(prev){const p=S.team[B.pi],e=B.enemy;
  else{B.lock=false;drawB()}}
 
 function enemyFaint(prev){const p=S.team[B.pi],e=B.enemy;
- let gain=e.lvl*(B.isPvP?20:14); p.xp+=gain; let m=prev+`<br>Enemy <b style="color:#f87171">${e.name}</b> fainted! <b style="color:#38bdf8">${p.name}</b> gained ${gain} XP.`;
+ // Check if the battle is an Event or PvP
+ let isEvent = B.trainer && B.trainer[0] === "Event Warden";
+ let gain = (B.isPvP || isEvent) ? 0 : (e.lvl * 14); 
+ 
+ p.xp += gain; 
+ let m = prev + `<br>Enemy <b style="color:#f87171">${e.name}</b> fainted!` + (gain > 0 ? ` <b style="color:#38bdf8">${p.name}</b> gained ${gain} XP.` : ``);
+ 
  while(p.xp>=p.lvl*20){
     let cap = p.rebirth ? 200 : 100;
     if(p.lvl >= cap) { p.xp = 0; break; }
@@ -3466,6 +3602,10 @@ async function explore(i){
  // Anomalies / Rift Forms: 0.05% base, 0.1% with Shiny Booster
      else if (isAnomaly) shinyRate = S.shinyCharm ? 0.001 : 0.0005;
  const isShiny = Math.random() < shinyRate;
+ 
+ // Force wild Pokemon to naturally evolve based on their level!
+ while(EVO[id] && lv >= EVO[id][0]) { id = EVO[id][1]; }
+ 
  const w=await makeMon(id,lv,isShiny);
  const doBattle = () => {
      startBattle({wild:true,queue:[w],onWin:()=>{S.money+=lv*10;log2(`+₽${lv*10}`)},onLose:()=>{healTeam();S.money=Math.floor(S.money/2);sysAlert('You blacked out and lost half your money...', 'Battle Lost');}})
