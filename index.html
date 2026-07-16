@@ -1550,15 +1550,10 @@ function initRealtime() {
             });
             
             socket.on('leaderboardData', (data) => {
-                const lb = document.getElementById('lbContent');
-                if(lb) {
-                    lb.innerHTML = data.map((p, index) => 
-                        `<div class="shoprow" ${p.user === S.user ? 'style="color:#38bdf8;font-weight:600"' : ''}>
-                            <span>#${index + 1}. ${p.user}</span>
-                            <span style="color:#cbd5e1">${p.elo} Elo</span>
-                         </div>`
-                    ).join('') || 'No ranked players yet.';
-                }
+                // Clear the failsafe timeout since the server successfully responded
+                if(window.lbTimeout) clearTimeout(window.lbTimeout);
+                // Use our shared render function for the gold styling
+                renderLB(data, false);
             });
         }
     } else if (sckAttempts < 50) {
@@ -2404,30 +2399,32 @@ function renderAll(){
 
 /* ============ GLOBAL LEADERBOARD FETCH LOGIC ============ */
 async function fetchLeaderboard() {
- const lb = document.getElementById('lbContent');
- if(!lb) return;
- lb.innerHTML = "Syncing with Global Cloud...";
- if(socket && socket.connected) {
-     socket.emit('getLeaderboard');
- } else {
-     try {
-         const response = await fetch('https://api.pokemon-su.com/leaderboard', { timeout: 3000 });
-         if(response.ok) {
-             const data = await response.json();
-             renderLB(data, false);
-             return;
-         } else { throw new Error('API Offline'); }
-     } catch (err) {
-         let players = [];
-         for(let key in ACC) {
-             if(ACC[key] && ACC[key].save) {
-                 players.push({user: ACC[key].save.user, elo: ACC[key].save.elo});
-             }
-         }
-         players.sort((a,b) => b.elo - a.elo);
-         renderLB(players, true);
-     }
- }
+    const lb = document.getElementById('lbContent');
+    if(!lb) return;
+    lb.innerHTML = "Syncing with Global Cloud...";
+    
+    // Helper function to load local data
+    const loadLocalData = () => {
+        let players = [];
+        for(let key in ACC) {
+            if(ACC[key] && ACC[key].save) {
+                players.push({user: ACC[key].save.user, elo: ACC[key].save.elo});
+            }
+        }
+        players.sort((a,b) => b.elo - a.elo);
+        renderLB(players, true);
+    };
+
+    if(socket && socket.connected) {
+        // Set a 3-second failsafe. If the server hangs, force the local data to show.
+        window.lbTimeout = setTimeout(() => {
+            loadLocalData();
+        }, 3000);
+        socket.emit('getLeaderboard');
+    } else {
+        // Instantly load local data if no server is connected
+        loadLocalData();
+    }
 }
 
 function renderLB(players, isOffline = false) {
