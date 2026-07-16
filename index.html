@@ -2227,15 +2227,14 @@ function claimLoot(){
 }
 
 function nav(i){
- renderAll(); 
  for(let k=0;k<8;k++){ 
   const btn = document.getElementById('nv'+k);
   const scr = document.getElementById('scr'+k);
   if(btn) btn.classList.toggle('on',k===i);
   if(scr) scr.classList.toggle('hidden',k!==i);
  }
- if(i===5) fetchLeaderboard(); 
  renderAll();
+ if(i===5) fetchLeaderboard(); 
 }
 
 function hpCls(m){const r=m.hp/m.maxhp;return r>.5?'':r>.25?'mid':'low'}
