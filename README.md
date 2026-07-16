@@ -134,23 +134,16 @@ Coming Soon
 
 ---
 
-# 🚀 Planned Features
+# 🚀 Planned Features (need support)
 
-- Online Multiplayer
-- PvP Arena
 - Trading System
 - Guilds
 - Global Chat
-- Raids
-- Legendary Events
-- Mega Evolution
 - Daily Quests
 - Battle Pass
 - Achievements
-- Mount System
-- Housing
 - Multiple Regions
-- Mobile App
+- Mobile version
 - Controller Support
 
 ---
@@ -177,7 +170,7 @@ Future Backend
 Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/PokemonSU.git
+git clone https://github.com/SGtriangle/PokemonSU.git
 ```
 
 Open the project
