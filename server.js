@@ -94,7 +94,8 @@ io.on('connection', (socket) => {
             // Loop through and extract the ones with save data and an Elo rating
             for(let p of allPlayers) {
                 if(p.saveData && p.saveData.elo) {
-                    leaderboard.push({ user: p.username, elo: p.saveData.elo });
+                    let dName = p.saveData.displayName || p.username;
+                    leaderboard.push({ user: p.username, displayName: dName, elo: p.saveData.elo });
                 }
             }
             

@@ -2402,12 +2402,14 @@ async function fetchLeaderboard() {
     if(!lb) return;
     lb.innerHTML = "Syncing with Global Cloud...";
     
-    // Helper function to load local data
+    // Helper function to safely load local data if the server fails
     const loadLocalData = () => {
         let players = [];
         for(let key in ACC) {
             if(ACC[key] && ACC[key].save) {
-                players.push({user: ACC[key].save.user, elo: ACC[key].save.elo});
+                // Look for a custom displayName, otherwise fall back to the login username
+                let dName = ACC[key].save.displayName || ACC[key].save.user;
+                players.push({user: ACC[key].save.user, displayName: dName, elo: ACC[key].save.elo});
             }
         }
         players.sort((a,b) => b.elo - a.elo);
@@ -2415,13 +2417,9 @@ async function fetchLeaderboard() {
     };
 
     if(socket && socket.connected) {
-        // Set a 3-second failsafe. If the server hangs, force the local data to show.
-        window.lbTimeout = setTimeout(() => {
-            loadLocalData();
-        }, 3000);
+        window.lbTimeout = setTimeout(loadLocalData, 3000);
         socket.emit('getLeaderboard');
     } else {
-        // Instantly load local data if no server is connected
         loadLocalData();
     }
 }
@@ -2431,8 +2429,9 @@ function renderLB(players, isOffline = false) {
     if(!lb) return;
     const warning = isOffline ? `<div style="font-size:0.8rem; color:#f87171; margin-bottom:12px; background:rgba(248,113,113,0.1); padding:4px; border-radius:6px; border:1px solid rgba(248,113,113,0.3);">⚠️ Global Cloud Offline: Showing Local Browser Data Only. Host game on a server to enable worldwide sync.</div>` : '';
     lb.innerHTML = warning + (players.map((p, index) => 
+        // We still use p.user === S.user to highlight your row correctly, but we display p.displayName!
         `<div class="shoprow" ${p.user === S.user ? 'style="color:#ffd54a;font-weight:600; background:rgba(255,213,74,0.05); padding: 8px; border-radius: 8px; border:1px solid rgba(255,213,74,0.2);"' : ''}>
-            <span>#${index + 1}. ${p.user}</span>
+            <span>#${index + 1}. ${p.displayName || p.user}</span>
             <span style="color:#cbd5e1">${p.elo} Elo</span>
          </div>`
     ).join('') || '<div class="shoprow">No ranked players found.</div>');
