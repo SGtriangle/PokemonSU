@@ -1,254 +1,259 @@
+<div align="center">
+
 # 🎮 PokemonSU
 
-> **A modern browser-based Pokémon adventure RPG built with HTML, CSS and JavaScript.**
->
-> Explore every Pokémon generation, complete an original story, battle powerful Wardens, catch hundreds of Pokémon, and build your ultimate team—all directly in your browser.
+### A Modern Pokémon-Inspired Browser MMORPG
+
+Play instantly in your browser. Catch monsters, battle trainers, explore new regions, collect rare Rift Pokémon, complete story quests, and become the strongest trainer.
+
+![Status](https://img.shields.io/badge/Status-Development-orange)
+![Platform](https://img.shields.io/badge/Platform-Web-blue)
+![Genre](https://img.shields.io/badge/Genre-Monster%20MMORPG-green)
+![License](https://img.shields.io/badge/License-Non--Commercial-red)
+
+</div>
 
 ---
 
-## ✨ Features
+## 🌟 About
 
-### 🌍 Massive Adventure
+PokemonSU is a fan-made browser MMORPG inspired by classic monster-catching RPGs.
 
-* Original story campaign: **The Rift Chronicles**
-* Explore **9 different regions**
-* Unlock new Rift Gates as you progress
-* Fight powerful Wardens and Team Eclipse
+Instead of downloading large game clients, players can jump directly into the adventure from any modern browser.
 
-### ⚔️ Battle System
+Train your team, challenge powerful trainers, unlock mysterious Rift Pokémon, climb the rankings, earn achievements, and discover an expanding online world.
 
-* Turn-based Pokémon battles
-* Type effectiveness
-* Leveling & experience system
-* Evolution system
-* Multiple battle moves
-* Healing items
-* Wild encounters
-* Trainer battles
+---
 
-### 📦 Collection
+# ✨ Features
 
-* Catch Pokémon from **Generation I – IX**
-* Pokédex tracking
-* Pokémon storage box
-* Team management
-* Starter Pokémon selection
+## ⚔ Battle System
 
-### 🏆 Competitive
+- Turn-based battles
+- Wild encounters
+- Trainer battles
+- HP bars and battle animations
+- Type effectiveness
+- Catch Pokémon
+- Level progression
 
-* Elo Rating System
-* PvP Arena (Simulation)
-* Ranked progression
-* Bronze
-* Silver
-* Gold
-* Master ranks
+---
 
-### 💰 Economy
+## 🌍 Explore
 
-* Earn money from battles
-* Poké shop
-* Master Balls
-* Potions
-* Healing Center
+- Multiple areas
+- Story progression
+- NPC interactions
+- Unlock new zones
+- Future regions planned
 
-### 💻 Browser Based
+---
 
-* No installation required
-* Runs directly in your browser
-* Responsive design
-* Lightweight
-* Fast loading
+## 👥 Online Features
+
+- Player accounts
+- Cloud save
+- Global rankings
+- Future multiplayer support
+- Trading (Planned)
+- PvP Battles (Planned)
+
+---
+
+## 🌌 Rift Pokémon
+
+Discover powerful dimensional variants.
+
+Features include:
+
+- Unique appearance
+- Increased rarity
+- Special effects
+- Exclusive events
+
+---
+
+## ⭐ Rebirth System
+
+Rebirth your strongest Pokémon to gain:
+
+- Increased power
+- Exclusive aura
+- Special badge
+- Better progression
+
+---
+
+## 🎁 Daily Rewards
+
+- Login bonuses
+- Daily missions
+- Free items
+- Event rewards
+
+---
+
+## 🏆 Progression
+
+Earn:
+
+- Badges
+- Money
+- Experience
+- Rare Pokémon
+- Achievements
+
+---
+
+## 🎉 Seasonal Events
+
+Limited-time events include:
+
+- Exclusive Pokémon
+- Event Shop
+- Countdown timer
+- Rare encounters
+- Special rewards
+
+---
+
+## 🛒 Shop
+
+Purchase useful items including:
+
+- Poké Balls
+- Healing items
+- Battle items
+- Event items
 
 ---
 
 # 📸 Screenshots
 
-> *Coming Soon*
-
-* Login Screen
-* Story Mode
-* Battle System
-* Exploration
-* Pokémon Box
-* PvP Arena
-
----
-
-# 🎯 Story
-
-The sky has fractured.
-
-Mysterious **Rifts** have appeared across the Pokémon world, bringing Pokémon from every known region into a single reality.
-
-You are recruited by **Professor Alder** to become the newest Rift Warden.
-
-Travel across the world.
-
-Battle Team Eclipse.
-
-Defeat powerful Wardens.
-
-Seal the Great Rift.
-
-Become the world's first **Rift Master**.
-
----
-
-# 🌎 Regions
-
-✅ Main Rift Region and total 5+ regions and 50+ chapter 15+ gyms
-
----
-
-# 🎮 Gameplay
-
-* Create your Trainer
-* Choose your Starter Pokémon
-* Complete Story Chapters
-* Unlock New Areas
-* Catch Pokémon
-* Build Your Team
-* Defeat Wardens
-* Earn Badges
-* Increase Elo Rating
-* Complete the Pokédex
-
----
-
-# 🛠 Built With
-
-* HTML5
-* CSS3
-* Vanilla JavaScript
-* PokéAPI
-* LocalStorage Save System
+Coming Soon
 
 ---
 
 # 🚀 Planned Features
 
-* 🌐 Online Save System
-* 👥 Real Multiplayer
-* ⚔️ Live PvP Battles
-* 💬 Global Chat
-* 🤝 Pokémon Trading
-* 🎁 Daily Rewards
-* 🏅 Achievements
-* 🏠 Player Profiles
-* 🌍 MMO World
-* 👥 Guilds & Teams
-* 📊 Global Leaderboards
-* ☁️ Cloud Saves
-* 🎉 Seasonal Events
-* 🛒 Premium Cosmetic Shop
-* 🐉 Legendary Events
-* ⚡ Raid Battles
+- Online Multiplayer
+- PvP Arena
+- Trading System
+- Guilds
+- Global Chat
+- Raids
+- Legendary Events
+- Mega Evolution
+- Daily Quests
+- Battle Pass
+- Achievements
+- Mount System
+- Housing
+- Multiple Regions
+- Mobile App
+- Controller Support
 
 ---
 
-# 📂 Project Structure
+# 🛠 Built With
 
-```text
-PokemonSU/
-│
-├── index.html
-├── server.js
-├── package.json
-├── package-lock.json
-├── images
-├── database
-└── README.md
-```
+- HTML5
+- CSS3
+- JavaScript
+- Responsive UI
+- Modern Glassmorphism Design
+
+Future Backend
+
+- Node.js
+- Express.js
+- MongoDB
+- Socket.IO
 
 ---
 
-# ▶️ Running Locally
+# 💻 Installation
 
-Clone the repository:
+Clone the repository
 
 ```bash
-git clone https://github.com/SGtriangle/PokemonSU.git
+git clone https://github.com/yourusername/PokemonSU.git
 ```
 
-Go to the project folder:
+Open the project
 
 ```bash
 cd PokemonSU
 ```
 
-Open:
+Run a local server
 
-```text
-index.html
+```bash
+python -m http.server
 ```
 
-Or use **Live Server** in Visual Studio Code.
+or
+
+```bash
+npx serve
+```
+
+Open
+
+```
+http://localhost:8000
+```
 
 ---
 
-# ❤️ Credits
+# 🎮 Gameplay
 
-### Pokémon
-
-Pokémon © Nintendo / Game Freak / Creatures Inc.
-
-### Sprites
-
-PokéAPI Sprite Repository
-
-### Pokémon Data
-
-PokéAPI
-
-https://pokeapi.co/
+1. Create an account
+2. Choose your starter
+3. Begin your adventure
+4. Catch new Pokémon
+5. Defeat Gym Leaders
+6. Complete quests
+7. Unlock Rift Pokémon
+8. Rebirth your strongest team
+9. Reach the top of the leaderboard
 
 ---
 
-# ⚠️ Disclaimer
+# 🤝 Contributing
 
-PokemonSU is a **fan-made, non-commercial project** created for educational and entertainment purposes.
+Contributions, ideas, bug reports, and feature requests are always welcome.
 
-This project is **not affiliated with, endorsed by, sponsored by, or associated with Nintendo, Game Freak, Creatures Inc., The Pokémon Company, or any of their subsidiaries.**
-
-All Pokémon names, characters, sprites, trademarks, and related media belong to their respective owners.
-
-If any copyright holder requests the removal of copyrighted content, it will be removed promptly.
+Feel free to open an Issue or submit a Pull Request.
 
 ---
 
-# ⭐ Support the Project
+# ⚠ Disclaimer
 
-If you enjoy PokemonSU, consider supporting its development.
+PokemonSU is a non-commercial fan project created for educational and entertainment purposes.
 
-Every contribution helps improve the game with new features, better artwork, multiplayer functionality, and future updates.
+Pokémon and related names, characters, and trademarks belong to Nintendo, Game Freak, and Creatures Inc.
 
-If you like this project, don't forget to ⭐ **Star this repository!**
+This project is not affiliated with or endorsed by Nintendo.
 
 ---
 
-# 📈 Project Status
+# ❤️ Support
 
-🟢 Active Development
+If you enjoy the project,
 
-Current Version: **Beta**
+⭐ Star this repository
 
-Upcoming Milestone:
-
-* Online Backend
-* Multiplayer
-* Trading
-* Global Chat
-* Cloud Save
-* MMO Features
+and share it with your friends!
 
 ---
 
 <div align="center">
 
-## ⭐ Catch. Battle. Explore. Become the Rift Master. ⭐
+## Become the Ultimate Trainer.
 
-Made with ❤️ for Pokémon fans around the world.
+**PokemonSU**
+
+Adventure Awaits.
 
 </div>
-
