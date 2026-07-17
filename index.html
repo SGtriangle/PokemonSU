@@ -388,6 +388,10 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 .type-dark { border-bottom: 3px solid #334155; }
 .type-steel { border-bottom: 3px solid #64748b; }
 .type-fairy { border-bottom: 3px solid #f472b6; }
+/* === DARK MEWTWO VISUAL FILTER === */
+.dark-mewtwo-filter {
+    filter: grayscale(1) brightness(0.4) contrast(1.5) drop-shadow(0 0 15px #ea580c) !important;
+}
 
 /* Authentic Item Icons */
 .item-icn { 
@@ -1138,7 +1142,7 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
         </div>
 
         <div class="hud-badges">
-            <span class="lbl">Badges</span>
+            <span class="lbl">Badges & Seals</span>
             <span id="hudBadges"></span>
         </div>
     </div>
@@ -1219,6 +1223,60 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 <script src="moves.js"></script>
 
 <script>
+/* ============ GLOBAL SPRITE FALLBACK ENGINE ============ */
+window.addEventListener('error', function(e) {
+    let img = e.target;
+    if (img.tagName === 'IMG' && img.src) {
+        // Only intercept broken Pokemon sprites
+        if (img.src.includes('sprites/pokemon') || img.src.includes('pokemonshowdown/sprites')) {
+            // Kill any old inline error handlers so our advanced engine takes over completely
+            img.onerror = null; 
+            
+            if (!img.attempts) img.attempts = 0;
+            img.attempts++;
+            
+            if (img.attempts > 4) return; // Prevent infinite loops
+
+            // 1. Extract data from the broken URL
+            let isBack = img.src.includes('/back/') || img.src.includes('-back');
+            let isShiny = img.src.includes('/shiny');
+            let idMatch = img.src.match(/\/(\d+)\.png/); 
+            
+            let id = idMatch ? idMatch[1] : null;
+            if (!id) return; // If we can't find an ID, let it fail natively
+
+            // 2. Format name for Pokemon Showdown's authentic Gen 5 Database
+            let sdName = id; 
+            if (typeof POKE_CACHE !== 'undefined' && POKE_CACHE[id]) {
+                sdName = POKE_CACHE[id].name.toLowerCase()
+                    .replace('✨ ', '')
+                    .replace(' (alolan)', '-alola')
+                    .replace(' (galarian)', '-galar')
+                    .replace(' (mega)', '-mega')
+                    .replace(/ /g, '-');
+            }
+
+            // --- 3. THE FASTEST GEN 5 FALLBACK CHAIN ---
+            if (img.attempts === 1) {
+                // Attempt 2: Pokemon Showdown Custom Gen 5 (Cloudflare - Ultra Fast, 100% Gen 5 Style)
+                img.src = `https://play.pokemonshowdown.com/sprites/gen5${isBack ? '-back' : ''}${isShiny ? '/shiny' : ''}/${sdName}.png`;
+            } 
+            else if (img.attempts === 2) {
+                // Attempt 3: Raw GitHub PokeAPI (Bypasses jsDelivr cache completely)
+                img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${isBack ? 'back/' : ''}${isShiny ? 'shiny/' : ''}${id}.png`;
+            } 
+            else if (img.attempts === 3 && isBack) {
+                // Attempt 4: If a BACK sprite is universally missing, force it to use the FRONT sprite!
+                img.src = `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${isShiny ? 'shiny/' : ''}${id}.png`;
+            } 
+            else if (img.attempts === 4) {
+                // Final Failsafe: Bulbasaur placeholder to prevent broken UI
+                img.src = 'https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/1.png';
+            }
+        }
+    }
+}, true); // useCapture=true is required to catch image loading errors!
+
 /* ============ CUSTOM ALERTS ============ */
 function sysConfirm(msg, title='Confirm') {
     return new Promise(res => {
@@ -1330,6 +1388,7 @@ function showMonInfo(c, i) {
     const rb = m.rebirth ? '<img src="reb_icon.png" class="rebirth-icon">' : '';
     let rba = m.rebirth ? 'rebirth-aura' : '';
     if(m.isRift) rba += ' rift-sprite';
+    if(m.id === 'shadow-mewtwo') rba += ' dark-mewtwo-filter';
     
     let rbBtn = '';
     let hasStone = S.stones && S.stones.rebirth > 0;
@@ -1604,8 +1663,9 @@ function initRealtime() {
 initRealtime();
 
 /* ============ DATAPOOL ============ */
-const SPR=(i,s=false)=>`https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${s?'shiny/':''}${i}.png`;
-const SPRB=(i,s=false)=>`https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/back/${s?'shiny/':''}${i}.png`;
+// Intercept custom IDs: Shadow Lugia grabs Showdown art. Dark Mewtwo grabs ID 150 so we can filter it.
+const SPR=(i,s=false)=> i === 'shadow' ? 'https://play.pokemonshowdown.com/sprites/gen5/lugia-shadow.png' : i === 'shadow-mewtwo' ? `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${s?'shiny/':''}150.png` : `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${s?'shiny/':''}${i}.png`;
+const SPRB=(i,s=false)=> i === 'shadow' ? 'https://play.pokemonshowdown.com/sprites/gen5-back/lugia-shadow.png' : i === 'shadow-mewtwo' ? `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/back/${s?'shiny/':''}150.png` : `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/back/${s?'shiny/':''}${i}.png`;
 const TRN=n=>`https://play.pokemonshowdown.com/sprites/trainers/${n}.png`;
 const API='https://pokeapi.co/api/v2/pokemon/';
 const GENS=[[1,151],[152,251],[252,386],[387,493],[494,649],[650,721],[722,809],[810,905],[906,1025]];
@@ -1795,6 +1855,7 @@ function genMoves(m) {
     
     // Reverse lookup for alternate forms to find their base moves
     let baseId = m.id;
+    if (baseId === 'shadow-mewtwo') baseId = 150; // Clone original Mewtwo's moveset pool
     if (baseId === 10116) baseId = 658; // Ash-Greninja
     if (baseId === 10127) baseId = 746; // Wishiwashi School
     if (baseId === 10035) baseId = 6;   // Mega Charizard Y
@@ -1848,6 +1909,7 @@ const EVO={1:[16,2],2:[32,3],4:[16,5],5:[36,6],7:[16,8],8:[36,9],10:[7,11],11:[1
 const MEGA = { 3:10033, 6:10034, 9:10036, 15:10090, 18:10073, 65:10037, 94:10038, 115:10039, 127:10040, 130:10041, 142:10042, 150:10043, 181:10045, 208:10072, 212:10046, 214:10047, 229:10048, 248:10049, 254:10065, 257:10066, 260:10067, 282:10051, 302:10074, 303:10052, 306:10053, 308:10054, 310:10055, 319:10075, 323:10076, 334:10077, 354:10056, 359:10057, 362:10078, 373:10089, 376:10079, 380:10080, 381:10081, 384:10082, 428:10083, 445:10058, 448:10059, 460:10060, 475:10084, 719:10085 };
 /* AUTOMATED SERVERLESS ROTATION EVENT POOL (24 PREMIUM ENTRIES) */
 const EVENT_POOL = [
+    {id: 'dark_mewtwo', monId: 'shadow-mewtwo', name: "Ultimate Dark Mewtwo", desc: "A Mewtwo completely consumed by a dark synergy stone, radiating a terrifying orange aura.", c: "#ea580c"},
     {id: 'garchomp', monId: 445, name: "Ultimate Garchomp", desc: "A terrifying predator corrupted by dark matter. Base Stats: +150, Unique Attacks.", c: "#a855f7"},
     {id: 'metagross', monId: 376, name: "Ultimate Metagross", desc: "An artificial supercomputer overloaded with cosmic energy. Base Stats: +120.", c: "#38bdf8"},
     {id: 'lucario', monId: 448, name: "Ultimate Lucario", desc: "An aura master that reads thoughts and strikes with absolute precision.", c: "#eab308"},
@@ -1981,8 +2043,8 @@ NEW_REGIONS.forEach((r, i) => {
                 mons: () => {
                     let eLv = r.levels[0] + j*2;
                     return [
-                        [Math.floor(Math.random()*800)+1, eLv],
-                        [Math.floor(Math.random()*800)+1, eLv+1],
+                        [STRONG_BOT_MONS[Math.floor(Math.random()*STRONG_BOT_MONS.length)], eLv],
+                        [STRONG_BOT_MONS[Math.floor(Math.random()*STRONG_BOT_MONS.length)], eLv+1],
                         isBoss ? [RESTRICTED[Math.floor(Math.random()*RESTRICTED.length)], eLv+5] : null
                     ].filter(Boolean);
                 },
@@ -2023,13 +2085,13 @@ DARK_REGIONS.forEach((r, i) => {
                 who: isBoss ? [r.boss, 'cyrus'] : [`Cultist ${j}`, 'galacticgrunt'],
                 badge: isBoss ? r.badge : null,
                 mons: () => {
-                    let eLv = r.levels[0] + j*2;
-                    return [
-                        [Math.floor(Math.random()*800)+1, eLv],
-                        [Math.floor(Math.random()*800)+1, eLv+1],
-                        isBoss ? [RESTRICTED[Math.floor(Math.random()*RESTRICTED.length)], eLv+5] : null
-                    ].filter(Boolean);
-                },
+                            let eLv = r.levels[0] + j*2;
+                            return [
+                                [STRONG_BOT_MONS[Math.floor(Math.random()*STRONG_BOT_MONS.length)], eLv],
+                                [STRONG_BOT_MONS[Math.floor(Math.random()*STRONG_BOT_MONS.length)], eLv+1],
+                                isBoss ? [RESTRICTED[Math.floor(Math.random()*RESTRICTED.length)], eLv+5] : null
+                            ].filter(Boolean);
+                        },
                 reward: isBoss ? 30000 : 5000,
                 after: [
                     [isBoss ? [r.boss, 'cyrus'] : ['Abyssal Cultist', 'galacticgrunt'], isBoss ? `The darkness... shatters!` : `Gah! Impossible!`]
@@ -2146,11 +2208,26 @@ async function getPoke(id){
 function calc(m){m.maxhp=Math.floor(m.base.hp*2*m.lvl/100)+m.lvl+10;m.atk=Math.floor(m.base.atk*2*m.lvl/100)+5;m.def=Math.floor(m.base.def*2*m.lvl/100)+5}
 
 async function makeMon(id,lvl,shiny=false, isBot=false){
-  const p=await getPoke(id);
+  // --- UNIVERSAL FINAL-FORM SNAP ---
+  if (lvl >= 70 && id !== 'shadow-mewtwo' && !RESTRICTED.includes(id) && !ULTRA_BEASTS.includes(id) && !RIFT_FORMS.includes(id) && !STRONG_BOT_MONS.includes(id)) {
+      id = STRONG_BOT_MONS[Math.floor(Math.random() * STRONG_BOT_MONS.length)];
+  }
+
+  // Point database call to standard Mewtwo statistics when custom ID matches
+  let fetchId = id === 'shadow-mewtwo' ? 150 : id;
+  const p=await getPoke(fetchId);
+  
   let cleanName = p.name.replace('-alola', ' (Alolan)').replace('-galar', ' (Galarian)').replace('-mega', ' (Mega)');
   
-  // Adaptive Bot Rebirth Logic
-  let rb = (lvl > 100 && isBot); 
+  // Custom Override Attributes
+  if (id === 'shadow-mewtwo') {
+      cleanName = "Dark Mewtwo";
+      p.types = ['psychic', 'dark']; // Gives it STAB configuration for Dark typing
+  }
+  
+  // --- UNIVERSAL REBIRTH ---
+  // Any Pokemon generated at Lv above 100 automatically gets the Rebirth aura
+  let rb = (lvl > 100); 
   
   const m={id,name:shiny?'✨ '+cleanName:cleanName,types:p.types,base:p.base,lvl,xp:0,shiny,rebirth:rb};
   calc(m);m.hp=m.maxhp;m.moves=genMoves(m);
@@ -2203,7 +2280,8 @@ window.applyDynamicTheme = function() {
         let activeBoss = EVENT_POOL[cycleIndex % EVENT_POOL.length];
         
         // Fetch High-Res Official Artwork instead of small pixel sprites
-        let hdSprite = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${activeBoss.monId}.png`;
+        let bgId = activeBoss.monId === 'shadow-mewtwo' ? 150 : activeBoss.monId;
+        let hdSprite = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${bgId}.png`;
 
         // Layer 1: Dynamic Theme Color fading into the dark UI background
                 // Layer 2: A dark dimming lens to push the Pokemon further into the background
@@ -2285,7 +2363,17 @@ function refreshHud(){
  hudName.textContent = S.displayName;
  hudMoney.textContent = S.money.toLocaleString();
  
- hudBadges.innerHTML=S.badges.map(b=>`<span class="badge" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(14, 165, 233, 0.2)); border: 1px solid rgba(56, 189, 248, 0.3); color: #38bdf8; text-shadow: none;">🏅 ${b}</span>`).join('')||'<small style="color:#64748b">None</small>';
+ // List of the specific late-game boss rewards
+ const darkSeals = ['Abyss', 'Void', 'Null', 'Despair', 'Eclipse'];
+ 
+ hudBadges.innerHTML=S.badges.map(b=>{
+     if (darkSeals.includes(b)) {
+         // Render Abyssal Seals as glowing red!
+         return `<span class="badge" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(153, 27, 27, 0.3)); border: 1px solid rgba(239, 68, 68, 0.5); color: #fca5a5; text-shadow: 0 0 5px rgba(239,68,68,0.8);">🩸 ${b} Seal</span>`;
+     }
+     // Render Normal Gym Badges as blue/gold
+     return `<span class="badge" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(14, 165, 233, 0.2)); border: 1px solid rgba(56, 189, 248, 0.3); color: #38bdf8; text-shadow: none;">🏅 ${b}</span>`;
+ }).join('')||'<small style="color:#64748b">None</small>';
  
  // Dynamic Trainer Avatar Update (Zoomed Face)
  const trnIcon = (S.gender === 'F') ? 'leaf-gen3' : 'red';
@@ -2325,7 +2413,8 @@ function monCard(m,extra='', c='', i=''){
     const rb = m.rebirth ? '<img src="reb_icon.png" class="rebirth-icon">' : '';
     let rba = m.rebirth ? 'rebirth-aura' : '';
     if(m.isRift) rba += ' rift-sprite';
-    return`<div class="mon type-${m.types[0]}"><div style="cursor:pointer;" onclick="if('${c}')showMonInfo('${c}',${i})"><img src="${SPR(m.id,m.shiny)}" class="${rba}" onerror="this.src='${SPR(1)}'"><div class="nm">${rb}${m.name}</div><small>Lv ${m.lvl} · ${m.types.join('/')}</small><div class="hpbar"><i class="${hpCls(m)}" style="transform:scaleX(${Math.max(0,m.hp/m.maxhp)})"></i></div><small>${m.hp}/${m.maxhp} HP</small></div>${extra}</div>`
+    if(m.id === 'shadow-mewtwo') rba += ' dark-mewtwo-filter';
+    return`<div class="mon type-${m.types[0]}"><div style="cursor:pointer;" onclick="if('${c}')showMonInfo('${c}',${i})"><img src="${SPR(m.id,m.shiny)}" class="${rba}"><div class="nm">${rb}${m.name}</div><small>Lv ${m.lvl} · ${m.types.join('/')}</small><div class="hpbar"><i class="${hpCls(m)}" style="transform:scaleX(${Math.max(0,m.hp/m.maxhp)})"></i></div><small>${m.hp}/${m.maxhp} HP</small></div>${extra}</div>`
 }
 
 /* ============ DYNAMIC VIEWS ============ */
@@ -2575,9 +2664,9 @@ function renderEvents() {
 
             eh += `
             <div class="event-card" style="border-color: ${e.c}; padding: 16px;">
-                <div style="height:90px; display:flex; align-items:center; justify-content:center; margin-bottom:8px; cursor:pointer;" onclick="showEventMonInfo('${e.id}', ${e.monId})" title="Click to view Entity Intel">
-                    <img src="${SPR(e.monId)}" class="rift-sprite" style="width:85px; height:85px; animation: float 2.5s ease-in-out infinite;">
-                </div>
+                <div style="height:90px; display:flex; align-items:center; justify-content:center; margin-bottom:8px; cursor:pointer;" onclick="showEventMonInfo('${e.id}', '${e.monId}')" title="Click to view Entity Intel">
+                    <img src="${SPR(e.monId)}" class="rift-sprite ${e.monId === 'shadow-mewtwo' ? 'dark-mewtwo-filter' : ''}" style="width:85px; height:85px; animation: float 2.5s ease-in-out infinite;">
+            </div>
                 <h4 style="color:${e.c}; font-size:1.25rem; font-weight:800; margin-bottom:4px; text-shadow: 0 0 8px ${e.c};">${e.name}</h4>
                 <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:12px; line-height: 1.3;">${e.desc}</p>
                 
@@ -2589,7 +2678,7 @@ function renderEvents() {
                     <div class="hpbar" style="height:6px; margin:0;"><i style="background: ${isDone ? '#4ade80' : e.c}; transform: scaleX(${pct/100});"></i></div>
                 </div>
                 
-                <button class="btn" style="padding: 8px 12px; font-size: 0.95rem; margin-top: 0; background: ${isDone ? '#475569' : `linear-gradient(135deg, ${e.c}, #1e1b4b)`}; box-shadow: ${isDone ? 'none' : `0 4px 15px rgba(0,0,0,0.5)`};" ${isDone ? 'disabled' : ''} onclick="startEventGauntlet('${e.id}', ${e.monId})">${isDone ? '✅ Entity Secured' : '⚔️ Enter Gauntlet'}</button>
+                <button class="btn" style="padding: 8px 12px; font-size: 0.95rem; margin-top: 0; background: ${isDone ? '#475569' : `linear-gradient(135deg, ${e.c}, #1e1b4b)`}; box-shadow: ${isDone ? 'none' : `0 4px 15px rgba(0,0,0,0.5)`};" ${isDone ? 'disabled' : ''} onclick="startEventGauntlet('${e.id}', '${e.monId}')">${isDone ? '✅ Entity Secured' : '⚔️ Enter Gauntlet'}</button>
             </div>`;
         });
         eh += `</div>`;
@@ -2664,7 +2753,7 @@ window.showEventMonInfo = async function(eventId, monId) {
     document.getElementById('infoContent').innerHTML = `
         <div style="text-align:center; margin-bottom: 16px; position:relative;">
             <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:120px; height:120px; background:radial-gradient(circle, ${ev.c}40, transparent 70%); border-radius:50%;"></div>
-            <img src="${SPR(m.id)}" class="rift-sprite" style="width: 120px; height: 120px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); position:relative; z-index:2; animation: float 2.5s ease-in-out infinite;">
+            <img src="${SPR(m.id)}" class="rift-sprite ${m.id === 'shadow-mewtwo' ? 'dark-mewtwo-filter' : ''}" style="width: 120px; height: 120px; position:relative; z-index:2; animation: float 2.5s ease-in-out infinite;">
             <h3 style="color:${ev.c}; font-size:1.5rem; margin-top:8px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-family: 'Segoe UI', system-ui, sans-serif !important;">${ev.name}</h3>
             <div style="margin-top:4px;">${typeBadges}</div>
             <div style="margin-top:8px; font-size:0.85rem; color:#ffd54a; font-weight:bold; letter-spacing: 0.5px;">⭐ REWARD PREVIEW (1.2x STATS) ⭐</div>
@@ -3022,7 +3111,13 @@ async function runEvent(c){const ev=c.ev;
        }
        
        persist(); renderAll(); nav(0); 
-       log2(`Chapter complete! +₽${ev.reward}${ev.badge?' · Earned the '+ev.badge+' Badge!':''}`);
+       
+       // Change victory text so Dark Chapters don't mention "Badges"
+       let extraTxt = '';
+       if(ev.badge) {
+           extraTxt = c.isDark ? ` · Secured the ${ev.badge} Seal! 🩸` : ` · Earned the ${ev.badge} Badge! 🏅`;
+       }
+       log2(`Chapter complete! +₽${ev.reward}${extraTxt}`);
    };
    
    ev.after?showDlg(ev.after,fin):fin()},
@@ -3104,6 +3199,7 @@ window.renderMoveLab = function() {
         eligible.forEach(x => {
             let rba = x.m.rebirth ? 'rebirth-aura' : '';
             if(x.m.isRift) rba += ' rift-sprite';
+            if(x.m.id === 'shadow-mewtwo') rba += ' dark-mewtwo-filter';
             html += `
             <div class="mon type-${x.m.types[0]}" style="display:flex; flex-direction:column; align-items:center; text-align:center; background: rgba(0,0,0,0.3); border: 1px solid rgba(250,204,21,0.2);">
                 <img src="${SPR(x.m.id, x.m.shiny)}" class="${rba}" style="width:80px; height:80px; filter:drop-shadow(0 4px 6px rgba(0,0,0,0.4)); margin-bottom:8px;">
@@ -3128,6 +3224,7 @@ window.openMoveTerminal = function(teamIndex) {
     
     let rba = mon.rebirth ? 'rebirth-aura' : '';
     if(mon.isRift) rba += ' rift-sprite';
+    if(mon.id === 'shadow-mewtwo') rba += ' dark-mewtwo-filter';
     
     let html = `
     <div class="panel" style="border-color: #facc15; box-shadow: 0 0 20px rgba(250, 204, 21, 0.1);">
@@ -3349,16 +3446,18 @@ function drawB(){const p=S.team[B.pi],e=B.enemy;
  
  let eRba = e.rebirth ? 'rebirth-aura' : '';
  if(e.isRift) eRba += ' rift-sprite';
+ if(e.id === 'shadow-mewtwo') eRba += ' dark-mewtwo-filter';
  eImg.className = eRba;
  
  eName.innerHTML=(e.rebirth?'<img src="reb_icon.png" class="rebirth-icon">':'')+e.name;
  eLvl.textContent='Lv '+e.lvl;eTypes.textContent=e.types.join(' / ');
  const eb=document.getElementById('eHp');eb.style.transform='scaleX('+Math.max(0,e.hp/e.maxhp)+')';eb.className=hpCls(e);
  
- pImg.src=SPRB(p.id,p.shiny);pImg.onerror=()=>{pImg.onerror=null;pImg.src=SPR(p.id,p.shiny)};
+ pImg.src=SPRB(p.id,p.shiny); // The Global Engine will automatically handle fallback to Front Sprites!
  
  let pRba = p.rebirth ? 'rebirth-aura' : '';
  if(p.isRift) pRba += ' rift-sprite';
+ if(p.id === 'shadow-mewtwo') pRba += ' dark-mewtwo-filter';
  pImg.className = pRba;
  
  pName.innerHTML=(p.rebirth?'<img src="reb_icon.png" class="rebirth-icon">':'')+p.name;
