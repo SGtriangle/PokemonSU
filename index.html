@@ -393,6 +393,11 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
     filter: grayscale(1) brightness(0.4) contrast(1.5) drop-shadow(0 0 15px #ea580c) !important;
 }
 
+/* === SHADOW LUGIA VISUAL FILTER === */
+.shadow-lugia-filter {
+    filter: invert(1) hue-rotate(180deg) brightness(0.8) contrast(1.2) drop-shadow(0 0 15px #a855f7) !important;
+}
+
 /* Authentic Item Icons */
 .item-icn { 
     width: 24px; 
@@ -1389,6 +1394,7 @@ function showMonInfo(c, i) {
     let rba = m.rebirth ? 'rebirth-aura' : '';
     if(m.isRift) rba += ' rift-sprite';
     if(m.id === 'shadow-mewtwo') rba += ' dark-mewtwo-filter';
+    if(m.id === 'shadow') rba += ' shadow-lugia-filter';
     
     let rbBtn = '';
     let hasStone = S.stones && S.stones.rebirth > 0;
@@ -1663,9 +1669,9 @@ function initRealtime() {
 initRealtime();
 
 /* ============ DATAPOOL ============ */
-// Intercept custom IDs: Shadow Lugia grabs Showdown art. Dark Mewtwo grabs ID 150 so we can filter it.
-const SPR=(i,s=false)=> i === 'shadow' ? 'https://play.pokemonshowdown.com/sprites/gen5/lugia-shadow.png' : i === 'shadow-mewtwo' ? `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${s?'shiny/':''}150.png` : `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${s?'shiny/':''}${i}.png`;
-const SPRB=(i,s=false)=> i === 'shadow' ? 'https://play.pokemonshowdown.com/sprites/gen5-back/lugia-shadow.png' : i === 'shadow-mewtwo' ? `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/back/${s?'shiny/':''}150.png` : `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/back/${s?'shiny/':''}${i}.png`;
+// Intercept custom IDs: Shadow Lugia grabs 249 and Dark Mewtwo grabs 150 so we can filter them!
+const SPR=(i,s=false)=> i === 'shadow' ? `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${s?'shiny/':''}249.png` : i === 'shadow-mewtwo' ? `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${s?'shiny/':''}150.png` : `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${s?'shiny/':''}${i}.png`;
+const SPRB=(i,s=false)=> i === 'shadow' ? `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/back/${s?'shiny/':''}249.png` : i === 'shadow-mewtwo' ? `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/back/${s?'shiny/':''}150.png` : `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/back/${s?'shiny/':''}${i}.png`;
 const TRN=n=>`https://play.pokemonshowdown.com/sprites/trainers/${n}.png`;
 const API='https://pokeapi.co/api/v2/pokemon/';
 const GENS=[[1,151],[152,251],[252,386],[387,493],[494,649],[650,721],[722,809],[810,905],[906,1025]];
@@ -1855,7 +1861,8 @@ function genMoves(m) {
     
     // Reverse lookup for alternate forms to find their base moves
     let baseId = m.id;
-    if (baseId === 'shadow-mewtwo') baseId = 150; // Clone original Mewtwo's moveset pool
+    if (baseId === 'shadow-mewtwo') baseId = 150; 
+    if (baseId === 'shadow') baseId = 249; // Map Shadow Lugia to standard Lugia's moves
     if (baseId === 10116) baseId = 658; // Ash-Greninja
     if (baseId === 10127) baseId = 746; // Wishiwashi School
     if (baseId === 10035) baseId = 6;   // Mega Charizard Y
@@ -1955,7 +1962,7 @@ const EVENT_POOL = [
     {id: 'sneasler', monId: 903, name: "Ultimate Sneasler", desc: "A lethal predator from ancient times, delivering highly toxic strikes with unmatched speed.", c: "#c026d3"}
 ];
 
-const STRONG_BOT_MONS = [3,6,9,15,18,22,24,26,28,31,34,36,38,40,45,47,49,51,53,55,57,59,62,65,68,71,73,76,78,80,82,85,87,89,91,94,97,99,101,103,105,107,110,112,115,117,119,121,122,123,124,125,126,127,128,130,131,134,135,136,139,141,142,143,149,154,157,160,162,164,166,168,169,171,173,176,178,181,185,189,192,193,195,196,197,199,201,202,203,205,208,210,211,212,214,217,219,222,224,226,227,229,230,232,233,235,237,241,242,248,254,257,260,282,286,373,376,445,448,468,475,477];
+const STRONG_BOT_MONS = [3, 6, 9, 59, 65, 68, 94, 130, 131, 142, 143, 149, 157, 160, 169, 212, 214, 229, 230, 248, 254, 257, 260, 282, 289, 306, 350, 373, 376, 389, 392, 395, 398, 445, 448, 462, 464, 466, 468, 473, 475, 530, 534, 555, 571, 609, 612, 620, 635, 637, 658, 663, 681, 697, 706, 715, 724, 727, 730, 768, 776, 778, 784, 812, 815, 818, 823, 849, 851, 861, 887, 908, 911, 914, 934, 959, 979, 983, 998, 1000];
 const RESTRICTED=[144,145,146,147,148,149,150,151,243,244,245,246,247,248,249,250,251,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,443,444,445,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,638,639,640,641,642,643,644,645,646,647,648,649,715,716,717,718,719,720,721,785,786,787,788,789,790,791,792,800,801,802,807,808,809,888,889,890,891,892,893,894,895,896,897,898,1001,1002,1003,1004,1007,1008,1014,1015,1016,1017,1024,1025];
 const RIFT_FORMS = [10103, 10105, 10111, 10161, 10166, 10117, 10127, 10155, 10156, 10157, 984,985,986,987,988,989,990,991,992,993,994,995,1005,1006,1009,1010,1020,1021,1022,1023]; 
 const ULTRA_BEASTS = [793, 794, 795, 796, 797, 798, 799, 803, 804, 805, 806];
@@ -2058,15 +2065,21 @@ NEW_REGIONS.forEach((r, i) => {
     ZONES.push({n: `${r.name} Apex`, g: 9, lv: r.levels, ch: r.offset+10});
 });
 
+// --- CUSTOM SANDBOX OVERRIDES FOR THE LAST TWO APEX ZONES ---
+// Override Blueberry Depths Apex (Index 12) to require Chapter 50 and set Lv 80-100
+ZONES[12] = { n: 'Blueberry Depths Apex', g: '1-9', lv: [80, 100], ch: 50, isCustomSandbox: true, type: 'blueberry' };
+// Override Ultra Space Apex (Index 13) to require Chapter 100, set Lv 5-60, and flag for weekend lock
+ZONES[13] = { n: 'Ultra Space Apex', g: '1-9', lv: [5, 60], ch: 100, isCustomSandbox: true, type: 'ultraspace' };
+
 // ==========================================================
 // DYNAMICALLY GENERATE 50 EXTREMELY HARD "DARK" CHAPTERS
 // ==========================================================
 const DARK_REGIONS = [
-    {name: "Abyssal Kanto", offset: 50, boss: "Dark Red", badge: "Abyss", levels: [120, 130]},
-    {name: "Abyssal Johto", offset: 60, boss: "Dark Ethan", badge: "Void", levels: [130, 140]},
-    {name: "Abyssal Hoenn", offset: 70, boss: "Dark Brendan", badge: "Null", levels: [140, 150]},
-    {name: "Abyssal Sinnoh", offset: 80, boss: "Dark Lucas", badge: "Despair", levels: [150, 160]},
-    {name: "Distortion Core", offset: 90, boss: "Noctis Prime", badge: "Eclipse", levels: [160, 180]}
+    {name: "Abyssal Kanto", offset: 50, boss: "Dark Red", levels: [120, 130]},
+    {name: "Abyssal Johto", offset: 60, boss: "Dark Ethan", levels: [130, 140]},
+    {name: "Abyssal Hoenn", offset: 70, boss: "Dark Brendan", levels: [140, 150]},
+    {name: "Abyssal Sinnoh", offset: 80, boss: "Dark Lucas", levels: [150, 160]},
+    {name: "Distortion Core", offset: 90, boss: "Noctis Prime", levels: [160, 180]}
 ];
 DARK_REGIONS.forEach((r, i) => {
     for(let j=1; j<=10; j++) {
@@ -2083,16 +2096,30 @@ DARK_REGIONS.forEach((r, i) => {
             ev: {
                 type: 'battle',
                 who: isBoss ? [r.boss, 'cyrus'] : [`Cultist ${j}`, 'galacticgrunt'],
-                badge: isBoss ? r.badge : null,
+                badge: null, // STRICT RULE: No badges or seals provided in Dark Chapters
                 mons: () => {
-                            let eLv = r.levels[0] + j*2;
-                            return [
-                                [STRONG_BOT_MONS[Math.floor(Math.random()*STRONG_BOT_MONS.length)], eLv],
-                                [STRONG_BOT_MONS[Math.floor(Math.random()*STRONG_BOT_MONS.length)], eLv+1],
-                                isBoss ? [RESTRICTED[Math.floor(Math.random()*RESTRICTED.length)], eLv+5] : null
-                            ].filter(Boolean);
-                        },
-                reward: isBoss ? 30000 : 5000,
+                    let eLv = r.levels[0] + j*2;
+                    if (isBoss) {
+                        // 6-MONSTER FULL COMPETITIVE/LEGENDARY TEAM FOR BOSSES
+                        return [
+                            [STRONG_BOT_MONS[Math.floor(Math.random()*STRONG_BOT_MONS.length)], eLv],
+                            [STRONG_BOT_MONS[Math.floor(Math.random()*STRONG_BOT_MONS.length)], eLv+1],
+                            [STRONG_BOT_MONS[Math.floor(Math.random()*STRONG_BOT_MONS.length)], eLv+2],
+                            [RESTRICTED[Math.floor(Math.random()*RESTRICTED.length)], eLv+3],
+                            [RESTRICTED[Math.floor(Math.random()*RESTRICTED.length)], eLv+4],
+                            [RESTRICTED[Math.floor(Math.random()*RESTRICTED.length)], eLv+5]
+                        ];
+                    } else {
+                        // 4-MONSTER META TEAM FOR CULTISTS
+                        return [
+                            [STRONG_BOT_MONS[Math.floor(Math.random()*STRONG_BOT_MONS.length)], eLv],
+                            [STRONG_BOT_MONS[Math.floor(Math.random()*STRONG_BOT_MONS.length)], eLv+1],
+                            [STRONG_BOT_MONS[Math.floor(Math.random()*STRONG_BOT_MONS.length)], eLv+2],
+                            [STRONG_BOT_MONS[Math.floor(Math.random()*STRONG_BOT_MONS.length)], eLv+3]
+                        ];
+                    }
+                },
+                reward: isBoss ? 50000 : 10000, // Massive pure money payouts
                 after: [
                     [isBoss ? [r.boss, 'cyrus'] : ['Abyssal Cultist', 'galacticgrunt'], isBoss ? `The darkness... shatters!` : `Gah! Impossible!`]
                 ]
@@ -2209,27 +2236,36 @@ function calc(m){m.maxhp=Math.floor(m.base.hp*2*m.lvl/100)+m.lvl+10;m.atk=Math.f
 
 async function makeMon(id,lvl,shiny=false, isBot=false){
   // --- UNIVERSAL FINAL-FORM SNAP ---
-  if (lvl >= 70 && id !== 'shadow-mewtwo' && !RESTRICTED.includes(id) && !ULTRA_BEASTS.includes(id) && !RIFT_FORMS.includes(id) && !STRONG_BOT_MONS.includes(id)) {
+  const isMega = Object.values(MEGA).includes(id); // Detect if the ID belongs to a Mega
+  if (lvl >= 70 && id !== 'shadow-mewtwo' && id !== 'shadow' && !isMega && !RESTRICTED.includes(id) && !ULTRA_BEASTS.includes(id) && !RIFT_FORMS.includes(id) && !STRONG_BOT_MONS.includes(id)) {
       id = STRONG_BOT_MONS[Math.floor(Math.random() * STRONG_BOT_MONS.length)];
   }
 
-  // Point database call to standard Mewtwo statistics when custom ID matches
-  let fetchId = id === 'shadow-mewtwo' ? 150 : id;
-  const p=await getPoke(fetchId);
+  // Point database call to standard statistics when custom ID matches
+  let fetchId = id === 'shadow-mewtwo' ? 150 : id === 'shadow' ? 249 : id;
+  const p = await getPoke(fetchId);
   
   let cleanName = p.name.replace('-alola', ' (Alolan)').replace('-galar', ' (Galarian)').replace('-mega', ' (Mega)');
+  let customTypes = p.types;
   
-  // Custom Override Attributes
+  // CRITICAL FIX: Clone the base stats so we don't accidentally mutate the normal Mewtwo/Lugia in the shared cache!
+  let customBase = { hp: p.base.hp, atk: p.base.atk, def: p.base.def };
+
+  // Custom Override Attributes & Massive Stat Boosts
   if (id === 'shadow-mewtwo') {
       cleanName = "Dark Mewtwo";
-      p.types = ['psychic', 'dark']; // Gives it STAB configuration for Dark typing
+      customTypes = ['psychic', 'dark']; 
+      customBase.atk = Math.floor(customBase.atk * 1.5); // 1.5x Attack Boost!
+  } else if (id === 'shadow') {
+      cleanName = "Shadow Lugia";
+      customBase.hp = Math.floor(customBase.hp * 1.5); // 1.5x HP Boost!
   }
   
   // --- UNIVERSAL REBIRTH ---
   // Any Pokemon generated at Lv above 100 automatically gets the Rebirth aura
   let rb = (lvl > 100); 
   
-  const m={id,name:shiny?'✨ '+cleanName:cleanName,types:p.types,base:p.base,lvl,xp:0,shiny,rebirth:rb};
+  const m={id,name:shiny?'✨ '+cleanName:cleanName,types:customTypes,base:customBase,lvl,xp:0,shiny,rebirth:rb};
   calc(m);m.hp=m.maxhp;m.moves=genMoves(m);
   new Image().src = SPR(id, shiny);
   new Image().src = SPRB(id, shiny);
@@ -2414,6 +2450,7 @@ function monCard(m,extra='', c='', i=''){
     let rba = m.rebirth ? 'rebirth-aura' : '';
     if(m.isRift) rba += ' rift-sprite';
     if(m.id === 'shadow-mewtwo') rba += ' dark-mewtwo-filter';
+    if(m.id === 'shadow') rba += ' shadow-lugia-filter';
     return`<div class="mon type-${m.types[0]}"><div style="cursor:pointer;" onclick="if('${c}')showMonInfo('${c}',${i})"><img src="${SPR(m.id,m.shiny)}" class="${rba}"><div class="nm">${rb}${m.name}</div><small>Lv ${m.lvl} · ${m.types.join('/')}</small><div class="hpbar"><i class="${hpCls(m)}" style="transform:scaleX(${Math.max(0,m.hp/m.maxhp)})"></i></div><small>${m.hp}/${m.maxhp} HP</small></div>${extra}</div>`
 }
 
@@ -2426,7 +2463,7 @@ function renderAll(){
  
  /* story: NO SCROLL DASHBOARD */
  let isDarkArc = S.ch >= 50;
- let arcName = isDarkArc ? "🩸 The Abyssal Chronicles" : "📖 The Rift Chronicles";
+ let arcName = isDarkArc ? "📖 The Abyssal Chronicles" : "📖 The Rift Chronicles";
  let arcDesc = isDarkArc ? "Survive the brutally hard Dark Rifts to awaken Shadow Lugia." : "Progress through the main campaign to unlock new regions and rare encounters.";
  let titleColor = isDarkArc ? "#ef4444" : "#ffd54a";
 
@@ -2513,14 +2550,36 @@ function renderAll(){
 
     currentZones.forEach((z, idx) => {
         let absoluteIndex = (window.expPage * zonesPerPage) + idx;
-        const un = S.ch >= z.ch;
         
-        // Grab the generation-specific theme
-        let gIdx = Math.min(z.g - 1, 9);
-        let tCol = genThemes[gIdx][0];
-        let tTrainer = genThemes[gIdx][1];
+        // Time Gate check: Determine if it's currently Saturday (6) or Sunday (0)
+        let isWeekend = true;
+        let weekendMessage = "";
+        if (z.type === 'ultraspace') {
+            let day = new Date().getDay();
+            isWeekend = (day === 0 || day === 6);
+            if (!isWeekend) weekendMessage = " 🔒 (Only opens Sat/Sun)";
+        }
 
-        // Apply dynamic thematic gradients, borders, and glows based on the Generation
+        const un = (S.ch >= z.ch) && (z.type !== 'ultraspace' || isWeekend);
+        
+        // Safe generation appearance routing
+        let tCol = '#f43f5e';
+        let tTrainer = 'cynthia';
+        if (typeof z.g === 'number') {
+            const genThemes = [
+                ['#ef4444', 'red'], ['#facc15', 'ethan'], ['#10b981', 'brendan'],
+                ['#a855f7', 'lucas'], ['#cbd5e1', 'hilbert'], ['#3b82f6', 'calem'],
+                ['#f97316', 'kukui'], ['#ec4899', 'leon'], ['#14b8a6', 'geeta'], ['#f43f5e', 'cynthia']
+            ];
+            let gIdx = Math.min(z.g - 1, 9);
+            tCol = genThemes[gIdx][0];
+            tTrainer = genThemes[gIdx][1];
+        } else if (z.type === 'blueberry') {
+            tCol = '#38bdf8'; tTrainer = 'kieran'; 
+        } else if (z.type === 'ultraspace') {
+            tCol = '#a855f7'; tTrainer = 'mars'; 
+        }
+
         const bg = un ? `linear-gradient(135deg, rgba(15,23,42,0.98) 40%, ${tCol}25)` : 'rgba(15,23,42,0.8)';
         const border = un ? `1px solid ${tCol}50` : '1px solid rgba(255,255,255,0.05)';
         const glow = un ? `box-shadow: 0 8px 20px rgba(0,0,0,0.4), inset 0 0 15px ${tCol}15;` : '';
@@ -2538,7 +2597,7 @@ function renderAll(){
                     <span style="background:rgba(0,0,0,0.5); border: 1px solid ${tCol}50; color: ${un?tCol:'#cbd5e1'}; padding:2px 6px; border-radius:4px; font-weight: 600;">Gen ${z.g}</span>
                     <span style="background:rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; margin-left:4px;">Lv ${z.lv[0]}-${z.lv[1]}</span>
                 </div>
-                ${un ? '' : `<div style="font-size:0.75rem; color:#f87171; margin-bottom:12px; font-weight: 600;">🔒 Beat Ch. ${z.ch}</div>`}
+                ${(S.ch >= z.ch) ? (weekendMessage ? `<div style="font-size:0.75rem; color:#f87171; margin-bottom:12px; font-weight: 600;">${weekendMessage}</div>` : '') : `<div style="font-size:0.75rem; color:#f87171; margin-bottom:12px; font-weight: 600;">🔒 Beat Ch. ${z.ch}</div>`}
             </div>
             
             <!-- THEMED BUTTON -->
@@ -2659,8 +2718,25 @@ function renderEvents() {
         const currentRollingEvents = [EVENT_POOL[idx1], EVENT_POOL[idx2]];
         currentRollingEvents.forEach(e => {
             let prog = S.events[e.id] || 0;
-            let pct = Math.min(100, Math.floor((prog / 100) * 100));
-            let isDone = prog >= 100;
+            
+            // Handle Dark Mewtwo's unique 101-stage boss progression
+            let maxProg = e.id === 'dark_mewtwo' ? 101 : 100;
+            let isDone = prog >= maxProg;
+            let pct = Math.min(100, Math.floor((Math.min(prog, 100) / 100) * 100)); 
+            
+            let btnText = isDone ? '✅ Boss Secured' : '⚔️ Enter Gauntlet';
+            let btnBg = isDone ? '#475569' : `linear-gradient(135deg, ${e.c}, #1e1b4b)`;
+            let btnShadow = isDone ? 'none' : `0 4px 15px rgba(0,0,0,0.5)`;
+            let isDisabled = isDone ? 'disabled' : '';
+            let progressText = `${prog > 100 ? 100 : prog} / 100`;
+
+            // --- TRUE BOSS INTERCEPT UI ---
+            if (e.id === 'dark_mewtwo' && prog === 100) {
+                btnText = '⚠️ FACE LV 200 BOSS';
+                btnBg = 'linear-gradient(135deg, #ea580c, #450a0a)';
+                btnShadow = '0 0 20px #ea580c';
+                progressText = '<b style="color:#ea580c">BOSS UNLOCKED</b>';
+            }
 
             eh += `
             <div class="event-card" style="border-color: ${e.c}; padding: 16px;">
@@ -2673,12 +2749,12 @@ function renderEvents() {
                 <div style="background: rgba(0,0,0,0.4); padding: 8px; border-radius: 8px; margin-bottom: 12px;">
                     <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
                         <span style="color:#cbd5e1;">Gauntlet Progress</span>
-                        <span style="color:${isDone ? '#4ade80' : '#ffd54a'}; font-weight:bold;">${prog} / 100</span>
+                        <span style="color:${isDone ? '#4ade80' : '#ffd54a'};">${progressText}</span>
                     </div>
                     <div class="hpbar" style="height:6px; margin:0;"><i style="background: ${isDone ? '#4ade80' : e.c}; transform: scaleX(${pct/100});"></i></div>
                 </div>
                 
-                <button class="btn" style="padding: 8px 12px; font-size: 0.95rem; margin-top: 0; background: ${isDone ? '#475569' : `linear-gradient(135deg, ${e.c}, #1e1b4b)`}; box-shadow: ${isDone ? 'none' : `0 4px 15px rgba(0,0,0,0.5)`};" ${isDone ? 'disabled' : ''} onclick="startEventGauntlet('${e.id}', '${e.monId}')">${isDone ? '✅ Entity Secured' : '⚔️ Enter Gauntlet'}</button>
+                <button class="btn" style="padding: 8px 12px; font-size: 0.95rem; margin-top: 0; background: ${btnBg}; box-shadow: ${btnShadow};" ${isDisabled} onclick="startEventGauntlet('${e.id}', '${e.monId}')">${btnText}</button>
             </div>`;
         });
         eh += `</div>`;
@@ -2790,6 +2866,57 @@ window.showEventMonInfo = async function(eventId, monId) {
 };
 window.startEventGauntlet = async function(eventId, monId) {
     if(!S.team.some(m=>m.hp>0)) return sysAlert('Your team is fainted! Heal at the Center first.', 'Gauntlet Error');
+    
+    let prog = (S.events && S.events[eventId]) ? S.events[eventId] : 0;
+
+    // ==========================================
+    // ⚠️ THE LEVEL 200 TRUE BOSS INTERCEPT ⚠️
+    // ==========================================
+    if (eventId === 'dark_mewtwo' && prog === 100) {
+        log2('WARNING: Massive Dimensional Anomaly Detected!');
+        document.getElementById('battle').classList.remove('hidden');
+        bLog.innerHTML = `⚠️ <b style="color:#ea580c">Dark Mewtwo</b> has absorbed the Gauntlet's energy! Level 200 True Boss approaching...`;
+        
+        setTimeout(async () => {
+            let trueBoss = await makeMon('shadow-mewtwo', 200, false, true);
+            trueBoss.item = 'focus_sash'; // Prevent the player from 1-shotting it
+            
+            startBattle({
+                wild: false, 
+                trainer: ["True Anomaly"], 
+                queue: [trueBoss], 
+                isPvP: false, 
+                botRank: 'Master', 
+                botPots: 3, // The boss can heal itself 3 times!
+                isDark: true, // Throws the player into the terrifying Dark Arena background
+                onWin: async () => {
+                    S.events[eventId] = 101; // Marks the event as fully completed
+                    
+                    let reward = await makeMon('shadow-mewtwo', 100, false, false);
+                    reward.isRift = true;
+                    reward.base = {
+                        hp: Math.floor(reward.base.hp * 1.2),
+                        atk: Math.floor(reward.base.atk * 1.2),
+                        def: Math.floor(reward.base.def * 1.2)
+                    };
+                    calc(reward); reward.hp = reward.maxhp;
+                    S.box.push(reward);
+                    
+                    sysAlert(`You defeated the Level 200 True Boss! The anomalous entity <b style="color:#ea580c">Dark Mewtwo</b> has submitted and was transferred to your Box.`, "🎉 Absolute Victory! 🎉");
+                    persist(); renderAll();
+                },
+                onLose: () => {
+                    healTeam();
+                    sysAlert("Dark Mewtwo's power was overwhelming. Your team was wiped out. Heal up and click the Boss button to try again!", "Annihilated");
+                }
+            });
+        }, 1500);
+        return; // Stops the standard gauntlet from loading
+    }
+
+    // ==========================================
+    // STANDARD LEVEL 100 GAUNTLET FLOW
+    // ==========================================
     log2('Entering the Event Gauntlet...');
     document.getElementById('battle').classList.remove('hidden');
     bLog.innerHTML = `Event Gauntlet: Level 100 Elite Warden approaching...`;
@@ -2816,35 +2943,29 @@ window.startEventGauntlet = async function(eventId, monId) {
                 if(!S.events[eventId]) S.events[eventId] = 0;
                 S.events[eventId]++;
                 
-                // Updated victory threshold to 100
-                if(S.events[eventId] >= 100) {
-                    if (monId === 493) {
-                        // Prevents Arceus from being caught even if uncommented later
-                        sysAlert("You conquered the Ultimate Gauntlet! Ultimate Arceus acknowledges your absolute authority, but dissolves back into the cosmic fabric of the space-time rift. A divine entity cannot be contained or summoned.", "✨ Divine Disappearance ✨");
-                    } else {
-                        // 1. Generate the reward at Level 100 instead of 50
-                        let reward = await makeMon(monId, 100, false, false);
-                        reward.isRift = true;
-                        
-                        // 2. Safely apply a permanent 1.2x multiplier to its base stats
-                        reward.base = {
-                            hp: Math.floor(reward.base.hp * 1.2),
-                            atk: Math.floor(reward.base.atk * 1.2),
-                            def: Math.floor(reward.base.def * 1.2)
-                        };
-                        
-                        // 3. Recalculate its actual combat stats using the new boosted base stats
-                        calc(reward);
-                        reward.hp = reward.maxhp; // Ensure it starts with full health
-
-                        S.box.push(reward);
-                        sysAlert(`You conquered the Ultimate Gauntlet! The dimensional entity <b style="color:#a855f7">${reward.name}</b> has been securely transferred to your Box.`, "🎉 Gauntlet Complete! 🎉");
-                    }
-                } else {
-                    log2(`Gauntlet Victory! Progress: ${S.events[eventId]} / 100`); // Updated message to 100
+                // 🛑 THE BAIT AND SWITCH 🛑
+                if(eventId === 'dark_mewtwo' && S.events[eventId] === 100) {
+                    sysAlert("You cleared the 100th gauntlet! But wait... Dark Mewtwo refuses to submit! It is absorbing the remaining dimensional energy. Prepare your team for a True Boss battle!", "⚠️ ANOMALY DETECTED ⚠️");
+                    persist(); renderAll();
+                    return; 
                 }
-                persist();
-                renderAll();
+
+                // Standard win condition for everyone else
+                if(S.events[eventId] >= 100) {
+                    let reward = await makeMon(monId, 100, false, false);
+                    reward.isRift = true;
+                    reward.base = {
+                        hp: Math.floor(reward.base.hp * 1.2),
+                        atk: Math.floor(reward.base.atk * 1.2),
+                        def: Math.floor(reward.base.def * 1.2)
+                    };
+                    calc(reward); reward.hp = reward.maxhp;
+                    S.box.push(reward);
+                    sysAlert(`You conquered the Ultimate Gauntlet! The dimensional entity <b style="color:#a855f7">${reward.name}</b> has been securely transferred to your Box.`, "🎉 Gauntlet Complete! 🎉");
+                } else {
+                    log2(`Gauntlet Victory! Progress: ${S.events[eventId]} / 100`);
+                }
+                persist(); renderAll();
             },
             onLose: () => {
                 healTeam();
@@ -3086,7 +3207,18 @@ async function runEvent(c){const ev=c.ev;
   for(let [id,lv] of ev.mons(S.starter)) {
       // Force enemy Pokemon to naturally evolve based on their level!
       while(EVO[id] && lv >= EVO[id][0]) { id = EVO[id][1]; }
-      mons.push(await makeMon(id,lv, false, true)); 
+      let emon = await makeMon(id,lv, false, true); 
+      
+      // --- NEW: DARK CHAPTER ENEMY BUFFS ---
+      if (c.isDark) {
+          emon.item = 'leftovers'; // Every Dark Chapter enemy heals every turn!
+      }
+      mons.push(emon);
+  }
+  
+  // Give the final "Ace" Pokemon of the Dark Chapter a Focus Sash to guarantee survival against 1-shot sweeps
+  if (c.isDark && mons.length > 0) {
+      mons[mons.length - 1].item = 'focus_sash';
   }
   
   startBattle({wild:false,trainer:ev.who,queue:mons, isDark: c.isDark, onWin:async ()=>{
@@ -3104,10 +3236,12 @@ async function runEvent(c){const ev=c.ev;
        
        // ⭐ MILESTONE REWARD 2: Chapter 100 (Shadow Lugia)
        if(S.ch === 100) {
-           let lugia = await makeMon(249, 150, true, false); 
-           lugia.isRift = true; // Gives it the purple rift aura to symbolize Shadow Lugia
+           // Since makeMon now natively handles 'shadow' with the 1.5x HP boost, just generate it directly!
+           let lugia = await makeMon('shadow', 150, false, false); 
+           lugia.isRift = true; // Keeps the glowing dark aura effect
+           
            S.box.push(lugia);
-           await sysAlert('You received a 🌌 <b style="color:#a855f7">Shadow Lugia (Lv 150)</b> for vanquishing the ultimate darkness!', 'Abyssal Campaign Complete!');
+           await sysAlert('You received the authentic 🌌 <b style="color:#a855f7">Shadow Lugia (Lv 150)</b> for vanquishing the ultimate darkness!', 'Abyssal Campaign Complete!');
        }
        
        persist(); renderAll(); nav(0); 
@@ -3369,34 +3503,64 @@ async function startPvP(){
             // Detect player power spikes
             const playerHasRebirth = S.team.some(m => m.rebirth || m.lvl > 100);
             const megaIds = Object.values(MEGA);
-            const playerHasMega = S.team.some(m => megaIds.includes(m.id));
-
+            
+            // --- NEW: DYNAMIC PVP TEAM COMPOSITION BALANCING ---
+            let playerMegaCount = 0;
+            let playerLegCount = 0;
+            S.team.forEach(m => {
+                // Catch standard Megas, Y-variants, and dynamically named ones (like your Falinks!)
+                if (megaIds.includes(m.id) || m.name.includes('(Mega)')) {
+                    playerMegaCount++;
+                }
+                // Catch standard Legendaries, Anomalies, Ash-Greninja (10116), and custom string IDs!
+                else if (RESTRICTED.includes(m.id) || ULTRA_BEASTS.includes(m.id) || RIFT_FORMS.includes(m.id) || m.id === 10116 || typeof m.id === 'string') {
+                    playerLegCount++;
+                }
+            });
+            
+            let totalPowerMons = playerMegaCount + playerLegCount;
+            let botPowerTotal = Math.min(6, totalPowerMons); // Cap at 6 for a full 6v6 match!
+            
             const diff = rank === 'Master' ? 3 : rank === 'Gold' ? 2 : rank === 'Silver' ? 1 : 0;
+            
+            // Master Rank Base Fallback: Even if the player brings 0 power mons, a Master bot will always bring at least 1 Ace.
+            if (botPowerTotal === 0 && rank === 'Master') botPowerTotal = 1;
+
+            // Generate the Bot's IDs based on the dynamic power scaling
+            let botQueueIds = [];
+            for (let k = 0; k < botPowerTotal; k++) {
+                if (Math.random() < 0.5) {
+                    botQueueIds.push(megaIds[Math.floor(Math.random() * megaIds.length)]); // 50% chance for a Mega
+                } else {
+                    botQueueIds.push(RESTRICTED[Math.floor(Math.random() * RESTRICTED.length)]); // 50% chance for a Legendary
+                }
+            }
+            
+            // Fill the remaining slots with standard meta Pokémon (Unshifted so they appear first, leaving Bosses for last)
+            while (botQueueIds.length < 6) {
+                botQueueIds.unshift(STRONG_BOT_MONS[Math.floor(Math.random() * STRONG_BOT_MONS.length)]);
+            }
+
             const botLvlBase = maxLvl + diff;
             const enemyTeam = [];
             
-            for(let i=0; i<3; i++){ 
-                let eid = Math.floor(Math.random()*150)+1; 
-                let finalBotLvl = Math.max(5, botLvlBase + (i===2?2:0));
-                if (!playerHasRebirth) finalBotLvl = Math.min(100, finalBotLvl);
+            for(let i=0; i<6; i++){ 
+                let eid = botQueueIds[i]; 
+                let finalBotLvl = Math.max(5, botLvlBase + (i===5?2:0)); // Ace slot is now the 6th slot (index 5)
                 
-                // NEW: 50/50 Chance for the Bot's Ace to be a Mega OR a Legendary!
-                if (i === 2 && playerHasMega) {
-                    const useMega = Math.random() < 0.5; // 50% coin flip
-                    const pool = useMega ? megaIds : RESTRICTED;
-                    eid = pool[Math.floor(Math.random() * pool.length)];
-                } else if (rank === 'Master' && i === 2) {
-                    eid = RESTRICTED[Math.floor(Math.random() * RESTRICTED.length)];
-                } else if (finalBotLvl >= 30) {
-                    eid = STRONG_BOT_MONS[Math.floor(Math.random() * STRONG_BOT_MONS.length)];
-                } else { 
+                // CRITICAL FIX: Ensure the bot NEVER exceeds the absolute caps of 100 (Normal) or 200 (Rebirth)
+                finalBotLvl = Math.min(playerHasRebirth ? 200 : 100, finalBotLvl);
+                
+                // Fallback for extremely low level casual PvP (swaps meta mons back to baby/route 1 spawns)
+                if (finalBotLvl < 30 && !megaIds.includes(eid) && !RESTRICTED.includes(eid)) {
+                    eid = Math.floor(Math.random()*150)+1; 
                     while(EVO[eid] && finalBotLvl >= EVO[eid][0]) { eid = EVO[eid][1]; } 
                 }
                 
                 let emon = await makeMon(eid, finalBotLvl, false, true); 
                 if(rank === 'Gold') emon.item = 'leftovers';
-                if(rank === 'Master' && i === 2) emon.item = 'focus_sash';
-                if(rank === 'Master' && i < 2) emon.item = 'leftovers';
+                if(rank === 'Master' && i === 5) emon.item = 'focus_sash';
+                if(rank === 'Master' && i < 5) emon.item = 'leftovers';
                 enemyTeam.push(emon); 
             }
 
@@ -3667,45 +3831,58 @@ function endB(win,m,caught){
 }
 
 async function explore(i){
- const z=ZONES[i];const[a,b]=GENS[z.g-1];let id=a+Math.floor(Math.random()*(b-a+1));
+ const z=ZONES[i];
+ let id = 1;
+ 
+ // Select national dex range dynamically if sandbox config is detected
+ if (z.isCustomSandbox) {
+     id = Math.floor(Math.random() * 1025) + 1; // Gen 1-9 pool range selection
+ } else {
+     const [a,b] = GENS[z.g-1];
+     id = a + Math.floor(Math.random() * (b-a+1));
+ }
+
  let isLegendary = false;
  let isAnomaly = false;
  let isUltraBeast = false;
  const rand = Math.random();
-         if (rand < 0.001) { 
-             // 0.1% chance for Legendary (Rerolling if Arceus is selected)
-             do {
-                 id = RESTRICTED[Math.floor(Math.random() * RESTRICTED.length)];
-             } while (id === 493);
-             isLegendary = true;
-         } else if (rand < 0.002) { 
-             // 0.1% chance for Ultra Beast
-             id = ULTRA_BEASTS[Math.floor(Math.random() * ULTRA_BEASTS.length)];
-             isUltraBeast = true;
-         } else if (rand < 0.004) {
-             // 0.2% chance for Anomaly / Rift Form
-             id = RIFT_FORMS[Math.floor(Math.random()*RIFT_FORMS.length)];
-             isAnomaly = true;
-         } else {
-             // 99.6% chance for Normal Regional Spawns
-             while(RESTRICTED.includes(id) || ULTRA_BEASTS.includes(id) || RIFT_FORMS.includes(id)){id=a+Math.floor(Math.random()*(b-a+1));}
-         }
- const lv=z.lv[0]+Math.floor(Math.random()*(z.lv[1]-z.lv[0]+1));
  
- // Standard Pokémon: 0.1% base, 0.25% with Shiny Booster
-     let shinyRate = S.shinyCharm ? 0.0025 : 0.001; 
-     
- // Legendaries & Ultra Beasts: 0.01% base, 0.05% with Shiny Booster
-     if (isLegendary || isUltraBeast) shinyRate = S.shinyCharm ? 0.0005 : 0.0001; 
-     
- // Anomalies / Rift Forms: 0.05% base, 0.1% with Shiny Booster
-     else if (isAnomaly) shinyRate = S.shinyCharm ? 0.001 : 0.0005;
+ if (!z.isCustomSandbox) {
+     if (rand < 0.001) { 
+         do { id = RESTRICTED[Math.floor(Math.random() * RESTRICTED.length)]; } while (id === 493);
+         isLegendary = true;
+     } else if (rand < 0.002) { 
+         id = ULTRA_BEASTS[Math.floor(Math.random() * ULTRA_BEASTS.length)];
+         isUltraBeast = true;
+     } else if (rand < 0.004) {
+         id = RIFT_FORMS[Math.floor(Math.random()*RIFT_FORMS.length)];
+         isAnomaly = true;
+     } else {
+         while(RESTRICTED.includes(id) || ULTRA_BEASTS.includes(id) || RIFT_FORMS.includes(id)){id=a+Math.floor(Math.random()*(b-a+1));}
+     }
+ } else {
+     // Categorize the species appropriately if it falls into specialty lists naturally
+     if (RESTRICTED.includes(id)) isLegendary = true;
+     if (ULTRA_BEASTS.includes(id)) isUltraBeast = true;
+     if (RIFT_FORMS.includes(id)) isAnomaly = true;
+ }
+
+ const lv = z.lv[0] + Math.floor(Math.random() * (z.lv[1] - z.lv[0] + 1));
+ 
+ // Shiny rate calculation pipeline
+ let shinyRate = S.shinyCharm ? 0.0025 : 0.001; 
+ if (isLegendary || isUltraBeast) shinyRate = S.shinyCharm ? 0.0005 : 0.0001; 
+ else if (isAnomaly) shinyRate = S.shinyCharm ? 0.001 : 0.0005;
+
+ // Apply the 5x shiny multiplier boost exclusively inside the Ultra Space Sandbox
+ if (z.type === 'ultraspace') {
+     shinyRate *= 5;
+ }
+
  const isShiny = Math.random() < shinyRate;
  
- // Force wild Pokemon to naturally evolve based on their level!
- while(EVO[id] && lv >= EVO[id][0]) { id = EVO[id][1]; }
- 
- const w=await makeMon(id,lv,isShiny);
+ // Pass generation call to makeMon factory (which handles high level evolution snapper limits automatically)
+ const w = await makeMon(id, lv, isShiny);
  const doBattle = () => {
      startBattle({wild:true,queue:[w],onWin:()=>{S.money+=lv*10;log2(`+₽${lv*10}`)},onLose:()=>{healTeam();S.money=Math.floor(S.money/2);sysAlert('You blacked out and lost half your money...', 'Battle Lost');}})
  };
