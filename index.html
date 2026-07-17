@@ -64,6 +64,18 @@ body {
 }
 .panel:hover { box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); border-color: rgba(255, 255, 255, 0.15); }
 
+/* MASS RELEASE & LOCK SYSTEM UI */
+.mon.selected { 
+    border-color: #ef4444 !important; 
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.5) !important; 
+    background: rgba(239, 68, 68, 0.15) !important; 
+    transform: translateY(-2px);
+}
+.locked-icon { 
+    font-size: 0.8em; color: #facc15; text-shadow: 0 2px 4px rgba(0,0,0,0.8); 
+    margin-right: 4px; vertical-align: middle; 
+}
+
 /* Polished Zones */
 .zone { 
     padding: 12px 16px; margin-bottom: 10px; 
@@ -1483,6 +1495,7 @@ function showMonInfo(c, i) {
         </div>
         ${rbBtn}
         ${megaBtn}
+        <button class="gbtn" style="width:100%; margin-top:8px; border-color:${m.locked ? '#facc15' : 'rgba(255,255,255,0.1)'}; color:${m.locked ? '#facc15' : '#cbd5e1'};" onclick="toggleLock('${c}',${i})">${m.locked ? '⭐ Locked (Protected)' : '🔓 Unlocked (Click to Lock)'}</button>
     `;
     
     document.getElementById('infoModal').classList.remove('hidden');
@@ -2447,11 +2460,19 @@ function hpCls(m){const r=m.hp/m.maxhp;return r>.5?'':r>.25?'mid':'low'}
 /* INJECTED DYNAMIC TYPE CLASS FOR COLORED BORDERS & CLICKABLE MODAL WRAPPER */
 function monCard(m,extra='', c='', i=''){
     const rb = m.rebirth ? '<img src="reb_icon.png" class="rebirth-icon">' : '';
+    const lk = m.locked ? '<span class="locked-icon">⭐</span>' : '';
     let rba = m.rebirth ? 'rebirth-aura' : '';
     if(m.isRift) rba += ' rift-sprite';
     if(m.id === 'shadow-mewtwo') rba += ' dark-mewtwo-filter';
     if(m.id === 'shadow') rba += ' shadow-lugia-filter';
-    return`<div class="mon type-${m.types[0]}"><div style="cursor:pointer;" onclick="if('${c}')showMonInfo('${c}',${i})"><img src="${SPR(m.id,m.shiny)}" class="${rba}"><div class="nm">${rb}${m.name}</div><small>Lv ${m.lvl} · ${m.types.join('/')}</small><div class="hpbar"><i class="${hpCls(m)}" style="transform:scaleX(${Math.max(0,m.hp/m.maxhp)})"></i></div><small>${m.hp}/${m.maxhp} HP</small></div>${extra}</div>`
+    
+    let selCls = (window.isMassReleaseMode && window.massReleaseSelection && window.massReleaseSelection.includes(i) && c === 'box') ? 'selected' : '';
+    let clickAction = `if('${c}')showMonInfo('${c}',${i})`;
+    if (c === 'box') {
+        clickAction = `if(window.isMassReleaseMode) toggleMassRelease(${i}); else showMonInfo('${c}',${i});`;
+    }
+
+    return`<div class="mon type-${m.types[0]} ${selCls}"><div style="cursor:pointer;" onclick="${clickAction}"><img src="${SPR(m.id,m.shiny)}" class="${rba}"><div class="nm">${lk}${rb}${m.name}</div><small>Lv ${m.lvl} · ${m.types.join('/')}</small><div class="hpbar"><i class="${hpCls(m)}" style="transform:scaleX(${Math.max(0,m.hp/m.maxhp)})"></i></div><small>${m.hp}/${m.maxhp} HP</small></div>${extra}</div>`
 }
 
 /* ============ DYNAMIC VIEWS ============ */
@@ -2610,7 +2631,27 @@ function renderAll(){
  /* team */
  scr2.innerHTML=`<div class="panel"><h3>⚔️ Your Team (${S.team.length}/6)</h3><p style="font-size:0.8rem; color:#94a3b8; margin-bottom:12px; text-align:center;">Click a Pokémon to view its stats and moveset.</p><div class="grid">${S.team.map((m,i)=>monCard(m,`<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center">${i>0?`<button class="gbtn" style="font-size:0.8rem;padding:4px 8px" onclick="lead(${i})">★ Lead</button>`:''}${S.team.length>1?`<button class="gbtn" style="font-size:0.8rem;padding:4px 8px" onclick="toBox(${i})">Box</button>`:''}</div>`, 'team', i)).join('')||'<p>No Pokémon yet — start the Story!</p>'}</div></div>`;
  /* box */
- scr4.innerHTML=`<div class="panel"><h3>📦 Box (${S.box.length} / ${S.boxLimit || 30}) · Rift Dex: ${Object.keys(S.dex).length}/1025</h3><p style="font-size:0.8rem; color:#94a3b8; margin-bottom:12px; text-align:center;">Click a Pokémon to view its stats and moveset.</p><div class="grid">${S.box.map((m,i)=>monCard(m,`<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center">${S.team.length<6?`<button class="gbtn" style="font-size:0.8rem;padding:4px 8px" onclick="toTeam(${i})">To Team</button>`:''}<button class="gbtn" style="font-size:0.8rem;padding:4px 8px;color:#f87171;border-color:rgba(248,113,113,0.3)" onclick="releaseMon('box',${i})">Release</button></div>`, 'box', i)).join('')||'<p>Empty — go catch some Pokémon!</p>'}</div></div>`;
+ let boxHeader = `
+     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+         <h3 style="margin:0;">📦 Box (${S.box.length} / ${S.boxLimit || 30}) · Rift Dex: ${Object.keys(S.dex).length}/1025</h3>
+         <div style="display:flex; gap:8px;">
+             ${window.isMassReleaseMode ? `<button class="btn" style="margin:0; width:auto; background:linear-gradient(135deg, #ef4444, #991b1b); padding:4px 12px; font-size:0.8rem;" onclick="executeMassRelease()" ${window.massReleaseSelection.length===0?'disabled':''}>Release (${window.massReleaseSelection.length})</button>` : ''}
+             <button class="gbtn ${window.isMassReleaseMode ? 'pulse-border' : ''}" style="margin:0; padding:4px 12px; font-size:0.8rem;" onclick="toggleMassReleaseMode()">
+                 ${window.isMassReleaseMode ? 'Cancel' : 'Mass Release'}
+             </button>
+         </div>
+     </div>
+     <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:12px; text-align:center;">Click a Pokémon to view its stats and moveset.</p>
+ `;
+
+ scr4.innerHTML=`<div class="panel">${boxHeader}<div class="grid">${S.box.map((m,i)=>{
+     let actions = '';
+     if(!window.isMassReleaseMode) {
+         let releaseBtn = m.locked ? `<button class="gbtn" style="font-size:0.8rem;padding:4px 8px;opacity:0.6;" disabled>⭐ Locked</button>` : `<button class="gbtn" style="font-size:0.8rem;padding:4px 8px;color:#f87171;border-color:rgba(248,113,113,0.3)" onclick="releaseMon('box',${i})">Release</button>`;
+         actions = `<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center">${S.team.length<6?`<button class="gbtn" style="font-size:0.8rem;padding:4px 8px" onclick="toTeam(${i})">To Team</button>`:''}${releaseBtn}</div>`;
+     }
+     return monCard(m, actions, 'box', i);
+ }).join('')||'<p>Empty — go catch some Pokémon!</p>'}</div></div>`;
  
  /* pvp arena */
  const rank = S.elo >= 1800 ? 'Master' : S.elo >= 1500 ? 'Gold' : S.elo >= 1200 ? 'Silver' : 'Bronze';
@@ -3180,6 +3221,7 @@ function toBox(i){S.box.push(S.team.splice(i,1)[0]);renderAll()}
 function toTeam(i){if(S.team.length>=6)return;S.team.push(S.box.splice(i,1)[0]);renderAll()}
 
 async function releaseMon(c,i){
+    if(S[c][i].locked) return sysAlert("Cannot release a locked Pokémon! Unlock it first.", "Action Denied");
     if(c==='team' && S.team.length<=1) return sysAlert("Cannot release your last Pokémon!", "Action Denied");
     if(await sysConfirm(`Are you sure you want to release ${S[c][i].name}? This cannot be undone.`, "Release Pokémon")) {
         log2(`Released ${S[c][i].name}!`);
@@ -3188,6 +3230,47 @@ async function releaseMon(c,i){
         renderAll();
     }
 }
+
+/* ============ MASS RELEASE & LOCK LOGIC ============ */
+window.isMassReleaseMode = false;
+window.massReleaseSelection = [];
+
+window.toggleMassReleaseMode = function() {
+    window.isMassReleaseMode = !window.isMassReleaseMode;
+    window.massReleaseSelection = []; // Reset selection on toggle
+    renderAll();
+};
+
+window.toggleMassRelease = function(i) {
+    if(S.box[i].locked) return sysAlert("Cannot select locked Pokémon for mass release!", "Locked");
+    let idx = window.massReleaseSelection.indexOf(i);
+    if (idx > -1) window.massReleaseSelection.splice(idx, 1);
+    else window.massReleaseSelection.push(i);
+    renderAll();
+};
+
+window.executeMassRelease = async function() {
+    if(window.massReleaseSelection.length === 0) return;
+    if(await sysConfirm(`Are you sure you want to permanently release ${window.massReleaseSelection.length} Pokémon?`, "Execute Mass Release")) {
+        // Sort descending so splicing doesn't shift the array index mapping
+        window.massReleaseSelection.sort((a, b) => b - a);
+        window.massReleaseSelection.forEach(i => {
+            if(!S.box[i].locked) S.box.splice(i, 1);
+        });
+        log2(`Successfully released ${window.massReleaseSelection.length} Pokémon!`);
+        window.isMassReleaseMode = false;
+        window.massReleaseSelection = [];
+        persist();
+        renderAll();
+    }
+};
+
+window.toggleLock = function(c, i) {
+    S[c][i].locked = !S[c][i].locked;
+    persist();
+    renderAll();
+    showMonInfo(c, i); // Live refresh the modal
+};
 
 /* ============ DIALOGUE ============ */
 let dq=[],dOn=null;
@@ -3611,17 +3694,19 @@ function drawB(){const p=S.team[B.pi],e=B.enemy;
  let eRba = e.rebirth ? 'rebirth-aura' : '';
  if(e.isRift) eRba += ' rift-sprite';
  if(e.id === 'shadow-mewtwo') eRba += ' dark-mewtwo-filter';
+ if(e.id === 'shadow') eRba += ' shadow-lugia-filter'; // Add this line!
  eImg.className = eRba;
  
  eName.innerHTML=(e.rebirth?'<img src="reb_icon.png" class="rebirth-icon">':'')+e.name;
  eLvl.textContent='Lv '+e.lvl;eTypes.textContent=e.types.join(' / ');
  const eb=document.getElementById('eHp');eb.style.transform='scaleX('+Math.max(0,e.hp/e.maxhp)+')';eb.className=hpCls(e);
  
- pImg.src=SPRB(p.id,p.shiny); // The Global Engine will automatically handle fallback to Front Sprites!
+ pImg.src=SPRB(p.id,p.shiny); 
  
  let pRba = p.rebirth ? 'rebirth-aura' : '';
  if(p.isRift) pRba += ' rift-sprite';
  if(p.id === 'shadow-mewtwo') pRba += ' dark-mewtwo-filter';
+ if(p.id === 'shadow') pRba += ' shadow-lugia-filter'; // Add this line!
  pImg.className = pRba;
  
  pName.innerHTML=(p.rebirth?'<img src="reb_icon.png" class="rebirth-icon">':'')+p.name;
