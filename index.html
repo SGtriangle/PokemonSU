@@ -631,6 +631,20 @@ footer { text-align:center; color:#475569; font-size:.75rem; padding:16px 10px; 
 .binfo b { color: #fff; font-size: 1.05rem; }
 .binfo small { color:#cbd5e1; font-size: 0.8rem; }
 
+/* === PVP TOURNAMENT ARENA === */
+.bfield.pvp-arena {
+    /* Sleek stadium lights fading into a professional slate/metallic floor */
+    background: linear-gradient(to bottom, #1e1b4b 0%, #312e81 50%, #334155 50.1%, #0f172a 100%);
+    border-color: rgba(56, 189, 248, 0.6);
+    box-shadow: inset 0 0 60px rgba(0,0,0,0.9), 0 15px 30px rgba(56, 189, 248, 0.2);
+}
+.bfield.pvp-arena .bmon::before {
+    /* Holographic / Metallic combat platforms */
+    background: radial-gradient(ellipse at center, #64748b 10%, #334155 70%, #0f172a 100%);
+    border-color: rgba(56, 189, 248, 0.6);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.9), 0 0 25px rgba(56, 189, 248, 0.4);
+}
+
 /* Fixed constraints for Battle Log and Action Buttons so they never overflow */
 .blog { 
     font-size:0.95rem; 
@@ -3425,6 +3439,7 @@ window.renderMoveLab = function() {
             let rba = x.m.rebirth ? 'rebirth-aura' : '';
             if(x.m.isRift) rba += ' rift-sprite';
             if(x.m.id === 'shadow-mewtwo') rba += ' dark-mewtwo-filter';
+            if(x.m.id === 'shadow') rba += ' shadow-lugia-filter'; // <-- Added this line!
             html += `
             <div class="mon type-${x.m.types[0]}" style="display:flex; flex-direction:column; align-items:center; text-align:center; background: rgba(0,0,0,0.3); border: 1px solid rgba(250,204,21,0.2);">
                 <img src="${SPR(x.m.id, x.m.shiny)}" class="${rba}" style="width:80px; height:80px; filter:drop-shadow(0 4px 6px rgba(0,0,0,0.4)); margin-bottom:8px;">
@@ -3450,6 +3465,7 @@ window.openMoveTerminal = function(teamIndex) {
     let rba = mon.rebirth ? 'rebirth-aura' : '';
     if(mon.isRift) rba += ' rift-sprite';
     if(mon.id === 'shadow-mewtwo') rba += ' dark-mewtwo-filter';
+    if(mon.id === 'shadow') rba += ' shadow-lugia-filter'; // <-- Added this line!
     
     let html = `
     <div class="panel" style="border-color: #facc15; box-shadow: 0 0 20px rgba(250, 204, 21, 0.1);">
@@ -3577,6 +3593,29 @@ window.confirmMoveLearn = async function(teamIndex, moveIndex) {
 /* ============ PvP MATCHMAKING ============ */
 async function startPvP(){
     if(!S.team.some(m=>m.hp>0)) return sysAlert('Your team is fainted! Heal at the Center first.', 'PvP Error');
+    
+    // --- NEW: SPECIES CLAUSE CHECK (PLAYER) ---
+    const getBaseId = (id) => {
+        if (id === 'shadow-mewtwo') return 150;
+        if (id === 'shadow') return 249;
+        if (id === 10116) return 658;
+        if (id === 10127) return 746;
+        if (id === 10035) return 6; // Mega Charizard Y
+        if (id === 10044) return 150; // Mega Mewtwo Y
+        for (let b in MEGA) { if (MEGA[b] === id) return parseInt(b); }
+        return id;
+    };
+    
+    let playerBaseIds = [];
+    for (let m of S.team) {
+        let bId = getBaseId(m.id);
+        if (playerBaseIds.includes(bId)) {
+            return sysAlert('PvP Rule Violation: Your party contains duplicate Pokémon species! (Megas and Alternate forms share the same limit). Please adjust your team to enter the Arena.', 'Species Clause Enforced 🚫');
+        }
+        playerBaseIds.push(bId);
+    }
+    // ------------------------------------------
+
     log2('Searching for opponents...');
     document.getElementById('battle').classList.remove('hidden');
 
@@ -3598,9 +3637,15 @@ async function startPvP(){
             // --- NEW: DYNAMIC PVP TEAM COMPOSITION BALANCING ---
             let playerMegaCount = 0;
             let playerLegCount = 0;
+            let playerEventCount = 0; // NEW: Track Event/Rift Pokémon!
+            
             S.team.forEach(m => {
-                // Catch standard Megas, Y-variants, and dynamically named ones (like your Falinks!)
-                if (megaIds.includes(m.id) || m.name.includes('(Mega)')) {
+                // Catch Event anomalies
+                if (m.isRift || m.isEvent || m.id === 'shadow-mewtwo' || m.id === 'shadow') {
+                    playerEventCount++;
+                }
+                // Catch standard Megas, Y-variants, and dynamically named ones
+                else if (megaIds.includes(m.id) || m.name.includes('(Mega)')) {
                     playerMegaCount++;
                 }
                 // Catch standard Legendaries, Anomalies, Ash-Greninja (10116), and custom string IDs!
@@ -3609,7 +3654,7 @@ async function startPvP(){
                 }
             });
             
-            let totalPowerMons = playerMegaCount + playerLegCount;
+            let totalPowerMons = playerMegaCount + playerLegCount + playerEventCount;
             let botPowerTotal = Math.min(6, totalPowerMons); // Cap at 6 for a full 6v6 match!
             
             const diff = rank === 'Master' ? 3 : rank === 'Gold' ? 2 : rank === 'Silver' ? 1 : 0;
@@ -3618,37 +3663,91 @@ async function startPvP(){
             if (botPowerTotal === 0 && rank === 'Master') botPowerTotal = 1;
 
             // Generate the Bot's IDs based on the dynamic power scaling
-            let botQueueIds = [];
+            let botQueueData = []; // NEW: Stores objects to track if a slot is an Event boss
+            let botBaseIds = []; 
+            
             for (let k = 0; k < botPowerTotal; k++) {
-                if (Math.random() < 0.5) {
-                    botQueueIds.push(megaIds[Math.floor(Math.random() * megaIds.length)]); // 50% chance for a Mega
-                } else {
-                    botQueueIds.push(RESTRICTED[Math.floor(Math.random() * RESTRICTED.length)]); // 50% chance for a Legendary
-                }
+                let eid;
+                let isEventMon = false;
+                let attempts = 0;
+                do {
+                    let r = Math.random();
+                    isEventMon = false;
+                    
+                    if (playerEventCount > 0 && r < 0.33) {
+                        // 33% chance to pull a terrifying Event Boss if the player uses Event mons
+                        eid = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)].monId;
+                        isEventMon = true;
+                    } else if (r < 0.66) {
+                        eid = megaIds[Math.floor(Math.random() * megaIds.length)]; // Mega
+                    } else {
+                        eid = RESTRICTED[Math.floor(Math.random() * RESTRICTED.length)]; // Legendary
+                    }
+                    attempts++;
+                } while (botBaseIds.includes(getBaseId(eid)) && attempts < 50); // Prevent duplicates!
+                
+                botQueueData.push({ id: eid, isEvent: isEventMon });
+                botBaseIds.push(getBaseId(eid));
             }
             
             // Fill the remaining slots with standard meta Pokémon (Unshifted so they appear first, leaving Bosses for last)
-            while (botQueueIds.length < 6) {
-                botQueueIds.unshift(STRONG_BOT_MONS[Math.floor(Math.random() * STRONG_BOT_MONS.length)]);
+            while (botQueueData.length < 6) {
+                let eid;
+                let attempts = 0;
+                do {
+                    eid = STRONG_BOT_MONS[Math.floor(Math.random() * STRONG_BOT_MONS.length)];
+                    attempts++;
+                } while (botBaseIds.includes(getBaseId(eid)) && attempts < 50); // Prevent duplicates!
+                
+                botQueueData.unshift({ id: eid, isEvent: false });
+                botBaseIds.push(getBaseId(eid));
             }
 
             const botLvlBase = maxLvl + diff;
             const enemyTeam = [];
             
             for(let i=0; i<6; i++){ 
-                let eid = botQueueIds[i]; 
+                let slotData = botQueueData[i]; 
+                let eid = slotData.id; 
                 let finalBotLvl = Math.max(5, botLvlBase + (i===5?2:0)); // Ace slot is now the 6th slot (index 5)
                 
                 // CRITICAL FIX: Ensure the bot NEVER exceeds the absolute caps of 100 (Normal) or 200 (Rebirth)
                 finalBotLvl = Math.min(playerHasRebirth ? 200 : 100, finalBotLvl);
                 
                 // Fallback for extremely low level casual PvP (swaps meta mons back to baby/route 1 spawns)
-                if (finalBotLvl < 30 && !megaIds.includes(eid) && !RESTRICTED.includes(eid)) {
-                    eid = Math.floor(Math.random()*150)+1; 
-                    while(EVO[eid] && finalBotLvl >= EVO[eid][0]) { eid = EVO[eid][1]; } 
+                if (finalBotLvl < 30 && !slotData.isEvent && !megaIds.includes(eid) && !RESTRICTED.includes(eid)) {
+                    botBaseIds = botBaseIds.filter(id => id !== getBaseId(eid)); // Remove the old meta ID
+                    let attempts = 0;
+                    do {
+                        eid = Math.floor(Math.random()*150)+1; 
+                        while(EVO[eid] && finalBotLvl >= EVO[eid][0]) { eid = EVO[eid][1]; } 
+                        attempts++;
+                    } while(botBaseIds.includes(getBaseId(eid)) && attempts < 50);
+                    botBaseIds.push(getBaseId(eid));
+                    slotData.id = eid;
                 }
                 
                 let emon = await makeMon(eid, finalBotLvl, false, true); 
+                
+                // --- NEW: INJECT EVENT BOSS STATS FOR BOT ---
+                if (slotData.isEvent) {
+                    emon.isRift = true; // Gives it the glowing CSS aura
+                    
+                    // Apply the massive 1.2x Gauntlet Event Reward Multiplier
+                    emon.base = {
+                        hp: Math.floor(emon.base.hp * 1.2),
+                        atk: Math.floor(emon.base.atk * 1.2),
+                        def: Math.floor(emon.base.def * 1.2)
+                    };
+                    calc(emon); 
+                    emon.hp = emon.maxhp;
+                    
+                    // Add the "Ultimate" prefix if it doesn't already have a custom name
+                    if (emon.id !== 'shadow-mewtwo' && emon.id !== 'shadow') {
+                        emon.name = "Ultimate " + emon.name;
+                    }
+                }
+                
                 if(rank === 'Gold') emon.item = 'leftovers';
                 if(rank === 'Master' && i === 5) emon.item = 'focus_sash';
                 if(rank === 'Master' && i < 5) emon.item = 'leftovers';
@@ -3689,7 +3788,17 @@ function startBattle(cfg){
     
     // --- NEW: DYNAMIC ARENA THEME ---
     const bfield = document.querySelector('.bfield');
-    if (bfield) bfield.classList.toggle('dark-arena', !!B.isDark);
+    if (bfield) {
+        // Reset all custom arenas first
+        bfield.classList.remove('dark-arena', 'pvp-arena'); 
+        
+        // Apply the correct arena based on the battle configuration
+        if (B.isDark) {
+            bfield.classList.add('dark-arena');
+        } else if (B.isPvP) {
+            bfield.classList.add('pvp-arena');
+        }
+    }
     // --------------------------------
     
     bmsg(cfg.wild ? `A wild <b style="color:#38bdf8">${B.enemy.name}</b> (Lv ${B.enemy.lvl}) appeared!` : `${cfg.trainer[0]} sent out <b style="color:#f87171">${B.enemy.name}</b> (Lv ${B.enemy.lvl})!`);
@@ -3781,32 +3890,117 @@ function useMove(i){
     else bmsg(m+"<br><i style='color:#94a3b8;font-size:0.9rem;'>Waiting for opponent...</i>");
 }
 
-function enemyTurn(prev){const p=S.team[B.pi],e=B.enemy;
- if (B.botRank === 'Master' && B.botPots > 0 && (e.hp / e.maxhp) < 0.2) {
-    B.botPots--; const heal = 120; e.hp = Math.min(e.maxhp, e.hp + heal);
-    let m = prev + `<br><b style="color:#4ade80">Opponent used a Full Restore! ${e.name} recovered ${heal} HP.</b>`;
-    if(e.item === 'leftovers' && e.hp < e.maxhp) {
+function enemyTurn(prev){
+    const p=S.team[B.pi], e=B.enemy;
+    
+    // 1. Potion Check (Master Rank Bosses)
+    if (B.botRank === 'Master' && B.botPots > 0 && (e.hp / e.maxhp) < 0.2) {
+        B.botPots--; const heal = 120; e.hp = Math.min(e.maxhp, e.hp + heal);
+        let m = prev + `<br><b style="color:#4ade80">Opponent used a Full Restore! ${e.name} recovered ${heal} HP.</b>`;
+        if(e.item === 'leftovers' && e.hp < e.maxhp) {
+            const leftHeal = Math.max(1, Math.floor(e.maxhp / 16)); e.hp = Math.min(e.maxhp, e.hp + leftHeal);
+            m += `<br><small style="color:#94a3b8">${e.name} restored a little HP using its Leftovers.</small>`;
+        }
+        B.lock = false; drawB(); bmsg(m); return;
+    }
+
+    // 2. Evaluate Current Bot's Best Move
+    let mv = e.moves[0], maxDmg = -1, maxEff = -1; 
+    e.moves.forEach(m => { 
+        const r = dmg(e, p, m); 
+        if(r.v > maxDmg){ maxDmg = r.v; mv = m; maxEff = r.e; } 
+    });
+
+    // 3. --- NEW INTELLIGENT PVP SWITCHING AI ---
+    // Only activates in PvP matches where the bot still has Pokémon left in the back
+    if (B.isPvP && !B.isRealPvP && B.queue.length > 0) {
+        
+        // Calculate the maximum damage the PLAYER can do to the CURRENT bot
+        let playerMaxDmgToBot = -1;
+        p.moves.forEach(m => { const r = dmg(p, e, m); if (r.v > playerMaxDmgToBot) playerMaxDmgToBot = r.v; });
+        
+        // AI Danger Check: Is the bot doing bad damage, OR is the player threatening massive damage?
+        let isInDanger = (playerMaxDmgToBot >= e.hp * 0.5);
+        let dealsLowDamage = (maxEff < 1);
+        
+        if (isInDanger || dealsLowDamage) {
+            let bestBenchIndex = -1;
+            let bestBenchScore = -9999;
+            
+            // The Bot mentally tests every Pokémon in its queue
+            B.queue.forEach((benchMon, idx) => {
+                if (benchMon.hp <= 0) return;
+                
+                // Calculate what this bench mon can do to the player
+                let bMaxDmg = -1, bMaxEff = -1;
+                benchMon.moves.forEach(m => { const r = dmg(benchMon, p, m); if (r.v > bMaxDmg) { bMaxDmg = r.v; bMaxEff = r.e; } });
+                
+                // Calculate what the player can do to this bench mon
+                let pMaxDmgToBench = -1;
+                p.moves.forEach(m => { const r = dmg(p, benchMon, m); if (r.v > pMaxDmgToBench) pMaxDmgToBench = r.v; });
+                
+                // Score Algorithm: Damage Dealt minus Damage Taken
+                let score = bMaxDmg - (pMaxDmgToBench * 0.8);
+                if (bMaxEff > 1) score += 500; // Heavily prioritize switching IN for Super Effective hits
+                if (pMaxDmgToBench >= benchMon.hp) score -= 1000; // NEVER switch into a guaranteed 1-shot KO
+                
+                if (score > bestBenchScore) { bestBenchScore = score; bestBenchIndex = idx; }
+            });
+            
+            // Calculate current active bot's score to see if it's worth abandoning ship
+            let currentScore = maxDmg - (playerMaxDmgToBot * 0.8);
+            if (maxEff > 1) currentScore += 500;
+            if (playerMaxDmgToBot >= e.hp) currentScore -= 1000;
+            
+            // If the bench Pokémon has a significantly better matchup, EXECUTE THE SWITCH!
+            if (bestBenchIndex !== -1 && (bestBenchScore > currentScore + 150 || (dealsLowDamage && bestBenchScore > currentScore))) {
+                let newMon = B.queue.splice(bestBenchIndex, 1)[0];
+                B.queue.push(e); // Send current Pokémon safely to the back of the queue
+                B.enemy = newMon;
+                
+                let switchMsg = prev + `<br>Opponent withdrew <b style="color:#f87171">${e.name}</b>!<br>Opponent sent out <b style="color:#f87171">${newMon.name}</b>!`;
+                drawB();
+                bmsg(switchMsg);
+                
+                // End the bot's turn, pass control back to the player
+                setTimeout(() => { B.lock = false; drawB(); }, 800);
+                return; 
+            }
+        }
+    }
+    // ------------------------------------------------
+
+    // 4. Attack Execution (if the Bot decided not to switch)
+    const r = dmg(e, p, mv); p.hp -= r.v; drawB();
+    
+    // Add visual feedback to show when the bot lands a Super Effective hit
+    let effTxt = r.e > 1 ? '<span style="color:#4ade80">It\'s super effective!</span>' : r.e === 0 ? '<span style="color:#94a3b8">It had no effect...</span>' : r.e < 1 ? '<span style="color:#f87171">Not very effective...</span>' : '';
+    let m = prev+`<br>Enemy <b style="color:#f87171">${e.name}</b> used <b>${mv.n}</b>! ${effTxt} (${r.v} dmg)`;
+
+    if(e.item === 'leftovers' && e.hp > 0 && e.hp < e.maxhp) {
         const leftHeal = Math.max(1, Math.floor(e.maxhp / 16)); e.hp = Math.min(e.maxhp, e.hp + leftHeal);
         m += `<br><small style="color:#94a3b8">${e.name} restored a little HP using its Leftovers.</small>`;
+        drawB();
     }
-    B.lock = false; drawB(); bmsg(m); return;
- }
- let mv=e.moves[0], maxDmg=-1; 
- e.moves.forEach(m=>{const r=dmg(e,p,m); if(r.v>maxDmg){maxDmg=r.v; mv=m;}});
- const r=dmg(e,p,mv);p.hp-=r.v;drawB();
- let m = prev+`<br>Enemy <b style="color:#f87171">${e.name}</b> used <b>${mv.n}</b>! (${r.v} dmg)`;
-
- if(e.item === 'leftovers' && e.hp > 0 && e.hp < e.maxhp) {
-    const leftHeal = Math.max(1, Math.floor(e.maxhp / 16)); e.hp = Math.min(e.maxhp, e.hp + leftHeal);
-    m += `<br><small style="color:#94a3b8">${e.name} restored a little HP using its Leftovers.</small>`;
-    drawB();
- }
- bmsg(m);
- if(p.hp<=0){p.hp=0;drawB();setTimeout(()=>{if(S.team.some(m=>m.hp>0)){bmsg(`<b style="color:#38bdf8">${p.name}</b> fainted! Choose another Pokémon.`);B.lock=false;forceSwitch();}else{
-  if(B.isPvP){ S.elo=Math.max(0, S.elo-15); endB(false,`Match Lost! Elo dropped to ${S.elo}`); }
-  else endB(false,`All your Pokémon fainted...`);
- }},700)}
- else{B.lock=false;drawB()}}
+    
+    bmsg(m);
+    
+    // Check if player died
+    if(p.hp<=0){
+        p.hp=0; drawB();
+        setTimeout(()=>{
+            if(S.team.some(m=>m.hp>0)){
+                bmsg(`<b style="color:#38bdf8">${p.name}</b> fainted! Choose another Pokémon.`);
+                B.lock=false; forceSwitch();
+            } else {
+                if(B.isPvP){ S.elo=Math.max(0, S.elo-15); endB(false,`Match Lost! Elo dropped to ${S.elo}`); }
+                else endB(false,`All your Pokémon fainted...`);
+            }
+        }, 700);
+    } else {
+        B.lock=false; drawB();
+    }
+}
 
 function enemyFaint(prev){const p=S.team[B.pi],e=B.enemy;
  // Check if the battle is an Event or PvP
