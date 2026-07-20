@@ -2747,6 +2747,23 @@ const ICN = (n) => `<img src="https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master
 function renderEvents() {
     if(!S.events) S.events = {};
     
+    // --- NEW: CHAPTER 5 PROGRESSION LOCK ---
+    if (S.ch < 5) {
+        let tempScr6 = document.getElementById('scr6');
+        if (tempScr6) tempScr6.innerHTML = `
+        <div class="panel" style="border-color: rgba(168, 85, 247, 0.2); background: rgba(30, 41, 59, 0.8); text-align:center; padding: 50px 20px; max-height: var(--dynamic-grid-height); overflow-y: auto;">
+            <div style="font-size: 3.5rem; margin-bottom: 16px; filter: grayscale(1); opacity: 0.5;">🔒</div>
+            <h3 style="color:#94a3b8; font-size:1.8rem; margin-bottom:12px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">Temporal Rifts Locked</h3>
+            <p style="color:#64748b; font-size:1.05rem; max-width: 450px; margin: 0 auto 20px; line-height: 1.5;">Your team is not yet strong enough to survive the volatile energy of the dimensional rifts.</p>
+            <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; border: 1px solid rgba(168, 85, 247, 0.3); display: inline-block;">
+                <span style="color:#cbd5e1; font-size: 0.9rem;">Requirement:</span>
+                <b style="color:#a855f7; font-size: 1.1rem; margin-left: 8px;">Clear Chapter 5 of the Story</b>
+            </div>
+        </div>`;
+        return; // Stops the rest of the event engine from rendering
+    }
+    // ---------------------------------------
+    
     // Define cycle lengths
     const CYCLE_DURATION = 345600000; // 4 days in total (3 days active + 1 day break)
     const ACTIVE_DURATION = 259200000; // 3 days active
