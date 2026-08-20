@@ -2885,6 +2885,11 @@ function renderEvents() {
 }
 /* ============ EVENT BOSS INTEL / PREVIEW ============ */
 window.showEventMonInfo = async function(eventId, monId) {
+    // --- NEW: BULLETPROOF ID CLEANER ---
+    if (typeof monId === 'string' && monId !== 'shadow-mewtwo' && monId !== 'shadow') {
+        monId = parseInt(monId);
+    }
+
     // 1. Show a loading screen in case the PokéAPI fetch takes a second
     document.getElementById('infoContent').innerHTML = `<div style="text-align:center; padding: 40px; color:#a855f7; font-weight:bold; animation: pulseGlow 1.5s infinite alternate;">Scanning Dimensional Entity...</div>`;
     document.getElementById('infoModal').classList.remove('hidden');
@@ -2953,6 +2958,11 @@ window.startEventGauntlet = async function(eventId, monId) {
     if(!S.team.some(m=>m.hp>0)) return sysAlert('Your team is fainted! Heal at the Center first.', 'Gauntlet Error');
     
     let prog = (S.events && S.events[eventId]) ? S.events[eventId] : 0;
+
+    // --- NEW: BULLETPROOF ID CLEANER ---
+    if (typeof monId === 'string' && monId !== 'shadow-mewtwo' && monId !== 'shadow') {
+        monId = parseInt(monId);
+    }
 
     // ==========================================
     // ⚠️ THE LEVEL 200 TRUE BOSS INTERCEPT ⚠️
