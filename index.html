@@ -2270,6 +2270,11 @@ async function getPoke(id){
 function calc(m){m.maxhp=Math.floor(m.base.hp*2*m.lvl/100)+m.lvl+10;m.atk=Math.floor(m.base.atk*2*m.lvl/100)+5;m.def=Math.floor(m.base.def*2*m.lvl/100)+5}
 
 async function makeMon(id,lvl,shiny=false, isBot=false){
+  // --- NEW: FIX ID TYPE MISMATCH FOR EVENT BOSSES ---
+  if (typeof id === 'string' && id !== 'shadow-mewtwo' && id !== 'shadow') {
+      id = parseInt(id);
+  }
+
   // --- UNIVERSAL FINAL-FORM SNAP ---
   const isMega = Object.values(MEGA).includes(id); // Detect if the ID belongs to a Mega
   if (lvl >= 70 && id !== 'shadow-mewtwo' && id !== 'shadow' && !isMega && !RESTRICTED.includes(id) && !ULTRA_BEASTS.includes(id) && !RIFT_FORMS.includes(id) && !STRONG_BOT_MONS.includes(id)) {
